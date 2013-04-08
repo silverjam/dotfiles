@@ -1,0 +1,25 @@
+
+execute pathogen#infect()
+
+syntax on
+
+filetype plugin indent on
+
+set hidden
+set hlsearch
+set colorcolumn=80
+
+let g:miniBufExplCheckDupeBufs = 0
+let g:miniBufExplVSplit = 20
+
+set et
+set ts=4
+set sts=4
+set sw=4
+
+nmap <F8> :TagbarToggle<CR>
+nmap <C-N> :NERDTreeToggle<CR>
+
+nmap <C-k>h :FSwitch<CR>
+
+let g:ctrlp_cmd = 'CtrlPBuffer'
