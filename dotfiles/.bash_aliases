@@ -1,0 +1,1 @@
+/home/jam/.bash_aliases

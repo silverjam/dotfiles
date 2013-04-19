@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export CHROOT=$HOME/Chroot
+
+sudo mount -o bind /proc $CHROOT/proc
+sudo mount -o bind $HOME $CHROOT/$HOME

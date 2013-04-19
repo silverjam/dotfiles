@@ -1,29 +1,40 @@
+#!/bin/bash
 
-CHROOT=/home/jam/Chroot
+CHROOT=$HOME/Chroot
+
+echo_eval()
+{
+    echo $@
+    eval $@
+}
 
 case $1 in
 
 1)
-    sudo debootstrap --variant=buildd --arch i386 quantal $CHROOT http://ubuntu.osuosl.org/ubuntu/
+    echo_eval sudo debootstrap --variant=buildd --arch i386 quantal $CHROOT http://ubuntu.osuosl.org/ubuntu/
 ;;
 
 1|2)
-    sudo mount -o bind /proc $CHROOT/proc
+    echo_eval sudo mount -o bind /proc $CHROOT/proc
 ;;
 
 1|2|3)
-    sudo cp -v /etc/resolv.conf $CHROOT/etc/resolv.conf
+    echo_eval sudo cp -v /etc/resolv.conf $CHROOT/etc/resolv.conf
 ;;
 
 1|2|3|4)
-    sudo cp -v /etc/passwd* $CHROOT/etc
-    sudo cp -v /etc/group* $CHROOT/etc
-    sudo mkdir $CHROOT/home/jam
-    sudo chown jam:jam $CHROOT/home/jam
+    echo_eval sudo cp -v /etc/passwd* $CHROOT/etc
+    echo_eval sudo cp -v /etc/group* $CHROOT/etc
+    echo_eval sudo mkdir $CHROOT/$HOME
+    echo_eval sudo chown $USER:$USER $CHROOT/$HOME
 ;;
 
 1|2|3|4|5)
-    sudo cp -v /etc/sudoers $CHROOT/etc
+    echo_eval sudo cp -v /etc/sudoers $CHROOT/etc
+;;
+
+1|2|3|4|5|6)
+    echo_eval schroot -c quantal -u root passwd $USER
 ;;
 
 esac

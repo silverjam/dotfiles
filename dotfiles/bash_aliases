@@ -5,4 +5,5 @@ alias keys='. ~/keys.sh'
 
 umask 022
 
-export PATH="$PATH":$HOME/Code/depot_tools
+export PATH=/home/jam/Android/adt-bundle-linux-x86_64-20130219/eclipse/plugins/org.apache.ant_1.8.3.v20120321-1730/bin:$PATH
+export PATH=$PATH:$HOME/Code/depot_tools:$HOME/Code/Sysmods/scripts:$HOME/Code/Sysmods/chroot:$HOME/Scripts
