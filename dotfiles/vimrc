@@ -23,3 +23,5 @@ nmap <C-N> :NERDTreeToggle<CR>
 nmap <C-k>h :FSwitch<CR>
 
 let g:ctrlp_cmd = 'CtrlPBuffer'
+
+set background=dark
