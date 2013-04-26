@@ -5,5 +5,44 @@ alias keys='. ~/keys.sh'
 
 umask 022
 
-export PATH=/home/jam/Android/adt-bundle-linux-x86_64-20130219/eclipse/plugins/org.apache.ant_1.8.3.v20120321-1730/bin:$PATH
-export PATH=$PATH:$HOME/Code/depot_tools:$HOME/Code/Sysmods/scripts:$HOME/Code/Sysmods/chroot:$HOME/Scripts
+ADT_ECLIPSE=$HOME/Android/adt-bundle-linux-x86_64-20130219/eclipse
+ECLIPSE_ANT=$ADT_ECLIPSE/plugins/org.apache.ant_1.8.3.v20120321-1730/bin
+
+export PATH=$ECLIPSE_ANT:$PATH
+export PATH=$HOME/Code/depot_tools:$PATH
+export PATH=$HOME/Code/Sysmods/scripts:$PATH
+export PATH=$HOME/Code/Sysmods/chroot:$PATH
+export PATH=$HOME/Scripts:$PATH
+
+source $HOME/Code/Sysmods/git-completion.bash
+
+export PS1="\[\033[31;38m\]\w\[\033[1;31m\]\$(__git_ps1)\[\033[00m\] "
+export GIT_PS1_SHOWDIRTYSTATE=1
+
+alias dirs='dirs -v'
+
+cd() {
+   MAX=10
+   LEN=${#DIRSTACK[@]}
+
+   if [ $# -eq 0 ] || [ "$1" = "-" ]; then
+      builtin cd "$@"
+      pushd -n $OLDPWD > /dev/null
+   else
+      pushd "$@" > /dev/null || return 1
+   fi
+
+   if [ $LEN -gt 1 ]; then
+      for i in `seq 1 $LEN`; do
+         eval p=~$i
+         if [ "$p" = "$PWD" ]; then
+            popd -n +$i > /dev/null
+            break
+         fi
+      done
+   fi
+
+   if [ $LEN -ge $MAX ]; then
+      popd -n -0 > /dev/null
+   fi
+}
