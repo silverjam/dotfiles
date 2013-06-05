@@ -1,17 +1,20 @@
 #!/bin/bash
 
-CHROOT=$HOME/Chroot
+CHROOT=$HOME/ChrootLucid
+
+CODENAME=lucid
+ARCH=amd64
 
 echo_eval()
 {
-    echo $@
-    eval $@
+    echo $*
+    eval $*
 }
 
 case $1 in
 
 1)
-    echo_eval sudo debootstrap --variant=buildd --arch i386 quantal $CHROOT http://ubuntu.osuosl.org/ubuntu/
+    echo_eval sudo debootstrap --variant=buildd --arch $ARCH $CODENAME $CHROOT http://ubuntu.osuosl.org/ubuntu/
 ;;
 
 1|2)
@@ -34,7 +37,8 @@ case $1 in
 ;;
 
 1|2|3|4|5|6)
-    echo_eval schroot -c quantal -u root passwd $USER
+    echo_eval schroot -c $CODENAME -u root passwd $USER
+    echo_eval schroot -c $CODENAME -u root passwd root
 ;;
 
 esac
