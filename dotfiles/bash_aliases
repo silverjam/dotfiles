@@ -5,10 +5,7 @@ alias keys='. ~/keys.sh'
 
 umask 022
 
-ADT_ECLIPSE=$HOME/Android/adt-bundle-linux-x86_64-20130219/eclipse
-ECLIPSE_ANT=$ADT_ECLIPSE/plugins/org.apache.ant_1.8.3.v20120321-1730/bin
 
-export PATH=$ECLIPSE_ANT:$PATH
 export PATH=$HOME/Code/depot_tools:$PATH
 export PATH=$HOME/Code/Sysmods/scripts:$PATH
 export PATH=$HOME/Code/Sysmods/chroot:$PATH
@@ -16,13 +13,26 @@ export PATH=$HOME/Scripts:$PATH
 
 function apath_adt()
 {
-    export PATH=$HOME/Android/adt-bundle-linux-x86_64-20130219/sdk/platform-tools/:$PATH
-    export PATH=$HOME/Android/adt-bundle-linux-x86_64-20130219/sdk/tools/:$PATH
+    export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/platform-tools/:$PATH
+    export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/tools/:$PATH
+
+    export ANDROID_HOME=$HOME/Android/AndroidDevelopmentToolkit/sdk
+    export ANDROID_SDK=$HOME/Android/AndroidDevelopmentToolkit/sdk
+
+    ADT_PLUGINS=$HOME/Android/AndroidDevelopmentToolkit/eclipse/plugins
+    ECLIPSE_ANT=$ADT_PLUGINS/$(cd $ADT_PLUGINS; ls -1 --color=never --directory --group-directories-first org.apache.ant* | head -1)/bin/
+
+    export PATH=$ECLIPSE_ANT:$PATH
 }
 
 function apath_ndk()
 {
     export PATH=$HOME/Android/android-ndk-r8e:$PATH
+}
+
+function setup_aosp_var()
+{
+    export AOSP_PATH=$HOME/Android/AOSP/WC/android-4.1.2_r1
 }
 
 alias dirs='dirs -v'
@@ -131,3 +141,6 @@ fi
 if [ -z "$SCHROOT_CHROOT_NAME" ]; then
     shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
 fi
+
+alias branch-name='echo jam-`date +%Y%m%d`'
+alias donesound='mplayer /home/jam/Downloads/Transfer complete.mp3'
