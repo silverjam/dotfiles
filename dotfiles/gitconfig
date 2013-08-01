@@ -1,0 +1,26 @@
+[user]
+	name = Jason Mobarak
+	email = jam@cozybit.com
+[color]
+	ui = auto
+[alias]
+	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+	wipe = "!git reset --hard;git clean -fd"
+    co = checkout
+    cob = checkout -b
+    st = status
+    ci = commit --verbose
+    cia = commit -a --verbose
+    apr = "config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*"
+    cbr = rev-parse --abbrev-ref HEAD
+    org = !echo cozybit
+	pr = "!f() { git prb master; }; f"
+    prb = "!git-prb.bash $1"
+    review = "!git-review.bash"
+	oldest-ancestor = !bash -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
+	branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
+	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+    rup = remote update --prune
+[diff]
+	tool = meld
+

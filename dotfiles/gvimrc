@@ -1,1 +1,3 @@
 colorscheme ir_black
+set guioptions-=T
+let g:viewdoc_open="topleft new"    

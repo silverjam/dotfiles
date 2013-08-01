@@ -13,6 +13,8 @@ export PATH=$HOME/Scripts:$PATH
 
 function apath_adt()
 {
+    echo "Adding ADT and ANT's Ant to the path..."
+
     export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/platform-tools/:$PATH
     export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/tools/:$PATH
 
@@ -27,13 +29,32 @@ function apath_adt()
 
 function apath_ndk()
 {
-    export PATH=$HOME/Android/android-ndk-r8e:$PATH
+    echo "Add the Android NDK to the path..."
+
+    export ANDROID_NDK=$HOME/Android/android-ndk-r8e
+    export PATH=$ANDROID_NDK:$PATH
 }
 
 function setup_aosp_var()
 {
+    echo "Setting up AOSP_PATH variable..."
+
     export AOSP_PATH=$HOME/Android/AOSP/WC/android-4.1.2_r1
 }
+
+function apath_ndk_arm_toolchain()
+{
+    echo "Adding static Android ARM toolchain to the path..."
+
+    export PATH=$PATH:$HOME/Android/ArmToolchain/bin
+}
+
+#if [ -z "$UNDER_SCRIPT" ]; then
+#    apath_adt
+#    apath_ndk
+#    setup_aosp_var
+#    apath_ndk_arm_toolchain
+#fi
 
 alias dirs='dirs -v'
 
@@ -144,3 +165,6 @@ fi
 
 alias branch-name='echo jam-`date +%Y%m%d`'
 alias donesound='mplayer /home/jam/Downloads/Transfer complete.mp3'
+alias launch_adt='screen -d -m -S eclipse eclipse'
+
+set MOZILLA_FIVE_HOME=/usr/lib/firefox

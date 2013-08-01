@@ -13,7 +13,7 @@ if version >= 703
 endif
 
 let g:miniBufExplCheckDupeBufs = 0
-"let g:miniBufExplVSplit = 20
+let g:miniBufExplVSplit = 30
 
 set et
 set ts=4
@@ -29,3 +29,6 @@ nmap <C-k>h :FSwitch<CR>
 let g:ctrlp_cmd = 'CtrlPBuffer'
 
 set background=dark
+
+"map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
+
