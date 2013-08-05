@@ -49,12 +49,13 @@ function apath_ndk_arm_toolchain()
     export PATH=$PATH:$HOME/Android/ArmToolchain/bin
 }
 
-#if [ -z "$UNDER_SCRIPT" ]; then
-#    apath_adt
-#    apath_ndk
-#    setup_aosp_var
-#    apath_ndk_arm_toolchain
-#fi
+function setup_android()
+{
+    apath_adt
+    apath_ndk
+    setup_aosp_var
+    apath_ndk_arm_toolchain
+}
 
 alias dirs='dirs -v'
 

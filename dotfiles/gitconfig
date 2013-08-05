@@ -5,22 +5,27 @@
 	ui = auto
 [alias]
 	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
-	wipe = "!git reset --hard;git clean -fd"
+	wipe = "!git reset --hard;git clean -fdx"
     co = checkout
     cob = checkout -b
+    com = checkout master
     st = status
     ci = commit --verbose
     cia = commit -a --verbose
-    apr = "config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*"
-    cbr = rev-parse --abbrev-ref HEAD
-    org = !echo cozybit
-	pr = "!f() { git prb master; }; f"
-    prb = "!git-prb.bash $1"
-    review = "!git-review.bash"
-    rup = remote update --prune
+    mf = merge --ff-only
+    mfpom = "!git merge --ff-only $1 && git push origin master"
+    pom = push origin master
 	oldest-ancestor = !bash -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
 	branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
 	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+	apr = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
+	cbr = rev-parse --abbrev-ref HEAD
+	org = !echo cozybit
+	pr = !git prb master
+	prb = !git-pullreq $1
+	review = !git-review
+	rup = remote update --prune
+	po = push origin
 [diff]
 	tool = meld
 
