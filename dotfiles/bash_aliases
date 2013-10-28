@@ -210,3 +210,8 @@ xterm*|rxvt*)
 *)
     ;;
 esac
+
+this_dir=$(dirname $(readlink -f ${BASH_SOURCE}))
+source $this_dir/../git-completion.bash
+
+export GIT_PS1_SHOWDIRTYSTATE=1
