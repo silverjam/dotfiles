@@ -32,3 +32,19 @@ set background=dark
 
 "map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
 
+"let b:start_time=localtime()
+"
+"au BufRead,BufNewFile * let b:start_time=localtime()
+"au CursorHold * call UpdateFile()
+"" only write if needed and update the start time after the save
+"function! UpdateFile()
+"  if ((localtime() - b:start_time) >= 5)
+"    update
+"    let b:start_time=localtime()
+"  else
+"    echo "Only " . (localtime() - b:start_time) . " seconds have elapsed so far."
+"  endif
+"endfunction
+"
+"au BufWritePre * let b:start_time=localtime()
+

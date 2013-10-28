@@ -6,15 +6,15 @@
 [alias]
 	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
 	wipe = "!git reset --hard;git clean -fdx"
-    co = checkout
-    cob = checkout -b
+	co = checkout
+	cob = checkout master
     com = checkout master
-    st = status
-    ci = commit --verbose
-    cia = commit -a --verbose
+	st = status
+	ci = commit --verbose
+	cia = commit -a --verbose
     mf = merge --ff-only
     mfpom = "!git merge --ff-only $1 && git push origin master"
-    pom = push origin master
+	pom = push origin master
 	oldest-ancestor = !bash -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
 	branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
 	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
@@ -26,6 +26,22 @@
 	review = !git-review
 	rup = remote update --prune
 	po = push origin
+	update-pull-request = !git upr
+	add-pull-request-remote = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
+	pull-request = !git pr
+	upr = !git-update-pr
+	branch-pull-request = !git prb
+	remote-update-prune = remote update --prune
+	checkout-branch = !git cob
+	checkout-master = !git com
+	commit-add = !git mff
+	mff = merge --ff-only
+	push-origin-master = !git pom
+	mffpom = !git mff -fj && git pom
 [diff]
 	tool = meld
-
+[sendemail]
+	smtpencryption = tls
+	smtpserver = smtp.gmail.com
+	smtpuser = jam@cozybit.com
+	smtpserverport = 587

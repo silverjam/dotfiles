@@ -1,3 +1,5 @@
-colorscheme ir_black
+"colorscheme ir_black
+colorscheme solarized
 set guioptions-=T
 let g:viewdoc_open="topleft new"    
+set background=light
