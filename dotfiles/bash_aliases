@@ -62,6 +62,12 @@ function setup_android()
     apath_ndk_arm_toolchain
 }
 
+function setup_devdroid()
+{
+    export DEVDROID=$HOME/dev/devdroid
+    export PATH=$DEVDROID/tools:$PATH
+}
+
 alias dirs='dirs -v'
 
 export COLOR_NC='\e[0m' # No Color

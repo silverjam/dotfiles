@@ -7,7 +7,7 @@
 	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
 	wipe = "!git reset --hard;git clean -fdx"
 	co = checkout
-	cob = checkout master
+	cob = checkout -b
     com = checkout master
 	st = status
 	ci = commit --verbose
@@ -39,6 +39,7 @@
 	push-origin-master = !git pom
 	mffpom = !git mff -fj && git pom
 [diff]
+#	tool = vimdiff
 	tool = meld
 [sendemail]
 	smtpencryption = tls

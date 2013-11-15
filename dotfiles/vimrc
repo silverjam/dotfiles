@@ -1,5 +1,5 @@
 
-execute pathogen#infect()
+"execute pathogen#infect()
 
 syntax on
 
@@ -21,13 +21,12 @@ set sts=4
 set sw=4
 set nocp
 
-nmap <F8> :TagbarToggle<CR>
-nmap <C-N> :NERDTreeToggle<CR>
+"nmap <F8> :TagbarToggle<CR>
+"nmap <C-N> :NERDTreeToggle<CR>
 
-nmap <C-k>h :FSwitch<CR>
+"nmap <C-k>h :FSwitch<CR>
 
 let g:ctrlp_cmd = 'CtrlPBuffer'
-
 set background=dark
 
 "map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
@@ -48,3 +47,21 @@ set background=dark
 "
 "au BufWritePre * let b:start_time=localtime()
 
+cmap w!! w !sudo tee % >/dev/null
+
+"nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
+"nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
+
+Bundle 'https://github.com/tomtom/vimtlib.git'
+Bundle 'https://github.com/tomtom/tinykeymap_vim.git'
+Bundle 'https://github.com/vim-scripts/taglist.vim.git'
+Bundle 'https://github.com/brookhong/cscope.vim.git'
+Bundle 'https://github.com/Rykka/riv.vim.git'
+
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <Leader>x :bp\|bd #<CR>
+
+""let g:cscope_cmd = 'pycscope'
+"let g:pymode_lint_write = 1
+let g:syntastic_check_on_wq = 0
+let g:riv_global_leader = "<C-J>"
