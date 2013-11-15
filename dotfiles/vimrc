@@ -1,6 +1,4 @@
-
 "execute pathogen#infect()
-
 syntax on
 
 filetype plugin indent on
@@ -14,6 +12,7 @@ endif
 
 let g:miniBufExplCheckDupeBufs = 0
 let g:miniBufExplVSplit = 30
+let g:miniBufExplorerAutoStart = 0
 
 set et
 set ts=4
