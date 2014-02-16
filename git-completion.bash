@@ -1,5 +1,3 @@
-#!bash
-#
 # bash/zsh completion support for core Git.
 #
 # Copyright (C) 2006,2007 Shawn O. Pearce <spearce@spearce.org>
@@ -33,8 +31,6 @@ esac
 # returns location of .git repo
 __gitdir ()
 {
-	# Note: this function is duplicated in git-prompt.sh
-	# When updating it, make sure you update the other one to match.
 	if [ -z "${1-}" ]; then
 		if [ -n "${__git_dir-}" ]; then
 			echo "$__git_dir"
@@ -182,14 +178,20 @@ _get_comp_words_by_ref ()
 }
 fi
 
-__gitcompadd ()
+__gitcompappend ()
 {
-	local i=0
+	local i=${#COMPREPLY[@]}
 	for x in $1; do
 		if [[ "$x" == "$3"* ]]; then
 			COMPREPLY[i++]="$2$x$4"
 		fi
 	done
+}
+
+__gitcompadd ()
+{
+	COMPREPLY=()
+	__gitcompappend "$@"
 }
 
 # Generates completion reply, appending a space to possible completion words,
@@ -222,6 +224,14 @@ __gitcomp ()
 	esac
 }
 
+# Variation of __gitcomp_nl () that appends to the existing list of
+# completion candidates, COMPREPLY.
+__gitcomp_nl_append ()
+{
+	local IFS=$'\n'
+	__gitcompappend "$1" "${2-}" "${3-$cur}" "${4- }"
+}
+
 # Generates completion reply from newline-separated possible completion words
 # by appending a space to all of them.
 # It accepts 1 to 4 arguments:
@@ -233,8 +243,8 @@ __gitcomp ()
 #    appended.
 __gitcomp_nl ()
 {
-	local IFS=$'\n'
-	__gitcompadd "$1" "${2-}" "${3-$cur}" "${4- }"
+	COMPREPLY=()
+	__gitcomp_nl_append "$@"
 }
 
 # Generates completion reply with compgen from newline-separated possible
@@ -252,106 +262,50 @@ __gitcomp_file ()
 	# since tilde expansion is not applied.
 	# This means that COMPREPLY will be empty and Bash default
 	# completion will be used.
-	COMPREPLY=($(compgen -P "${2-}" -W "$1" -- "${3-$cur}"))
+	__gitcompadd "$1" "${2-}" "${3-$cur}" ""
 
-	# Tell Bash that compspec generates filenames.
-	compopt -o filenames 2>/dev/null
+	# use a hack to enable file mode in bash < 4
+	compopt -o filenames +o nospace 2>/dev/null ||
+	compgen -f /non-existing-dir/ > /dev/null
 }
 
-__git_index_file_list_filter_compat ()
-{
-	local path
-
-	while read -r path; do
-		case "$path" in
-		?*/*) echo "${path%%/*}/" ;;
-		*) echo "$path" ;;
-		esac
-	done
-}
-
-__git_index_file_list_filter_bash ()
-{
-	local path
-
-	while read -r path; do
-		case "$path" in
-		?*/*)
-			# XXX if we append a slash to directory names when using
-			# `compopt -o filenames`, Bash will append another slash.
-			# This is pretty stupid, and this the reason why we have to
-			# define a compatible version for this function.
-			echo "${path%%/*}" ;;
-		*)
-			echo "$path" ;;
-		esac
-	done
-}
-
-# Process path list returned by "ls-files" and "diff-index --name-only"
-# commands, in order to list only file names relative to a specified
-# directory, and append a slash to directory names.
-__git_index_file_list_filter ()
-{
-	# Default to Bash >= 4.x
-	__git_index_file_list_filter_bash
-}
-
-# Execute git ls-files, returning paths relative to the directory
-# specified in the first argument, and using the options specified in
-# the second argument.
+# Execute 'git ls-files', unless the --committable option is specified, in
+# which case it runs 'git diff-index' to find out the files that can be
+# committed.  It return paths relative to the directory specified in the first
+# argument, and using the options specified in the second argument.
 __git_ls_files_helper ()
 {
 	(
 		test -n "${CDPATH+set}" && unset CDPATH
-		# NOTE: $2 is not quoted in order to support multiple options
-		cd "$1" && git ls-files --exclude-standard $2
+		cd "$1"
+		if [ "$2" == "--committable" ]; then
+			git diff-index --name-only --relative HEAD
+		else
+			# NOTE: $2 is not quoted in order to support multiple options
+			git ls-files --exclude-standard $2
+		fi
 	) 2>/dev/null
 }
 
-
-# Execute git diff-index, returning paths relative to the directory
-# specified in the first argument, and using the tree object id
-# specified in the second argument.
-__git_diff_index_helper ()
-{
-	(
-		test -n "${CDPATH+set}" && unset CDPATH
-		cd "$1" && git diff-index --name-only --relative "$2"
-	) 2>/dev/null
-}
 
 # __git_index_files accepts 1 or 2 arguments:
 # 1: Options to pass to ls-files (required).
-#    Supported options are --cached, --modified, --deleted, --others,
-#    and --directory.
 # 2: A directory path (optional).
 #    If provided, only files within the specified directory are listed.
 #    Sub directories are never recursed.  Path must have a trailing
 #    slash.
 __git_index_files ()
 {
-	local dir="$(__gitdir)" root="${2-.}"
+	local dir="$(__gitdir)" root="${2-.}" file
 
 	if [ -d "$dir" ]; then
-		__git_ls_files_helper "$root" "$1" | __git_index_file_list_filter |
-			sort | uniq
-	fi
-}
-
-# __git_diff_index_files accepts 1 or 2 arguments:
-# 1) The id of a tree object.
-# 2) A directory path (optional).
-#    If provided, only files within the specified directory are listed.
-#    Sub directories are never recursed.  Path must have a trailing
-#    slash.
-__git_diff_index_files ()
-{
-	local dir="$(__gitdir)" root="${2-.}"
-
-	if [ -d "$dir" ]; then
-		__git_diff_index_helper "$root" "$1" | __git_index_file_list_filter |
-			sort | uniq
+		__git_ls_files_helper "$root" "$1" |
+		while read -r file; do
+			case "$file" in
+			?*/*) echo "${file%%/*}" ;;
+			*) echo "$file" ;;
+			esac
+		done | sort | uniq
 	fi
 }
 
@@ -427,14 +381,8 @@ __git_refs ()
 		done
 		;;
 	*)
-		git ls-remote "$dir" HEAD ORIG_HEAD 'refs/tags/*' 'refs/heads/*' 'refs/remotes/*' 2>/dev/null | \
-		while read -r hash i; do
-			case "$i" in
-			*^{}) ;;
-			refs/*) echo "${i#refs/*/}" ;;
-			*) echo "$i" ;;
-			esac
-		done
+		echo "HEAD"
+		git for-each-ref --format="%(refname:short)" -- "refs/remotes/$dir/" | sed -e "s#^$dir/##"
 		;;
 	esac
 }
@@ -552,44 +500,23 @@ __git_complete_revlist_file ()
 }
 
 
-# __git_complete_index_file requires 1 argument: the options to pass to
-# ls-file
+# __git_complete_index_file requires 1 argument:
+# 1: the options to pass to ls-file
+#
+# The exception is --committable, which finds the files appropriate commit.
 __git_complete_index_file ()
 {
-	local pfx cur_="$cur"
+	local pfx="" cur_="$cur"
 
 	case "$cur_" in
 	?*/*)
 		pfx="${cur_%/*}"
 		cur_="${cur_##*/}"
 		pfx="${pfx}/"
-
-		__gitcomp_file "$(__git_index_files "$1" "$pfx")" "$pfx" "$cur_"
-		;;
-	*)
-		__gitcomp_file "$(__git_index_files "$1")" "" "$cur_"
 		;;
 	esac
-}
 
-# __git_complete_diff_index_file requires 1 argument: the id of a tree
-# object
-__git_complete_diff_index_file ()
-{
-	local pfx cur_="$cur"
-
-	case "$cur_" in
-	?*/*)
-		pfx="${cur_%/*}"
-		cur_="${cur_##*/}"
-		pfx="${pfx}/"
-
-		__gitcomp_file "$(__git_diff_index_files "$1" "$pfx")" "$pfx" "$cur_"
-		;;
-	*)
-		__gitcomp_file "$(__git_diff_index_files "$1")" "" "$cur_"
-		;;
-	esac
+	__gitcomp_file "$(__git_index_files "$1" "$pfx")" "$pfx" "$cur_"
 }
 
 __git_complete_file ()
@@ -733,6 +660,7 @@ __git_list_porcelain_commands ()
 		cat-file)         : plumbing;;
 		check-attr)       : plumbing;;
 		check-ignore)     : plumbing;;
+		check-mailmap)    : plumbing;;
 		check-ref-format) : plumbing;;
 		checkout-index)   : plumbing;;
 		commit-tree)      : plumbing;;
@@ -757,7 +685,6 @@ __git_list_porcelain_commands ()
 		index-pack)       : plumbing;;
 		init-db)          : deprecated;;
 		local-fetch)      : plumbing;;
-		lost-found)       : infrequent;;
 		ls-files)         : plumbing;;
 		ls-remote)        : plumbing;;
 		ls-tree)          : plumbing;;
@@ -771,14 +698,12 @@ __git_list_porcelain_commands ()
 		pack-refs)        : plumbing;;
 		parse-remote)     : plumbing;;
 		patch-id)         : plumbing;;
-		peek-remote)      : plumbing;;
 		prune)            : plumbing;;
 		prune-packed)     : plumbing;;
 		quiltimport)      : import;;
 		read-tree)        : plumbing;;
 		receive-pack)     : plumbing;;
 		remote-*)         : transport;;
-		repo-config)      : deprecated;;
 		rerere)           : plumbing;;
 		rev-list)         : plumbing;;
 		rev-parse)        : plumbing;;
@@ -791,7 +716,6 @@ __git_list_porcelain_commands ()
 		ssh-*)            : transport;;
 		stripspace)       : plumbing;;
 		symbolic-ref)     : plumbing;;
-		tar-tree)         : deprecated;;
 		unpack-file)      : plumbing;;
 		unpack-objects)   : plumbing;;
 		update-index)     : plumbing;;
@@ -985,7 +909,7 @@ _git_add ()
 	esac
 
 	# XXX should we check for --update and --all options ?
-	__git_complete_index_file "--others --modified"
+	__git_complete_index_file "--others --modified --directory --no-empty-directory"
 }
 
 _git_archive ()
@@ -1147,7 +1071,7 @@ _git_clean ()
 	esac
 
 	# XXX should we check for -x option ?
-	__git_complete_index_file "--others"
+	__git_complete_index_file "--others --directory"
 }
 
 _git_clone ()
@@ -1184,13 +1108,6 @@ _git_commit ()
 		;;
 	esac
 
-	case "$prev" in
-	-c|-C)
-		__gitcomp_nl "$(__git_refs)" "" "${cur}"
-		return
-		;;
-	esac
-
 	case "$cur" in
 	--cleanup=*)
 		__gitcomp "default strip verbatim whitespace
@@ -1220,7 +1137,7 @@ _git_commit ()
 	esac
 
 	if git rev-parse --verify --quiet HEAD >/dev/null; then
-		__git_complete_diff_index_file "HEAD"
+		__git_complete_index_file "--committable"
 	else
 		# This is the first commit
 		__git_complete_index_file "--cached"
@@ -1253,7 +1170,7 @@ __git_diff_common_options="--stat --numstat --shortstat --summary
 			--no-prefix --src-prefix= --dst-prefix=
 			--inter-hunk-context=
 			--patience --histogram --minimal
-			--raw
+			--raw --word-diff
 			--dirstat --dirstat= --dirstat-by-file
 			--dirstat-by-file= --cumulative
 			--diff-algorithm=
@@ -1279,7 +1196,7 @@ _git_diff ()
 	__git_complete_revlist_file
 }
 
-__git_mergetools_common="diffuse ecmerge emerge kdiff3 meld opendiff
+__git_mergetools_common="diffuse diffmerge ecmerge emerge kdiff3 meld opendiff
 			tkdiff vimdiff gvimdiff xxdiff araxis p4merge bc3 codecompare
 "
 
@@ -1301,7 +1218,7 @@ _git_difftool ()
 		return
 		;;
 	esac
-	__git_complete_file
+	__git_complete_revlist_file
 }
 
 __git_fetch_options="
@@ -1321,11 +1238,12 @@ _git_fetch ()
 }
 
 __git_format_patch_options="
-	--stdout --attach --no-attach --thread --thread= --output-directory
+	--stdout --attach --no-attach --thread --thread= --no-thread
 	--numbered --start-number --numbered-files --keep-subject --signoff
 	--signature --no-signature --in-reply-to= --cc= --full-index --binary
 	--not --all --cover-letter --no-prefix --src-prefix= --dst-prefix=
 	--inline --suffix= --ignore-if-in-upstream --subject-prefix=
+	--output-directory --reroll-count --to= --quiet --notes
 "
 
 _git_format_patch ()
@@ -1581,6 +1499,12 @@ _git_mergetool ()
 
 _git_merge_base ()
 {
+	case "$cur" in
+	--*)
+		__gitcomp "--octopus --independent --is-ancestor --fork-point"
+		return
+		;;
+	esac
 	__gitcomp_nl "$(__git_refs)"
 }
 
@@ -1713,7 +1637,7 @@ _git_rebase ()
 			--preserve-merges --stat --no-stat
 			--committer-date-is-author-date --ignore-date
 			--ignore-whitespace --whitespace=
-			--autosquash
+			--autosquash --fork-point --no-fork-point
 			"
 
 		return
@@ -1817,7 +1741,7 @@ __git_config_get_set_variables ()
 _git_config ()
 {
 	case "$prev" in
-	branch.*.remote)
+	branch.*.remote|branch.*.pushremote)
 		__gitcomp_nl "$(__git_remotes)"
 		return
 		;;
@@ -1825,11 +1749,19 @@ _git_config ()
 		__gitcomp_nl "$(__git_refs)"
 		return
 		;;
+	branch.*.rebase)
+		__gitcomp "false true"
+		return
+		;;
+	remote.pushdefault)
+		__gitcomp_nl "$(__git_remotes)"
+		return
+		;;
 	remote.*.fetch)
 		local remote="${prev#remote.}"
 		remote="${remote%.fetch}"
 		if [ -z "$cur" ]; then
-			__gitcompadd "refs/heads/" "" "" ""
+			__gitcomp_nl "refs/heads/" "" "" ""
 			return
 		fi
 		__gitcomp_nl "$(__git_refs_remotes "$remote")"
@@ -1862,6 +1794,10 @@ _git_config ()
 			normal black red green yellow blue magenta cyan white
 			bold dim ul blink reverse
 			"
+		return
+		;;
+	diff.submodule)
+		__gitcomp "log short"
 		return
 		;;
 	help.format)
@@ -1905,12 +1841,13 @@ _git_config ()
 		;;
 	branch.*.*)
 		local pfx="${cur%.*}." cur_="${cur##*.}"
-		__gitcomp "remote merge mergeoptions rebase" "$pfx" "$cur_"
+		__gitcomp "remote pushremote merge mergeoptions rebase" "$pfx" "$cur_"
 		return
 		;;
 	branch.*)
 		local pfx="${cur%.*}." cur_="${cur#*.}"
 		__gitcomp_nl "$(__git_heads)" "$pfx" "$cur_" "."
+		__gitcomp_nl_append $'autosetupmerge\nautosetuprebase\n' "$pfx" "$cur_"
 		return
 		;;
 	guitool.*.*)
@@ -1953,6 +1890,7 @@ _git_config ()
 	remote.*)
 		local pfx="${cur%.*}." cur_="${cur#*.}"
 		__gitcomp_nl "$(__git_remotes)" "$pfx" "$cur_" "."
+		__gitcomp_nl_append "pushdefault" "$pfx" "$cur_"
 		return
 		;;
 	url.*.*)
@@ -2036,7 +1974,6 @@ _git_config ()
 		core.fileMode
 		core.fsyncobjectfiles
 		core.gitProxy
-		core.ignoreCygwinFSTricks
 		core.ignoreStat
 		core.ignorecase
 		core.logAllRefUpdates
@@ -2058,13 +1995,14 @@ _git_config ()
 		core.whitespace
 		core.worktree
 		diff.autorefreshindex
-		diff.statGraphWidth
 		diff.external
 		diff.ignoreSubmodules
 		diff.mnemonicprefix
 		diff.noprefix
 		diff.renameLimit
 		diff.renames
+		diff.statGraphWidth
+		diff.submodule
 		diff.suppressBlankEmpty
 		diff.tool
 		diff.wordRegex
@@ -2075,6 +2013,7 @@ _git_config ()
 		fetch.unpackLimit
 		format.attach
 		format.cc
+		format.coverLetter
 		format.headers
 		format.numbered
 		format.pretty
@@ -2199,6 +2138,7 @@ _git_config ()
 		receive.fsckObjects
 		receive.unpackLimit
 		receive.updateserverinfo
+		remote.pushdefault
 		remotes.
 		repack.usedeltabaseoffset
 		rerere.autoupdate
@@ -2352,7 +2292,7 @@ _git_show ()
 		return
 		;;
 	esac
-	__git_complete_file
+	__git_complete_revlist_file
 }
 
 _git_show_branch ()
@@ -2443,7 +2383,7 @@ _git_svn ()
 			--no-metadata --use-svm-props --use-svnsync-props
 			--log-window-size= --no-checkout --quiet
 			--repack-flags --use-log-author --localtime
-			--ignore-paths= $remote_opts
+			--ignore-paths= --include-paths= $remote_opts
 			"
 		local init_opts="
 			--template= --shared= --trunk= --tags=
@@ -2567,9 +2507,10 @@ __git_main ()
 		i="${words[c]}"
 		case "$i" in
 		--git-dir=*) __git_dir="${i#--git-dir=}" ;;
+		--git-dir)   ((c++)) ; __git_dir="${words[c]}" ;;
 		--bare)      __git_dir="." ;;
 		--help) command="help"; break ;;
-		-c) c=$((++c)) ;;
+		-c|--work-tree|--namespace) ((c++)) ;;
 		-*) ;;
 		*) command="$i"; break ;;
 		esac
@@ -2587,6 +2528,7 @@ __git_main ()
 			--exec-path
 			--exec-path=
 			--html-path
+			--man-path
 			--info-path
 			--work-tree=
 			--namespace=
@@ -2655,7 +2597,7 @@ if [[ -n ${ZSH_VERSION-} ]]; then
 				--*=*|*.) ;;
 				*) c="$c " ;;
 				esac
-				array[$#array+1]="$c"
+				array[${#array[@]}+1]="$c"
 			done
 			compset -P '*[=:]'
 			compadd -Q -S '' -p "${2-}" -a -- array && _ret=0
@@ -2681,35 +2623,19 @@ if [[ -n ${ZSH_VERSION-} ]]; then
 		compadd -Q -p "${2-}" -f -- ${=1} && _ret=0
 	}
 
-	__git_zsh_helper ()
-	{
-		emulate -L ksh
-		local cur cword prev
-		cur=${words[CURRENT-1]}
-		prev=${words[CURRENT-2]}
-		let cword=CURRENT-1
-		__${service}_main
-	}
-
 	_git ()
 	{
-		emulate -L zsh
-		local _ret=1
-		__git_zsh_helper
-		let _ret && _default -S '' && _ret=0
+		local _ret=1 cur cword prev
+		cur=${words[CURRENT]}
+		prev=${words[CURRENT-1]}
+		let cword=CURRENT-1
+		emulate ksh -c __${service}_main
+		let _ret && _default && _ret=0
 		return _ret
 	}
 
 	compdef _git git gitk
 	return
-elif [[ -n ${BASH_VERSION-} ]]; then
-	if ((${BASH_VERSINFO[0]} < 4)); then
-		# compopt is not supported
-		__git_index_file_list_filter ()
-		{
-			__git_index_file_list_filter_compat
-		}
-	fi
 fi
 
 __git_func_wrap ()

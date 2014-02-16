@@ -5,7 +5,6 @@ alias keys='. ~/keys.sh'
 
 umask 022
 
-
 export PATH=$HOME/Code/depot_tools:$PATH
 export PATH=$HOME/Code/Sysmods/scripts:$PATH
 export PATH=$HOME/Code/Sysmods/chroot:$PATH
@@ -206,7 +205,20 @@ alias rsmv='rsync -aSPh --remove-source-files'
 
 PROMPT_COMMAND="history -a;"
 
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
+if [[ $(uname) -eq "Darwin" ]]; then
+	not_linux=1
+	readlink='greadlink'
+else
+	not_linux=
+	readlink='readlink'
+fi
+
+
+if [[ -z $not_linux ]]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
+else
+	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w'"\$(__git_ps1)"' \n\$ '
+fi
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -217,7 +229,8 @@ xterm*|rxvt*)
     ;;
 esac
 
-this_dir=$(dirname $(readlink -f ${BASH_SOURCE}))
+this_dir=$(dirname $($readlink -f ${BASH_SOURCE}))
 source $this_dir/../git-completion.bash
+source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
