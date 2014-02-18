@@ -47,3 +47,5 @@
 	smtpserverport = 587
 [push]
 	default = simple
+[include]
+    path = .gitconfig.local
