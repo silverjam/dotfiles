@@ -67,8 +67,8 @@ nnoremap <silent> <Leader>x :bp\|bd #<CR>
 let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
 
-UnBundle 'AutoClose'
 UnBundle 'spf13/vim-autoclose'
-UnBundle 'vim-autoclose'
-UnBundle 'eagletmt/ghcmod-vim'
+"UnBundle 'eagletmt/ghcmod-vim'
 UnBundle 'Shougo/vimproc'
+UnBundle 'Twinside/vim-haskellConceal'
+UnBundle 'Shougo/neosnippet'
