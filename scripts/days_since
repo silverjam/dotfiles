@@ -1,0 +1,28 @@
+#!/usr/bin/runhaskell
+
+import Data.Time
+import Data.Time.Format
+import System.Environment
+import System.Locale
+import System.Exit
+
+main :: IO ()
+main = do
+  args <- getArgs
+  prog <- getProgName
+  if length args <= 0 then do
+    putStrLn $ "Usage: " ++ prog ++ ": <DATE_STRING>"
+    exitFailure
+  else do
+    let t0 = readTime defaultTimeLocale "%b %d, %Y" (head args) :: Day
+    print t0
+    zonedTime <- getZonedTime
+    let localTime = zonedTimeToLocalTime zonedTime
+    let t1 = localDay localTime
+    print t1
+    let daysince = diffDays t1 t0
+    putStrLn $ show daysince
+    return ()
+
+
+-- vim: ft=haskell

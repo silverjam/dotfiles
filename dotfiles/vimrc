@@ -20,8 +20,10 @@ set sts=4
 set sw=4
 set nocp
 
-"nmap <F8> :TagbarToggle<CR>
-"nmap <C-N> :NERDTreeToggle<CR>
+noremap <C-\>t :TagbarToggle<CR>
+nnoremap <C-\>t :TagbarToggle<CR>
+noremap <C-\>n :NERDTreeToggle<CR>
+nnoremap <C-\>n :NERDTreeToggle<CR>
 
 "nmap <C-k>h :FSwitch<CR>
 
@@ -60,7 +62,13 @@ Bundle 'https://github.com/Rykka/riv.vim.git'
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
 
-""let g:cscope_cmd = 'pycscope'
+"let g:cscope_cmd = 'pycscope'
 "let g:pymode_lint_write = 1
 let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
+
+UnBundle 'AutoClose'
+UnBundle 'spf13/vim-autoclose'
+UnBundle 'vim-autoclose'
+UnBundle 'eagletmt/ghcmod-vim'
+UnBundle 'Shougo/vimproc'
