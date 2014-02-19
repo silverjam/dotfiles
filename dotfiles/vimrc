@@ -58,6 +58,7 @@ Bundle 'https://github.com/tomtom/tinykeymap_vim.git'
 Bundle 'https://github.com/vim-scripts/taglist.vim.git'
 Bundle 'https://github.com/brookhong/cscope.vim.git'
 Bundle 'https://github.com/Rykka/riv.vim.git'
+Bundle 'https://github.com/nelstrom/vim-markdown-folding'
 
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
@@ -68,7 +69,7 @@ let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
 
 UnBundle 'spf13/vim-autoclose'
-"UnBundle 'eagletmt/ghcmod-vim'
+UnBundle 'eagletmt/ghcmod-vim'
 UnBundle 'Shougo/vimproc'
 UnBundle 'Twinside/vim-haskellConceal'
 UnBundle 'Shougo/neosnippet'
