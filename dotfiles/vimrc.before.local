@@ -1,0 +1,30 @@
+let g:haddock_browser = "google-chrome"
+let g:haddock_docdir = "/usr/lib/ghc-doc/haddock"
+
+let g:haskell_conceal = 0
+let g:no_haskell_conceal = 0
+
+if has('vim_starting')
+   set nocompatible
+   set runtimepath+=~/.vim/neobundle/neobundle.vim/
+endif
+
+call neobundle#rc(expand('~/.vim/neobundle/'))
+
+NeoBundle 'Shougo/vimproc', {
+      \ 'build' : {
+      \     'windows' : 'make -f make_mingw32.mak',
+      \     'cygwin' : 'make -f make_cygwin.mak',
+      \     'mac' : 'make -f make_mac.mak',
+      \     'unix' : 'make -f make_unix.mak',
+      \    },
+      \ }
+
+NeoBundle 'eagletmt/ghcmod-vim'
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+if has("autocmd")
+    filetype plugin indent on
+endif
+
+NeoBundleCheck
