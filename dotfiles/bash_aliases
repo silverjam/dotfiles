@@ -206,7 +206,7 @@ alias rsmv='rsync -aSPh --remove-source-files'
 
 PROMPT_COMMAND="history -a;"
 
-if [[ $(uname) -eq "Darwin" ]]; then
+if [[ $(uname) == "Darwin" ]]; then
 	not_linux=1
 	readlink='greadlink'
 else
