@@ -1,5 +1,10 @@
-let g:haddock_browser = "google-chrome"
-let g:haddock_docdir = "/usr/lib/ghc-doc/haddock"
+if has("mac")
+   let g:haddock_browser='open'
+   let g:neosnippet#disable_runtime_snippets=1
+else
+   let g:haddock_browser = "google-chrome"
+   let g:haddock_docdir = "/usr/lib/ghc-doc/haddock"
+endif
 
 let g:haskell_conceal = 0
 let g:no_haskell_conceal = 0
