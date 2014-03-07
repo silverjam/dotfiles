@@ -33,3 +33,5 @@ if has("autocmd")
 endif
 
 NeoBundleCheck
+
+set bg=light

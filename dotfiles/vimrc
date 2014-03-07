@@ -28,7 +28,7 @@ nnoremap <C-\>n :NERDTreeToggle<CR>
 "nmap <C-k>h :FSwitch<CR>
 
 let g:ctrlp_cmd = 'CtrlPBuffer'
-set background=dark
+set background=light
 
 "map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
 
