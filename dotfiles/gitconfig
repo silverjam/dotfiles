@@ -45,6 +45,7 @@
 	smtpserver = smtp.gmail.com
 	smtpuser = jam@cozybit.com
 	smtpserverport = 587
+    smtpsslcertpath = '/etc/ssl/certs'
 [push]
 	default = simple
 [include]
