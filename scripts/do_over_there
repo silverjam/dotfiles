@@ -1,0 +1,11 @@
+#!/bin/bash
+
+D=$(dirname $(readlink -f ${BASH_SOURCE}))
+source "$D/do_over_there_listen.sh"
+
+echo "mm $@" >$FIFO_STDINP
+
+cat $FIFO_STDOUT &
+cat $FIFO_STDERR >&2 &
+
+wait
