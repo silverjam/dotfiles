@@ -1,0 +1,3 @@
+[submodule "cp_p"]
+	path = cp_p
+	url = https://github.com/ericpaulbishop/cp_p

@@ -1,5 +1,12 @@
 "execute pathogen#infect()
 syntax on
+set nocp
+
+filetype off " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
 filetype plugin indent on
 
@@ -18,7 +25,6 @@ set et
 set ts=4
 set sts=4
 set sw=4
-set nocp
 
 noremap <C-\>t :TagbarToggle<CR>
 nnoremap <C-\>t :TagbarToggle<CR>
@@ -59,6 +65,10 @@ Bundle 'https://github.com/vim-scripts/taglist.vim.git'
 Bundle 'https://github.com/brookhong/cscope.vim.git'
 Bundle 'https://github.com/Rykka/riv.vim.git'
 Bundle 'plasticboy/vim-markdown'
+Bundle 'tfnico/vim-gradle'
+Bundle 'vim-scripts/gtags.vim'
+Bundle 'vim-scripts/groovy.vim'
+"Bundle 'https://github.com/kien/ctrlp.vim'
 
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
@@ -68,9 +78,9 @@ nnoremap <silent> <Leader>x :bp\|bd #<CR>
 let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
 
-UnBundle 'spf13/vim-autoclose'
-UnBundle 'eagletmt/ghcmod-vim'
-UnBundle 'Shougo/vimproc'
-UnBundle 'Twinside/vim-haskellConceal'
-UnBundle 'Shougo/neosnippet'
-UnBundle 'tpope/vim-markdown'
+"UnBundle 'spf13/vim-autoclose'
+"UnBundle 'eagletmt/ghcmod-vim'
+"UnBundle 'Shougo/vimproc'
+"UnBundle 'Twinside/vim-haskellConceal'
+"UnBundle 'Shougo/neosnippet'
+"UnBundle 'tpope/vim-markdown'

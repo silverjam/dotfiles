@@ -2,41 +2,83 @@
 
 alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
+alias ls='ls --color'
+alias vimr='vim --remote'
+alias gvimr='gvim --remote'
 
 umask 022
 
-export PATH=$HOME/Code/depot_tools:$PATH
-export PATH=$HOME/Code/Sysmods/scripts:$PATH
-export PATH=$HOME/Code/Sysmods/chroot:$PATH
-export PATH=$HOME/Scripts:$PATH
+export PATH=$HOME/dev/depot_tools:$PATH
+export PATH=$HOME/dev/Sysmods/scripts:$PATH
+export PATH=$HOME/dev/Sysmods/chroot:$PATH
+export PATH=$HOME/dev/Sysmods/Scripts:$PATH
 export PATH=$HOME/.cabal/bin:$PATH
+export PATH=$HOME/dev/the_silver_searcher:$PATH
+
+# Base dir for all Android development tools / libraries / kits
+export MY_ANDROID_BASE=$HOME/dev/Android
+# Link to current 'sdk' directory within ADT
+export MY_ANDROID_SDK=$MY_ANDROID_BASE/AndroidSdk
+# Link to current 'Android Development Toolkit'
+export MY_ANDROID_ADT=$MY_ANDROID_BASE/ADT
+export MY_ADT_PLUGINS=$MY_ANDROID_ADT/eclipse/plugins
+# Link to current NDK
+export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
+
+function g()
+{
+    ( # Run in subshell (to preserve parent's $PWD):
+        while `true`; do
+            if [[ `pwd` == "/" ]]; then
+                echo "!!! Script gradlew not found in any parent path"
+                return
+            fi
+            if [[ -e `pwd`/gradlew ]]; then
+                `pwd`/gradlew ${*}
+                return
+            fi
+            cd ..
+        done
+    )
+}
+
+function fname()
+{
+    find . -iname "*$1*"
+}
+
+function get_ant_dir()
+{
+    cd $MY_ADT_PLUGINS;
+    ls -1 --color=never --directory --group-directories-first \
+        org.apache.ant* | head -1
+}
 
 function apath_adt()
 {
     echo "Adding ADT and ANT's Ant to the path..."
 
-    export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/platform-tools/:$PATH
-    export PATH=$HOME/Android/AndroidDevelopmentToolkit/sdk/tools/:$PATH
+    export PATH=$MY_ANDROID_SDK/platform-tools:$PATH
+    export PATH=$MY_ANDROID_SDK/tools:$PATH
 
-    export ANDROID_HOME=$HOME/Android/AndroidDevelopmentToolkit/sdk
-    export ANDROID_SDK=$HOME/Android/AndroidDevelopmentToolkit/sdk
+    export ANDROID_HOME=$MY_ANDROID_SDK
+    export ANDROID_SDK=$MY_ANDROID_SDK
 
-    ADT_PLUGINS=$HOME/Android/AndroidDevelopmentToolkit/eclipse/plugins
-    ECLIPSE_ANT=$ADT_PLUGINS/$(cd $ADT_PLUGINS; ls -1 --color=never --directory --group-directories-first org.apache.ant* | head -1)/bin/
+    ECLIPSE_ANT=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
 
     export PATH=$ECLIPSE_ANT:$PATH
 }
 
 function sfastboot()
 {
-    sudo $HOME/Android/AndroidDevelopmentToolkit/sdk/platform-tools/fastboot ${*}
+    sudo $MY_ANDROID_SDK/platform-tools/fastboot ${*}
 }
 
 function apath_ndk()
 {
     echo "Add the Android NDK to the path..."
 
-    export ANDROID_NDK=$HOME/Android/android-ndk-r8e
+    export ANDROID_NDK=$MY_ANDROID_NDK
     export PATH=$ANDROID_NDK:$PATH
 }
 
@@ -44,14 +86,14 @@ function setup_aosp_var()
 {
     echo "Setting up AOSP_PATH variable..."
 
-    export AOSP_PATH=$HOME/Android/AOSP/WC/android-4.1.2_r1
+    export AOSP_PATH=$MY_ANDROID_BASE/AOSP/WC
 }
 
 function apath_ndk_arm_toolchain()
 {
     echo "Adding static Android ARM toolchain to the path..."
 
-    export PATH=$PATH:$HOME/Android/ArmToolchain/bin
+    export PATH=$PATH:$MY_ANDROID_BASE/ArmToolchain/bin
 }
 
 function setup_android()
@@ -62,14 +104,15 @@ function setup_android()
     apath_ndk_arm_toolchain
 }
 
-function setup_devdroid()
-{
-    export DEVDROID=$HOME/dev/devdroid
-    export PATH=$DEVDROID/tools:$PATH
-}
+#function setup_devdroid()
+#{
+#    export DEVDROID=$HOME/dev/devdroid
+#    export PATH=$DEVDROID/tools:$PATH
+#}
 
 alias dirs='dirs -v'
 
+## Color definitions:
 export COLOR_NC='\e[0m' # No Color
 export COLOR_WHITE='\e[1;37m'
 export COLOR_BLACK='\e[0;30m'
@@ -127,11 +170,10 @@ vboxdate () {
    echo VBoxManage modifyvm $1 --biossystemtimeoffset ${msecs};
 }
 
-export PATH="$HOME/.rbenv/bin:$PATH"
-
-if [ -n "`which rbenv`" ]; then
-    eval "$(rbenv init -)"
-fi
+#export PATH="$HOME/.rbenv/bin:$PATH"
+#if [ -n "`which rbenv`" ]; then
+#    eval "$(rbenv init -)"
+#fi
 
 if [ -n "$SCHROOT_CHROOT_NAME" ]; then
 
@@ -147,59 +189,64 @@ if [ -n "$SCHROOT_CHROOT_NAME" ]; then
 fi
 
 #export UNDER_SCRIPT=1
-
-if [ -z "$UNDER_SCRIPT" ]; then
-
-    logdir=$HOME/Logs
-    logname=$(date +%F_%T).$$.script
-
-    logfile=$logdir/.$logname
-    final_logfile=$logdir/$logname
-
-    trap '( mv $logfile $final_logfile )' EXIT
-
-    if [ ! -d $logdir ]; then
-        mkdir $logdir
-    fi
-
-    gzip -q $logdir/*.script &>/dev/null
-
-    export UNDER_SCRIPT=$logfile
-
-    script -e -f -q $logfile
-    exit $?
-fi
+#if [ -z "$UNDER_SCRIPT" ]; then
+#
+#    logdir=$HOME/Logs
+#    logname=$(date +%F_%T).$$.script
+#
+#    logfile=$logdir/.$logname
+#    final_logfile=$logdir/$logname
+#
+#    trap '( mv $logfile $final_logfile )' EXIT
+#
+#    if [ ! -d $logdir ]; then
+#        mkdir $logdir
+#    fi
+#
+#    gzip -q $logdir/*.script &>/dev/null
+#
+#    export UNDER_SCRIPT=$logfile
+#
+#    script -e -f -q $logfile
+#    exit $?
+#fi
 
 if [ -z "$SCHROOT_CHROOT_NAME" ]; then
     shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
 fi
 
-ECLIPSE=$HOME/Android/AndroidDevelopmentToolkit/eclipse/eclipse
-
 alias branch-name='echo jam-`date +%Y%m%d`'
 alias donesound='mplayer /home/jam/Downloads/Transfer complete.mp3'
-alias launch_adt='screen -d -m -S eclipse $ECLIPSE'
+
+export MY_ECLIPSE=$MY_ANDROID_ADT/eclipse/eclipse
+alias launch_adt='screen -dmS eclipse $MY_ECLIPSE'
+
+export MY_ANDROID_STUDIO=$MY_ANDROID_BASE/android-studio/bin/studio.sh
+alias launch_as='screen -dmS studio $MY_ANDROID_STUDIO'
 
 set MOZILLA_FIVE_HOME=/usr/lib/firefox
 
-cp_p()
-{
-   strace -q -ewrite cp -- "${1}" "${2}" 2>&1 \
-      | awk '{
-        count += $NF
-            if (count % 10 == 0) {
-               percent = count / total_size * 100
-               printf "%3d%% [", percent
-               for (i=0;i<=percent;i++)
-                  printf "="
-               printf ">"
-               for (i=percent;i<100;i++)
-                  printf " "
-               printf "]\r"
-            }
-         }
-         END { print "" }' total_size=$(stat -c '%s' "${1}") count=0
-}
+#cp_p()
+#{
+#   strace -q -ewrite cp -- "${1}" "${2}" 2>&1 \
+#      | awk '{
+#        count += $NF
+#            if (count % 10 == 0) {
+#               percent = count / total_size * 100
+#               printf "%3d%% [", percent
+#               for (i=0;i<=percent;i++)
+#                  printf "="
+#               printf ">"
+#               for (i=percent;i<100;i++)
+#                  printf " "
+#               printf "]\r"
+#            }
+#         }
+#         END { print "" }' total_size=$(stat -c '%s' "${1}") count=0
+#}
+
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/dev/Sysmods/cp_p:$PATH
 
 alias rscp='rsync -aSPh'
 alias rsmv='rsync -aSPh --remove-source-files'
@@ -214,7 +261,9 @@ else
 	readlink='readlink'
 fi
 
-if [[ -z $not_linux ]]; then
+if [[ -n $MANUAL_HOSTNAME ]]; then
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@'$MANUAL_HOSTNAME'\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
+elif [[ -z $not_linux ]]; then
 	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
 else
 	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w'"\$(__git_ps1)"' \n\$ '
@@ -234,3 +283,5 @@ source $this_dir/../git-completion.bash
 source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
+
+export JAVA_HOME=$(dirname $(dirname $(dirname $(realpath $(which java)))))

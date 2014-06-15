@@ -1,0 +1,66 @@
+#!/bin/bash
+
+black=$'\E[1;30m'
+red=$'\E[1;31m'
+green=$'\E[1;32m'
+yellow=$'\E[1;33m'
+blue=$'\E[1;34m'
+magenta=$'\E[1;35m'
+cyan=$'\E[1;36m'
+white=$'\E[1;37m'
+
+function cecho () # Color-echo.
+                             # Argument $1 = message
+                             # Argument $2 = color
+{
+    local default_msg="No message passed."
+
+    local message=${1:-$default_msg}
+    local color=${2:-$black}
+
+    echo -ne "$color"
+    echo "$message"
+
+    tput sgr0
+}
+
+function echo_eval() {
+    echo "Running: $@"
+    "$@"
+}
+
+cecho "Adding 'wipe' which ruthlessly murders anything that's not in the git repo (DANGEROUS)..." $green
+echo_eval git config --global alias.wipe "!git reset --hard;git clean -fdx"
+
+cecho "Adding 'co' alias for 'git checkout'..." $green
+echo_eval git config --global alias.co "checkout"
+
+cecho "Adding 'cob' / 'checkout-branch' alias for 'git checkout -b'..." $green
+echo_eval git config --global alias.cob "checkout -b"
+echo_eval git config --global alias.checkout-branch "!git cob"
+
+cecho "Adding 'com' / 'checkout-master' alias for 'git checkout master'..." $green
+echo_eval git config --global alias.com "checkout master"
+echo_eval git config --global alias.checkout-master "!git com"
+
+cecho "Adding 'st' alias for 'git status'..." $green
+echo_eval git config --global alias.st "status"
+
+cecho "Adding 'ci' alias for 'git checkin'..." $green
+echo_eval git config --global alias.ci "commit --verbose"
+
+cecho "Adding 'cia' / 'commit-add' alias which automatically adds all files, diffs and opens a commit..." $green
+echo_eval git config --global alias.cia "commit -a --verbose"
+echo_eval git config --global alias.commit-add "!git cia"
+
+cecho "Adding 'mff' / 'merge-ff' alias which does a fast-foward merge..." $green
+echo_eval git config --global alias.mff "merge --ff-only"
+echo_eval git config --global alias.commit-add "!git mff"
+
+cecho "Adding 'pom' / 'push-origin-master' alias which does a 'push origin master'..." $green
+echo_eval git config --global alias.pom "push origin master"
+echo_eval git config --global alias.push-origin-master "!git pom"
+
+cecho "Adding 'mffpom' alias which does a fast-foward merge, then pushes to origin 'master'..." $green
+echo_eval git config --global alias.mffpom "!git mff $1 && git pom" 
+
