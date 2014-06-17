@@ -1,8 +1,9 @@
 #!/bin/bash
 
+#set -x
+
 alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
-alias ls='ls --color'
 alias vimr='vim --remote'
 alias gvimr='gvim --remote'
 
@@ -256,9 +257,13 @@ PROMPT_COMMAND="history -a;"
 if [[ $(uname) == "Darwin" ]]; then
 	not_linux=1
 	readlink='greadlink'
+	realpath='grealpath'
 else
 	not_linux=
 	readlink='readlink'
+	realpath='realpath'
+
+    alias ls='ls --color'
 fi
 
 if [[ -n $MANUAL_HOSTNAME ]]; then
@@ -284,4 +289,20 @@ source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-export JAVA_HOME=$(dirname $(dirname $(dirname $(realpath $(which java)))))
+export JAVA_HOME=$(dirname $(dirname $(dirname $($realpath $(which java)))))
+
+alias gerrit-git='/opt/git17/bin/git'
+
+start_ssh_ctrl() {
+    local server=$1; shift 1
+    screen -dmS sshm_$server ssh -v -M -N -S /tmp/ssh_ctrl_$server $server
+}
+
+ger4='gerrit g4'
+alias ger4=$ger4
+
+ger6='gerrit g6'
+alias ger6=$ger6
+
+gere='gerrit ge'
+alias gere=$gere

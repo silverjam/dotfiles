@@ -1,0 +1,6 @@
+#!/bin/bash
+
+server=$1
+shift 1
+
+ssh -S /tmp/ssh_ctrl_$server . ${*}
