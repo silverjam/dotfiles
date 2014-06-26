@@ -1,9 +1,9 @@
 
 " The next three lines ensure that the ~/.vim/bundle/ system works
-filetype on
-filetype off
-set rtp+=~/.vim/bundle/vundle
-call vundle#rc()
+"filetype on
+"filetype off
+"set rtp+=~/.vim/bundle/vundle
+"call vundle#rc()
 
 "execute pathogen#infect()
 
@@ -85,28 +85,33 @@ set cursorline
 set showmatch
 set hlsearch
 
-Bundle 'gmarik/Vundle.vim'
-Bundle 'kien/ctrlp.vim'
-Bundle 'tomtom/vimtlib.git'
-Bundle 'tomtom/tinykeymap_vim.git'
-Bundle 'vim-scripts/taglist.vim.git'
-Bundle 'brookhong/cscope.vim.git'
-Bundle 'Rykka/riv.vim.git'
-Bundle 'plasticboy/vim-markdown'
-Bundle 'tfnico/vim-gradle'
-Bundle 'vim-scripts/gtags.vim'
-Bundle 'vim-scripts/groovy.vim'
-"Bundle 'https://github.com/kien/ctrlp.vim'
+Plugin 'gmarik/Vundle.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tomtom/vimtlib.git'
+Plugin 'tomtom/tinykeymap_vim.git'
+Plugin 'vim-scripts/taglist.vim.git'
+Plugin 'brookhong/cscope.vim.git'
+Plugin 'Rykka/riv.vim.git'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'tfnico/vim-gradle'
+Plugin 'vim-scripts/gtags.vim'
+Plugin 'vim-scripts/groovy.vim'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'airblade/vim-gitgutter'
+"Plugin 'https://github.com/kien/ctrlp.vim'
 
-Bundle 'Blackrush/vim-gocode'
-Bundle 'Shougo/neosnippet-snippets'
-Bundle 'nathanaelkane/vim-indent-guides'
+Plugin 'Blackrush/vim-gocode'
+Plugin 'Shougo/neosnippet-snippets'
+Plugin 'nathanaelkane/vim-indent-guides'
+
+call vundle#end()
+filetype plugin indent on
 
 syntax enable
 
 set t_Co=256
 let g:solarized_termtrans=0    "default value is 0
-let g:solarized_termcolors=256    "default value is 16
+"let g:solarized_termcolors=256    "default value is 16
 set background=dark
 colorscheme solarized
 
