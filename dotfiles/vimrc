@@ -1,4 +1,12 @@
+
+" The next three lines ensure that the ~/.vim/bundle/ system works
+filetype on
+filetype off
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+
 "execute pathogen#infect()
+
 syntax on
 set nocp
 
@@ -11,7 +19,6 @@ call vundle#begin()
 filetype plugin indent on
 
 set hidden
-set hlsearch
 
 if version >= 703
     set colorcolumn=80
@@ -34,7 +41,6 @@ nnoremap <C-\>n :NERDTreeToggle<CR>
 "nmap <C-k>h :FSwitch<CR>
 
 let g:ctrlp_cmd = 'CtrlPBuffer'
-set background=light
 
 "map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
 
@@ -59,16 +65,50 @@ cmap w!! w !sudo tee % >/dev/null
 "nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
 "nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
 
-Bundle 'https://github.com/tomtom/vimtlib.git'
-Bundle 'https://github.com/tomtom/tinykeymap_vim.git'
-Bundle 'https://github.com/vim-scripts/taglist.vim.git'
-Bundle 'https://github.com/brookhong/cscope.vim.git'
-Bundle 'https://github.com/Rykka/riv.vim.git'
+if &term == 'xterm' || &term == 'screen'
+    set t_Co=256
+endif
+
+let g:airline_theme = 'solarized'
+let g:airline_left_sep='›'
+let g:airline_right_sep='‹'
+set laststatus=2
+
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+let g:indent_guides_enable_on_vim_startup = 1
+
+set list
+set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+
+set cursorline
+set showmatch
+set hlsearch
+
+Bundle 'gmarik/Vundle.vim'
+Bundle 'kien/ctrlp.vim'
+Bundle 'tomtom/vimtlib.git'
+Bundle 'tomtom/tinykeymap_vim.git'
+Bundle 'vim-scripts/taglist.vim.git'
+Bundle 'brookhong/cscope.vim.git'
+Bundle 'Rykka/riv.vim.git'
 Bundle 'plasticboy/vim-markdown'
 Bundle 'tfnico/vim-gradle'
 Bundle 'vim-scripts/gtags.vim'
 Bundle 'vim-scripts/groovy.vim'
 "Bundle 'https://github.com/kien/ctrlp.vim'
+
+Bundle 'Blackrush/vim-gocode'
+Bundle 'Shougo/neosnippet-snippets'
+Bundle 'nathanaelkane/vim-indent-guides'
+
+syntax enable
+
+set t_Co=256
+let g:solarized_termtrans=0    "default value is 0
+let g:solarized_termcolors=256    "default value is 16
+set background=dark
+colorscheme solarized
 
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
@@ -84,3 +124,80 @@ let g:riv_global_leader = "<C-J>"
 "UnBundle 'Twinside/vim-haskellConceal'
 "UnBundle 'Shougo/neosnippet'
 "UnBundle 'tpope/vim-markdown'
+"UnBundle 'jnwhiteh/vim-golang'
+"UnBundle 'spf13/vim-gocode'
+
+"if empty($VIMBG)
+"    set bg=dark
+"else
+"    let envvimbg=$VIMBG
+"    let &bg=envvimbg
+"endif
+
+set runtimepath+=$GOROOT/misc/vim
+
+if has("cscope")
+    set csprg=/usr/bin/cscope
+    set csto=0
+    set cst
+
+"    let parent=1
+"    let dir = "./"
+"    while parent <= 10
+"      if filereadable(dir . "cscope.out")
+"          break
+"      endif
+"      let dir = "../" . dir
+"      let parent = parent+1
+"      if simplify(dir) ==# "/"
+"          break
+"      endif
+"    endwhile
+"
+"    let cscope_db = simplify($PWD . "/" . dir . "cscope.out")
+"
+"    if filereadable(cscope_db)
+"        echo cscope_db
+"        cs add cscope_db
+"    elseif $CSCOPE_DB != ""
+"        cs add $CSCOPE_DB
+"    endif
+"
+"    unlet parent
+"    unlet dir
+"    unlet cscope_db
+
+    function! LoadCscope()
+      let db = findfile("cscope.out", ".;")
+      if (!empty(db))
+        let path = strpart(db, 0, match(db, "/cscope.out$"))
+        set nocscopeverbose " suppress 'duplicate connection' error
+        exe "cs add " . db . " " . path
+        set cscopeverbose
+      endif
+    endfunction
+
+    au BufEnter /* call LoadCscope()
+
+	noremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nnoremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	noremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	nnoremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	noremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+endif
+
+let g:neocomplcache_enable_auto_delimiter = 0
