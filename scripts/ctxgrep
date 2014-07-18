@@ -1,5 +1,50 @@
 #!/usr/bin/python
 
+"""
+Contextual grep:
+
+Allows you to specify a set of patterns (e.g. a chunk of important text in a
+log file).  Within that chunk, you can look for other regex patterns.  Also
+allows match sets to be chained.  Submatch patterns can either count occurances
+or capture lines that match.
+
+Example:
+    [{
+        "name" : "UnitTestRun",
+
+        "start_pattern" : "^.*TestRunner: started:.*$",
+        "stop_pattern" : "^.*TestRunner: finished:.*$",
+
+        "submatches" : [
+
+            { "name" : "ErrorCondition",
+              "type" : "count",
+              "pattern" : "^.*BlahProcessor - Error From Blah:.*$" 
+
+            }, {
+              "name" : "IsFailed",
+              "type" : "count",
+              "pattern" : "^.*TestRunner: failed:.*$" 
+            }
+        ]
+
+    },{
+        "name" : "Exception",
+        "depends_on" : "UnitTestRun",
+
+        "start_pattern" : "^.*TestRunner: ----- begin exception -----.*$",
+        "stop_pattern" : "^.*TestRunner: ----- end exception -----.*$",
+
+        "submatches" : [
+
+            { "name" : "StackTrace",
+              "pattern" : "^.*TestRunner:.*$",
+              "type" : "capture"
+            }
+        ]
+    }]
+"""
+
 import re
 import sys
 import json
