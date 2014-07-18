@@ -7,3 +7,6 @@
 [submodule "gterm-solarized"]
 	path = gterm-solarized
 	url = https://github.com/Anthony25/gnome-terminal-colors-solarized.git
+[submodule "jq"]
+	path = jq
+	url = https://github.com/stedolan/jq
