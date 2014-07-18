@@ -25,8 +25,11 @@
 	checkout-branch = !git cob
 	checkout-master = !git com
 	push-origin-master = !git pom
+    restack = rebase -v -i HEAD~15
+    lg15 = !git lg -n 15
 
 ## Older stuff
+
 ##
 #[user]
 #	name = Jason Mobarak

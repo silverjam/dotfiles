@@ -1,14 +1,11 @@
-"execute pathogen#infect()
-syntax on
 set nocp
 
+" {{{ Vundle Init
+syntax on
 filetype off " required
-
-" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
-filetype plugin indent on
+" }}}
 
 set hidden
 set hlsearch
@@ -26,61 +23,123 @@ set ts=4
 set sts=4
 set sw=4
 
+" {{{ Back-up / swapfile config
+set backup
+set swapfile
+set backupdir=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
+set directory=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
+" }}}
+
+let g:ctrlp_cmd = 'CtrlPBuffer'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
+let g:ctrlp_max_files = 0
+
+let g:ycm_semantic_triggers = {'haskell' : ['.']}
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+"let g:ycm_auto_trigger = 0 "Disable auto trigger
+let g:EclimCompletionMethod = 'omnifunc'
+let g:nailgun_port = 44666
+let g:javacomplete_ng = '/usr/bin/ng-nailgun'
+let g:is_bash = 1
+
+"autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
+
+" {{{ Vim plugins
+Plugin 'tomtom/vimtlib'
+Plugin 'tomtom/tinykeymap_vim'
+Plugin 'vim-scripts/taglist.vim'
+Plugin 'brookhong/cscope.vim'
+Plugin 'Rykka/riv.vim'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'tfnico/vim-gradle'
+Plugin 'vim-scripts/gtags.vim'
+Plugin 'vim-scripts/groovy.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'tpope/vim-sensible'
+Plugin 'tpope/vim-fugitive'
+Plugin 'bling/vim-airline'
+Plugin 'scrooloose/nerdtree'
+Plugin 'rking/ag.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'solarnz/thrift.vim'
+Plugin 'Lokaltog/vim-easymotion'
+"Plugin 'cilquirm/javacomplete'
+Plugin 'eagletmt/neco-ghc'
+Plugin 'tpope/vim-dispatch'
+" }}}
+
+" {{{ Vundle finalization
+call vundle#end()
+filetype plugin indent on
+filetype on
+" }}}
+
+" {{{ Completion stuff
+set wildmenu
+set wildmode=longest:list,full
+set completeopt=longest,menuone
+" }}}
+
+set mouse=a
+
+" {{{ Configure Solarized color scheme
+set t_Co=256
+set background=dark
+
+"let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_contrast="high"
+let g:solarized_visibility="normal"
+
+colorscheme solarized
+" }}}
+
+let mapleader = ","
+
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <Leader>x :bp\|bd #<CR>
+
 noremap <C-\>t :TagbarToggle<CR>
 nnoremap <C-\>t :TagbarToggle<CR>
 noremap <C-\>n :NERDTreeToggle<CR>
 nnoremap <C-\>n :NERDTreeToggle<CR>
 
+set tags+=~/dev/openjdk6/tags
+
+nmap <Leader>gr :Gtags -r<SPACE>
+nmap <Leader>gl :Gtags -f %<CR>
+
+"nmap <C-n> :cn<CR>
+"nmap <C-p> :cp<CR>
+
+nmap <C-\><C-]> :GtagsCursor<CR>
+
+cabbr <expr> %% expand('%:p:h')
+
 "nmap <C-k>h :FSwitch<CR>
-
-let g:ctrlp_cmd = 'CtrlPBuffer'
-set background=light
-
 "map <F4> :execute "vimgrep /" . expand("<cword>") . "/j *.java" <Bar> cw<CR>
-
-"let b:start_time=localtime()
-"
-"au BufRead,BufNewFile * let b:start_time=localtime()
-"au CursorHold * call UpdateFile()
-"" only write if needed and update the start time after the save
-"function! UpdateFile()
-"  if ((localtime() - b:start_time) >= 5)
-"    update
-"    let b:start_time=localtime()
-"  else
-"    echo "Only " . (localtime() - b:start_time) . " seconds have elapsed so far."
-"  endif
-"endfunction
-"
-"au BufWritePre * let b:start_time=localtime()
 
 cmap w!! w !sudo tee % >/dev/null
 
 "nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
 "nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
 
-Bundle 'https://github.com/tomtom/vimtlib.git'
-Bundle 'https://github.com/tomtom/tinykeymap_vim.git'
-Bundle 'https://github.com/vim-scripts/taglist.vim.git'
-Bundle 'https://github.com/brookhong/cscope.vim.git'
-Bundle 'https://github.com/Rykka/riv.vim.git'
-Bundle 'plasticboy/vim-markdown'
-Bundle 'tfnico/vim-gradle'
-Bundle 'vim-scripts/gtags.vim'
-Bundle 'vim-scripts/groovy.vim'
-"Bundle 'https://github.com/kien/ctrlp.vim'
-
-nnoremap <silent> <F8> :TlistToggle<CR>
-nnoremap <silent> <Leader>x :bp\|bd #<CR>
-
 "let g:cscope_cmd = 'pycscope'
 "let g:pymode_lint_write = 1
 let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
 
+" {{{ UnBundle junk for spf13
 "UnBundle 'spf13/vim-autoclose'
 "UnBundle 'eagletmt/ghcmod-vim'
 "UnBundle 'Shougo/vimproc'
 "UnBundle 'Twinside/vim-haskellConceal'
 "UnBundle 'Shougo/neosnippet'
 "UnBundle 'tpope/vim-markdown'
+" }}}
+
+" vim: fdm=marker

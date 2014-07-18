@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#set -x
-
 alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
 alias vimr='vim --remote'
@@ -13,8 +11,10 @@ export PATH=$HOME/dev/depot_tools:$PATH
 export PATH=$HOME/dev/Sysmods/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/chroot:$PATH
 export PATH=$HOME/dev/Sysmods/Scripts:$PATH
-export PATH=$HOME/.cabal/bin:$PATH
-export PATH=$HOME/dev/the_silver_searcher:$PATH
+#export PATH=$HOME/.cabal/bin:$PATH
+export PATH=$HOME/dev/Sysmods/ag:$PATH
+export PATH=$HOME/dev/Sysmods/jq.pkg/bin:$PATH
+export PATH=$HOME/dev/Sysmods/gterm-solarized:$PATH
 
 # Base dir for all Android development tools / libraries / kits
 export MY_ANDROID_BASE=$HOME/dev/Android
@@ -28,7 +28,8 @@ export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
 
 function g()
 {
-    ( # Run in subshell (to preserve parent's $PWD):
+    # Run in subshell (to preserve parent's $PWD):
+    (
         while `true`; do
             if [[ `pwd` == "/" ]]; then
                 echo "!!! Script gradlew not found in any parent path"
@@ -258,6 +259,7 @@ if [[ $(uname) == "Darwin" ]]; then
 	not_linux=1
 	readlink='greadlink'
 	realpath='grealpath'
+#
 else
 	not_linux=
 	readlink='readlink'
@@ -289,7 +291,7 @@ source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-export JAVA_HOME=$(dirname $(dirname $(dirname $($realpath $(which java)))))
+export JAVA_HOME=$(dirname $(dirname $($realpath $(which java))))
 
 alias gerrit-git='/opt/git17/bin/git'
 
@@ -306,3 +308,5 @@ alias ger6=$ger6
 
 gere='gerrit ge'
 alias gere=$gere
+
+export LANG="en_US.UTF-8"
