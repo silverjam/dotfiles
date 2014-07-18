@@ -1,3 +1,9 @@
 [submodule "cp_p"]
 	path = cp_p
 	url = https://github.com/ericpaulbishop/cp_p
+[submodule "ag"]
+	path = ag
+	url = https://github.com/ggreer/the_silver_searcher
+[submodule "gterm-solarized"]
+	path = gterm-solarized
+	url = https://github.com/Anthony25/gnome-terminal-colors-solarized.git
