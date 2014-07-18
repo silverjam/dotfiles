@@ -1,0 +1,110 @@
+#!/usr/bin/python
+
+import re
+import sys
+import json
+import pprint
+
+class MatchSpec(object):
+
+    def __init__(self, name, start_re_obj, stop_re_obj, submatches, depends_on):
+        self.name = name
+        self.start_re = start_re_obj
+        self.stop_re = stop_re_obj
+        self._submatches = submatches
+        self._counts = {}
+        self.reset_submatch_counts()
+        self._matched_start = None
+        self._depends_on = depends_on
+        self._attached_dependent_results = []
+
+    @staticmethod
+    def load_match_specs(s):
+        data = json.loads(s)
+        for spec in data:
+            name = spec["name"]
+            start_re = re.compile(spec["start_pattern"])
+            stop_re = re.compile(spec["stop_pattern"])
+            depends_on = None
+            if spec.has_key("depends_on"):
+                depends_on = spec["depends_on"]
+            submatches = []
+            for submatch_spec in spec["submatches"]:
+                sm_name = submatch_spec["name"]
+                sm_pattern = submatch_spec["pattern"]
+                sm_type = submatch_spec["type"]
+                submatches.append( (sm_name, re.compile(sm_pattern),sm_type,) )
+            yield MatchSpec(name, start_re, stop_re, submatches, depends_on)
+
+    def reset_submatch_counts(self):
+        for (name, re_obj, sm_type) in self._submatches:
+            if sm_type == "count":
+                self._counts[name] = 0
+            elif sm_type == "capture":
+                self._counts[name] = []
+
+    def get_submatch_counts(self):
+        d = {
+            "name": self.name,
+            "start_line" : self._matched_start,
+            "submatches": self._counts,
+        }
+        if self._attached_dependent_results:
+            d["dependent_matches"] = self._attached_dependent_results[:]
+        return d
+
+    def attach_result_from_dependent(self, result):
+        self._attached_dependent_results.append(result)
+
+    def set_match_start(self, line):
+        self._matched_start = line
+
+    def check_submatches(self, line):
+        for (name, re_obj, sm_type) in self._submatches:
+            if re_obj.match(line):
+                if sm_type == "count":
+                    self._counts[name] += 1
+                elif sm_type == "capture":
+                    self._counts[name].append(line)
+
+    def match_start(self, active_matchers, line):
+        if self.is_dependent():
+            if self._depends_on not in active_matchers:
+                return False
+        return self.start_re.match(line)
+
+    def is_dependent(self):
+        return self._depends_on is not None
+
+    def match_end(self, active_matchers, line):
+        is_match = self.stop_re.match(line)
+        if self.is_dependent() and is_match:
+            m = active_matchers[self._depends_on]
+            m.attach_result_from_dependent(self.get_submatch_counts())
+        return is_match
+
+match_specs = list(MatchSpec.load_match_specs(open(sys.argv[1]).read()))
+#print "%s match specs loaded" % (len(match_specs),)
+input_fp = open(sys.argv[2])
+
+active_matchers = {}
+
+first = True
+print "["
+
+for line in input_fp:
+    for matcher in match_specs:
+        if matcher.match_start(active_matchers, line):
+            active_matchers[matcher.name] = matcher
+            matcher.set_match_start(line)
+            matcher.reset_submatch_counts()
+        elif matcher.match_end(active_matchers, line):
+            if not matcher.is_dependent():
+                if not first: print ","
+                if first: first = False
+                sys.stdout.write("%s" % (json.dumps(matcher.get_submatch_counts()),))
+            del active_matchers[matcher.name]
+    for matcher in active_matchers.values():
+        matcher.check_submatches(line)
+
+print "]"

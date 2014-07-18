@@ -1,0 +1,32 @@
+[
+    {
+        "name" : "UnitTestRun",
+        "start_pattern" : "^.*TestRunner: started:.*$",
+        "stop_pattern" : "^.*TestRunner: finished:.*$",
+        "submatches" : [
+            { 
+              "name" : "NoResponseFromServer",
+              "type" : "count",
+              "pattern" : "^.*credshare.AmazonServerAuthenticationProcessor - No Response From Server:.*$" 
+            },
+            {   
+              "name" : "IsFailed",
+              "type" : "count",
+              "pattern" : "^.*TestRunner: failed:.*$" 
+            }
+        ]
+    },
+    {
+        "name" : "Exception",
+        "depends_on" : "UnitTestRun",
+        "start_pattern" : "^.*TestRunner: ----- begin exception -----.*$",
+        "stop_pattern" : "^.*TestRunner: ----- end exception -----.*$",
+        "submatches" : [
+            {
+                "name" : "StackTrace",
+                "pattern" : "^.*TestRunner:.*$",
+                "type" : "capture"
+            }
+        ]
+    }
+]
