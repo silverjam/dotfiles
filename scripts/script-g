@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function g()
+{
+    # Run in subshell (to preserve parent's $PWD):
+    (
+        while `true`; do
+            if [[ `pwd` == "/" ]]; then
+                echo "!!! Script gradlew not found in any parent path"
+                return
+            fi
+            if [[ -e `pwd`/gradlew ]]; then
+                TERM=dumb `pwd`/gradlew --no-color ${*}
+                return
+            fi
+            cd ..
+        done
+    )
+}
+
+g ${*}
