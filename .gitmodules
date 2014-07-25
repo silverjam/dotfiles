@@ -10,3 +10,6 @@
 [submodule "jq"]
 	path = jq
 	url = https://github.com/stedolan/jq
+[submodule "scripts/plyj"]
+	path = scripts/plyj
+	url = git@github.com:silverjam/plyj.git
