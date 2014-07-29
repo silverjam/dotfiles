@@ -1,0 +1,23 @@
+#!/bin/bash
+
+_dirname="/usr/bin/dirname"
+_readlink="/usr/local/bin/greadlink"
+_netstat="/usr/sbin/netstat"
+_grep="/usr/bin/grep"
+_notify="/usr/local/bin/terminal-notifier"
+
+D=$($_dirname $($_readlink -f ${BASH_SOURCE}))
+
+msg="Hey, you're not connected to chat!"
+bundle_id=com.adiumX.adiumX
+group_id="groupid:ocs.connection.checker"
+title="OCS Connection Checker"
+
+if ! $_netstat -p tcp | $_grep -q ocs; then
+    $_notify \
+        -message "$msg" \
+        -activate $bundle_id \
+        -group "$group_id" \
+        -title "$title" \
+        -appIcon "$D/communicator.png"
+fi
