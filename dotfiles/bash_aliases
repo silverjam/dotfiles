@@ -5,6 +5,8 @@ alias keys='. ~/keys.sh'
 alias vimr='vim --remote'
 alias gvimr='gvim --remote'
 
+#set -o vi
+
 umask 022
 
 export PATH=$HOME/dev/depot_tools:$PATH
@@ -253,7 +255,17 @@ export PATH=$HOME/dev/Sysmods/cp_p:$PATH
 alias rscp='rsync -aSPh'
 alias rsmv='rsync -aSPh --remove-source-files'
 
-PROMPT_COMMAND="history -a;"
+# {{{ Infinite bash history
+
+export HISTFILESIZE=
+export HISTSIZE=
+export HISTTIMEFORMAT="[%F %T] "
+
+export HISTFILE=~/.bash_eternal_history
+
+# }}}
+
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 if [[ $(uname) == "Darwin" ]]; then
 	not_linux=1
@@ -291,7 +303,7 @@ source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-export JAVA_HOME=$(dirname $(dirname $($realpath $(which java))))
+export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 
 alias gerrit-git='/opt/git17/bin/git'
 
