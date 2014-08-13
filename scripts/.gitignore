@@ -4,3 +4,6 @@ eclipse
 sublime_text
 quickserve
 android-studio
+lextab.py*
+parsetab.py*
+parser.out

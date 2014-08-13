@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 import sys
+import os
+
+d = os.path.dirname(sys.argv[0])
+sys.path.insert(0, os.path.join(d, "plyj"))
+
 import plyj.parser
 import plyj.model as m
 import ipdb
@@ -88,19 +93,92 @@ def select_if_contains_name(data, names):
     return len(results) > 0
 
 
-p = plyj.parser.Parser()
-data = p.parse_file(sys.argv[1]).toJson()
+def parse_java_to_json(filename):
 
-klass_data = find_class(data, "HashCodeBuilder")
-refs = extract_refs(klass_data, "toHashCode")
+    p = plyj.parser.Parser()
+    return p.parse_file(filename).toJson()
 
-print refs
 
-methods = find_methods(klass_data, "HashCodeBuilder")
-for method in methods:
-    
-    method_name = method["p_fields"]["name"]
+def find_refs_to_method(data, klass, method):
+
+    klass_data = find_class(data, klass)
+    refs = extract_refs(klass_data, method)
+
+    print refs
+
+    methods = find_methods(klass_data, klass)
+    for method in methods:
+        
+        method_name = method["p_fields"]["name"]
+        names = [ N["p_fields"]["value"] for N in refs ]
+
+        if select_if_contains_name(method, names):
+            print method_name
+
+
+class CleanupImports(object):
+
+    @staticmethod
+    def extract_names(data):
+
+        q = """ 
+        [
+        .p_fields.type_declarations
+        | ..
+        | select ( .p_type? == "Name" )
+        ]
+        """
+
+        return runjq(data, q)
+
+
+    @staticmethod
+    def extract_imports(data):
+
+        q = """ 
+        [
+        .p_fields.import_declarations
+        | ..
+        | select ( .p_type? == "Name" )
+        ]
+        """
+
+        return runjq(data, q)
+
+
+def find_unused_imports(data):
+
+    refs = CleanupImports.extract_names(data)
     names = [ N["p_fields"]["value"] for N in refs ]
 
-    if select_if_contains_name(method, names):
-        print method_name
+    imports = CleanupImports.extract_imports(data)
+    import_names = [ N["p_fields"]["value"] for N in imports ]
+
+    used_imports = set()
+
+    for name in names:
+        for import_name in import_names:
+            if import_name.endswith(name):
+                used_imports.add(import_name)
+
+    used_imports = sorted(used_imports)
+
+    print( '>>> New import list:' )
+    print( '' )
+
+    for import_name in used_imports:
+        print( "import %s;" % (import_name,) )
+
+    print( '' )
+    print( "Import count delta: %d" % (len(used_imports) - len(import_names),))
+
+
+if __name__ == '__main__':
+
+    d = parse_java_to_json(sys.argv[1])
+
+    if sys.argv[2] == "cleanup_imports":
+        find_unused_imports(d)
+
+    elif sys.argv[2] == "minify_code":
+        find_refs_to_method(d, sys.argv[3], sys.argv[4])
