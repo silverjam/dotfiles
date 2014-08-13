@@ -23,6 +23,12 @@ set ts=4
 set sts=4
 set sw=4
 
+"flag problematic whitespace (trailing and spaces before tabs)
+"Note you get the same by doing let c_space_errors=1 but
+"this rule really applys to everything.
+"highlight RedundantSpaces term=standout ctermbg=red guibg=red
+"match RedundantSpaces /\s\+$\| \+\ze\t/ "\ze sets end of match so only spaces highlighted
+
 " {{{ Back-up / swapfile config
 set backup
 set swapfile
@@ -70,6 +76,9 @@ Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'cilquirm/javacomplete'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'tpope/vim-dispatch'
+Plugin 'vim-scripts/Mark--Karkat'
+"Plugin 'naseer/logcat'
+Plugin 'christoomey/vim-tmux-navigator'
 " }}}
 
 " {{{ Vundle finalization
@@ -99,6 +108,12 @@ colorscheme solarized
 " }}}
 
 let mapleader = ","
+
+nnoremap <silent> <c-a>h :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-a>j :TmuxNavigateDown<cr>
+nnoremap <silent> <c-a>k :TmuxNavigateUp<cr>
+nnoremap <silent> <c-a>l :TmuxNavigateRight<cr>
+nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
 
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
@@ -132,6 +147,12 @@ cmap w!! w !sudo tee % >/dev/null
 "let g:pymode_lint_write = 1
 let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
+
+" Tmux hack?
+map <Esc>[B <Down>
+map <Esc>[D <Left>
+map <Esc>[A <Up>
+map <Esc>[C <Right>
 
 " {{{ UnBundle junk for spf13
 "UnBundle 'spf13/vim-autoclose'
