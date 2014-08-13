@@ -7,3 +7,4 @@ android-studio
 lextab.py*
 parsetab.py*
 parser.out
+clang-ctags
