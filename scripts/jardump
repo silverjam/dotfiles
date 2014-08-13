@@ -1,0 +1,5 @@
+#!/bin/bash
+
+[[ -z $1 ]] && { echo "Usage: jardump <filename>"; exit 1; }
+
+jar -tvf $1 | awk "{ print \"$1:\"\$8 }"
