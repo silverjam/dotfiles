@@ -10,6 +10,7 @@ alias gvimr='gvim --remote'
 umask 022
 
 export PATH=$HOME/dev/depot_tools:$PATH
+export PATH=$HOME/dev/internal:$PATH
 export PATH=$HOME/dev/Sysmods/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/chroot:$PATH
 export PATH=$HOME/dev/Sysmods/Scripts:$PATH
