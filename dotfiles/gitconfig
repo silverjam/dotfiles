@@ -27,6 +27,8 @@
 	push-origin-master = !git pom
     restack = rebase -v -i HEAD~15
     lg15 = !git lg -n 15
+    cp = cherry-pick
+    change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ $`echo $VAR` = \\\"$OLD\\\" ]]; then export $VAR=\\\"$NEW\\\"; fi\" $@; }; f"
 
 ## Older stuff
 
