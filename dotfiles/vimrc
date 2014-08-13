@@ -1,4 +1,16 @@
+" {{{ Basic vim config
 set nocp
+set hidden
+
+if version >= 703
+    set colorcolumn=80
+endif
+
+set et
+set ts=4
+set sts=4
+set sw=4
+" }}}
 
 " {{{ Vundle Init
 syntax on
@@ -7,27 +19,17 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " }}}
 
-set hidden
-set hlsearch
-
-if version >= 703
-    set colorcolumn=80
-endif
-
 let g:miniBufExplCheckDupeBufs = 0
 let g:miniBufExplVSplit = 30
 let g:miniBufExplorerAutoStart = 0
 
-set et
-set ts=4
-set sts=4
-set sw=4
-
+" {{{ Whitspace stuff
 "flag problematic whitespace (trailing and spaces before tabs)
 "Note you get the same by doing let c_space_errors=1 but
 "this rule really applys to everything.
 "highlight RedundantSpaces term=standout ctermbg=red guibg=red
 "match RedundantSpaces /\s\+$\| \+\ze\t/ "\ze sets end of match so only spaces highlighted
+" }}}
 
 " {{{ Back-up / swapfile config
 set backup
@@ -36,10 +38,12 @@ set backupdir=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
 set directory=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
 " }}}
 
+" {{{ CtrlP config
 let g:ctrlp_cmd = 'CtrlPBuffer'
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 let g:ctrlp_max_files = 0
+" }}}
 
 let g:ycm_semantic_triggers = {'haskell' : ['.']}
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
@@ -53,6 +57,7 @@ let g:is_bash = 1
 autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
 
 " {{{ Vim plugins
+Plugin 'gmarik/Vundle.vim'
 Plugin 'tomtom/vimtlib'
 Plugin 'tomtom/tinykeymap_vim'
 Plugin 'vim-scripts/taglist.vim'
@@ -79,6 +84,10 @@ Plugin 'tpope/vim-dispatch'
 Plugin 'vim-scripts/Mark--Karkat'
 "Plugin 'naseer/logcat'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'Blackrush/vim-gocode'
+Plugin 'Shougo/neosnippet-snippets'
+Plugin 'nathanaelkane/vim-indent-guides'
 " }}}
 
 " {{{ Vundle finalization
@@ -93,9 +102,8 @@ set wildmode=longest:list,full
 set completeopt=longest,menuone
 " }}}
 
-set mouse=a
-
 " {{{ Configure Solarized color scheme
+set mouse=a
 set t_Co=256
 set background=dark
 
@@ -115,7 +123,7 @@ nnoremap <silent> <c-a>k :TmuxNavigateUp<cr>
 nnoremap <silent> <c-a>l :TmuxNavigateRight<cr>
 nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
 
-nnoremap <silent> <F8> :TlistToggle<CR>
+"nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
 
 noremap <C-\>t :TagbarToggle<CR>
@@ -125,13 +133,11 @@ nnoremap <C-\>n :NERDTreeToggle<CR>
 
 set tags+=~/dev/openjdk6/tags
 
-nmap <Leader>gr :Gtags -r<SPACE>
-nmap <Leader>gl :Gtags -f %<CR>
-
+"nmap <Leader>gr :Gtags -r<SPACE>
+"nmap <Leader>gl :Gtags -f %<CR>
 "nmap <C-n> :cn<CR>
 "nmap <C-p> :cp<CR>
-
-nmap <C-\><C-]> :GtagsCursor<CR>
+"nmap <C-\><C-]> :GtagsCursor<CR>
 
 cabbr <expr> %% expand('%:p:h')
 
@@ -142,6 +148,35 @@ cmap w!! w !sudo tee % >/dev/null
 
 "nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
 "nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
+
+if &term == 'xterm' || &term == 'screen'
+    set t_Co=256
+endif
+
+let g:airline_theme = 'solarized'
+let g:airline_left_sep='›'
+let g:airline_right_sep='‹'
+set laststatus=2
+
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+let g:indent_guides_enable_on_vim_startup = 1
+
+set list
+set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+
+set cursorline
+set showmatch
+set hlsearch
+
+set t_Co=256
+let g:solarized_termtrans=0    "default value is 0
+"let g:solarized_termcolors=256    "default value is 16
+set background=dark
+colorscheme solarized
+
+nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <Leader>x :bp\|bd #<CR>
 
 "let g:cscope_cmd = 'pycscope'
 "let g:pymode_lint_write = 1
@@ -161,6 +196,88 @@ map <Esc>[C <Right>
 "UnBundle 'Twinside/vim-haskellConceal'
 "UnBundle 'Shougo/neosnippet'
 "UnBundle 'tpope/vim-markdown'
+"UnBundle 'jnwhiteh/vim-golang'
+"UnBundle 'spf13/vim-gocode'
 " }}}
 
-" vim: fdm=marker
+"if empty($VIMBG)
+"    set bg=dark
+"else
+"    let envvimbg=$VIMBG
+"    let &bg=envvimbg
+"endif
+
+" {{{ CScope setup
+"if has("cscope")
+if 0
+    set csprg=/usr/bin/cscope
+    set csto=0
+    set cst
+
+"    let parent=1
+"    let dir = "./"
+"    while parent <= 10
+"      if filereadable(dir . "cscope.out")
+"          break
+"      endif
+"      let dir = "../" . dir
+"      let parent = parent+1
+"      if simplify(dir) ==# "/"
+"          break
+"      endif
+"    endwhile
+"
+"    let cscope_db = simplify($PWD . "/" . dir . "cscope.out")
+"
+"    if filereadable(cscope_db)
+"        echo cscope_db
+"        cs add cscope_db
+"    elseif $CSCOPE_DB != ""
+"        cs add $CSCOPE_DB
+"    endif
+"
+"    unlet parent
+"    unlet dir
+"    unlet cscope_db
+
+    function! LoadCscope()
+      let db = findfile("cscope.out", ".;")
+      if (!empty(db))
+        let path = strpart(db, 0, match(db, "/cscope.out$"))
+        set nocscopeverbose " suppress 'duplicate connection' error
+        exe "cs add " . db . " " . path
+        set cscopeverbose
+      endif
+    endfunction
+
+    au BufEnter /* call LoadCscope()
+
+	noremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+	noremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nnoremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	noremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	nnoremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	noremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+	nnoremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+endif
+" }}}
+
+set runtimepath+=$GOROOT/misc/vim
+
+" {{{ NeoCompl cache setup
+let g:neocomplcache_enable_auto_delimiter = 0
+" }}}
+
+" vim: fdm=marker:
