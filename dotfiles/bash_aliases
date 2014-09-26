@@ -55,7 +55,7 @@ function fname()
 function get_ant_dir()
 {
     cd $MY_ADT_PLUGINS;
-    ls -1 --color=never --directory --group-directories-first \
+    $_ls -1 --color=never --directory --group-directories-first \
         org.apache.ant* | head -1
 }
 
@@ -216,7 +216,7 @@ fi
 #    exit $?
 #fi
 
-if [ -z "$SCHROOT_CHROOT_NAME" ]; then
+if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
     shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
 fi
 

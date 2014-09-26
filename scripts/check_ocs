@@ -19,5 +19,6 @@ if ! $_netstat -p tcp | $_grep -q ocs; then
         -activate $bundle_id \
         -group "$group_id" \
         -title "$title" \
-        -appIcon "$D/communicator.png"
+        -appIcon "$D/communicator.png" \
+        2>&1 >/dev/null
 fi
