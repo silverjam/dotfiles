@@ -269,16 +269,21 @@ export HISTFILE=~/.bash_eternal_history
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 if [[ $(uname) == "Darwin" ]]; then
-	not_linux=1
-	readlink='greadlink'
-	realpath='grealpath'
-#
+    not_linux=1
+    _ls='gls'
+    readlink='greadlink'
+    realpath='grealpath'
+
+    export JAVA_HOME=$(/usr/libexec/java_home -v 1.)
 else
-	not_linux=
-	readlink='readlink'
-	realpath='realpath'
+    _ls='ls'
+    not_linux=
+    readlink='readlink'
+    realpath='realpath'
 
     alias ls='ls --color'
+
+    export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 fi
 
 if [[ -n $MANUAL_HOSTNAME ]]; then
@@ -303,8 +308,6 @@ source $this_dir/../git-completion.bash
 source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
-
-export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 
 alias gerrit-git='/opt/git17/bin/git'
 

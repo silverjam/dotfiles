@@ -1,17 +1,18 @@
 #!/bin/bash
 
+bundle_id=com.adiumX.adiumX
+#bundle_id=com.microsoft.Communicator
+
 _dirname="/usr/bin/dirname"
-_readlink="/usr/local/bin/greadlink"
 _netstat="/usr/sbin/netstat"
 _grep="/usr/bin/grep"
 _notify="/usr/local/bin/terminal-notifier"
 
-D=$($_dirname $($_readlink -f ${BASH_SOURCE}))
+D=$( (cd `dirname $0` >/dev/null; pwd -P) )
 
 msg="Hey, you're not connected to chat!"
-bundle_id=com.adiumX.adiumX
-group_id="groupid:ocs.connection.checker"
-title="OCS Connection Checker"
+group_id="groupid:chat.connection.checker"
+title="Chat Connection Checker"
 
 if ! $_netstat -p tcp | $_grep -q ocs; then
     $_notify \
