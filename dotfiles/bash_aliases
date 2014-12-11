@@ -57,7 +57,7 @@ function fname()
 function get_ant_dir()
 {
     cd $MY_ADT_PLUGINS;
-    ls -1 --color=never --directory --group-directories-first \
+    $_ls -1 --color=never --directory --group-directories-first \
         org.apache.ant* | head -1
 }
 
@@ -218,7 +218,7 @@ fi
 #    exit $?
 #fi
 
-if [ -z "$SCHROOT_CHROOT_NAME" ]; then
+if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
     shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
 fi
 
@@ -271,16 +271,21 @@ export HISTFILE=~/.bash_eternal_history
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 if [[ $(uname) == "Darwin" ]]; then
-	not_linux=1
-	readlink='greadlink'
-	realpath='grealpath'
-#
+    not_linux=1
+    _ls='gls'
+    readlink='greadlink'
+    realpath='grealpath'
+
+    export JAVA_HOME=$(/usr/libexec/java_home -v 1.)
 else
-	not_linux=
-	readlink='readlink'
-	realpath='realpath'
+    _ls='ls'
+    not_linux=
+    readlink='readlink'
+    realpath='realpath'
 
     alias ls='ls --color -F'
+
+    export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 fi
 
 alias sl=ls
@@ -307,8 +312,6 @@ source $this_dir/../git-completion.bash
 source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
-
-export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 
 alias gerrit-git='/opt/git17/bin/git'
 

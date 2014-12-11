@@ -1,0 +1,25 @@
+#!/bin/bash
+
+bundle_id=com.adiumX.adiumX
+#bundle_id=com.microsoft.Communicator
+
+_dirname="/usr/bin/dirname"
+_netstat="/usr/sbin/netstat"
+_grep="/usr/bin/grep"
+_notify="/usr/local/bin/terminal-notifier"
+
+D=$( (cd `dirname $0` >/dev/null; pwd -P) )
+
+msg="Hey, you're not connected to chat!"
+group_id="groupid:chat.connection.checker"
+title="Chat Connection Checker"
+
+if ! $_netstat -p tcp | $_grep -q ocs; then
+    $_notify \
+        -message "$msg" \
+        -activate $bundle_id \
+        -group "$group_id" \
+        -title "$title" \
+        -appIcon "$D/communicator.png" \
+        2>&1 >/dev/null
+fi
