@@ -1,8 +1,8 @@
 [color]
-	ui = auto
+    ui = auto
 
 [push]
-	default = simple
+    default = simple
 
 [alias]
     wipe = "!git reset --hard;git clean -fdx"
@@ -17,48 +17,51 @@
     pom = push origin master
     push-origin-master = !git pom
     mffpom = !git mff  && git pom
-	lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
-	branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
-	branchlog = !sh -c \"git log `git oldest-ancestor`..\"
-	rup = remote update --prune
-	po = push origin
-	checkout-branch = !git cob
-	checkout-master = !git com
-	push-origin-master = !git pom
+    lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+    branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
+    branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+    rup = remote update --prune
+    po = push origin
+    checkout-branch = !git cob
+    checkout-master = !git com
+    push-origin-master = !git pom
     restack = rebase -v -i HEAD~15
     lg15 = !git lg -n 15
     cp = cherry-pick
     change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ $`echo $VAR` = \\\"$OLD\\\" ]]; then export $VAR=\\\"$NEW\\\"; fi\" $@; }; f"
+    resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
+    editcornflakes = !vim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<$\\|^=======$\\|^>>>>>>>$'
+    findcornflakes = grep '^<<<<<<<$'
 
 ## Older stuff
 
 ##
 #[user]
-#	name = Jason Mobarak
-#	email = jam@cozybit.com
+#    name = Jason Mobarak
+#    email = jam@cozybit.com
 #
 #[alias]
-#	oldest-ancestor = !bash -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
-#	apr = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
-#	cbr = rev-parse --abbrev-ref HEAD
-#	org = !echo cozybit
-#	pr = !git prb master
-#	prb = !git-pullreq $1
-#	review = !git-review
-#	update-pull-request = !git upr
-#	add-pull-request-remote = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
-#	pull-request = !git pr
-#	upr = !git-update-pr
-#	branch-pull-request = !git prb
-#	remote-update-prune = remote update --prune
+#    oldest-ancestor = !bash -c 'diff --old-line-format= --new-line-format= <(git rev-list --first-parent \"${1:-master}\") <(git rev-list --first-parent \"${2:-HEAD}\") | head -1' -
+#    apr = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
+#    cbr = rev-parse --abbrev-ref HEAD
+#    org = !echo cozybit
+#    pr = !git prb master
+#    prb = !git-pullreq $1
+#    review = !git-review
+#    update-pull-request = !git upr
+#    add-pull-request-remote = config --add remote.origin.fetch +refs/pull/*/head:refs/remotes/origin/pull-request/*
+#    pull-request = !git pr
+#    upr = !git-update-pr
+#    branch-pull-request = !git prb
+#    remote-update-prune = remote update --prune
 #
 #[diff]
-#	tool = meld
+#    tool = meld
 #[sendemail]
-#	smtpencryption = tls
-#	smtpserver = smtp.gmail.com
-#	smtpuser = jam@cozybit.com
-#	smtpserverport = 587
+#    smtpencryption = tls
+#    smtpserver = smtp.gmail.com
+#    smtpuser = jam@cozybit.com
+#    smtpserverport = 587
 #    smtpsslcertpath = '/etc/ssl/certs'
 
 # vim: filetype=gitconfig

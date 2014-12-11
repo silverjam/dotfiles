@@ -1,6 +1,8 @@
 " {{{ Basic vim config
+
 set nocp
 set hidden
+set nu
 
 if version >= 703
     set colorcolumn=80
@@ -11,6 +13,17 @@ set ts=4
 set sts=4
 set sw=4
 " }}}
+
+function! ToggleVerbose()
+    if !&verbose
+        set verbosefile=~/.vim/verbose.log
+        set verbose=9
+    else
+        set verbose=0
+        set verbosefile=
+    endif
+endfunction
+
 
 " {{{ Vundle Init
 syntax on
@@ -29,6 +42,7 @@ let g:miniBufExplorerAutoStart = 0
 "this rule really applys to everything.
 "highlight RedundantSpaces term=standout ctermbg=red guibg=red
 "match RedundantSpaces /\s\+$\| \+\ze\t/ "\ze sets end of match so only spaces highlighted
+set list listchars=tab:»·,trail:·
 " }}}
 
 " {{{ Back-up / swapfile config
@@ -48,13 +62,44 @@ let g:ctrlp_max_files = 0
 let g:ycm_semantic_triggers = {'haskell' : ['.']}
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 "let g:ycm_auto_trigger = 0 "Disable auto trigger
-let g:EclimCompletionMethod = 'omnifunc'
+"let g:EclimCompletionMethod = 'omnifunc'
 let g:nailgun_port = 44666
 let g:javacomplete_ng = '/usr/bin/ng-nailgun'
+let g:netrw_liststyle=3
+
+"let g:tmux_navigator_no_mappings = 1
+
+"let g:EasyMotion_leader_key = '<Leader>'
+
+" {{{ NeoCompl cache setup
+let g:neocomplcache_enable_auto_delimiter = 0
+" }}}
+
+autocmd Filetype java setlocal omnifunc=javacomplete#Complete
+autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
+
+" Force bash mode for shell scripts?
 let g:is_bash = 1
 
-"autocmd Filetype java setlocal omnifunc=javacomplete#Complete
-autocmd Filetype haskell setlocal omnifunc=necoghc#omnifunc
+" {{{ ultisnips
+let g:UltiSnipsExpandTrigger="<c-b>"
+let g:UltiSnipsListSnippets="<c-b>"
+"let g:UltiSnipsJumpForwardTrigger="<c-b>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+inoremap <silent> <C-b> <C-R>=UltiSnips#ExpandSnippetOrJump()<cr>
+snoremap <silent> <C-b> <Esc>:call UltiSnips#ExpandSnippetOrJump()<cr>
+xnoremap <silent> <C-b> :call UltiSnips#SaveLastVisualSelection()<cr>gvs
+inoremap <silent> <C-b> <C-R>=UltiSnips#ListSnippets()<cr>
+snoremap <silent> <C-b> <Esc>:call UltiSnips#ListSnippets()<cr>
+
+" }}}
+
+" {{{ Git gutter config
+highlight GitGutterAddDefault ctermbg=0
+highlight GitGutterChangeDefault ctermbg=0
+highlight GitGutterDeleteDefault ctermbg=0
+" }}}
 
 " {{{ Vim plugins
 Plugin 'gmarik/Vundle.vim'
@@ -75,10 +120,11 @@ Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
 Plugin 'rking/ag.vim'
 Plugin 'majutsushi/tagbar'
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 Plugin 'solarnz/thrift.vim'
 Plugin 'Lokaltog/vim-easymotion'
 "Plugin 'cilquirm/javacomplete'
+Plugin 'silverjam/javacomplete'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'tpope/vim-dispatch'
 Plugin 'vim-scripts/Mark--Karkat'
@@ -86,8 +132,14 @@ Plugin 'vim-scripts/Mark--Karkat'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'Blackrush/vim-gocode'
-Plugin 'Shougo/neosnippet-snippets'
-Plugin 'nathanaelkane/vim-indent-guides'
+"Plugin 'Shougo/neosnippet-snippets'
+"Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
+"Plugin 'ardagnir/united-front'
+Plugin 'scrooloose/syntastic'
+Plugin 'junegunn/vim-easy-align'
+Plugin 'vim-scripts/Align'
 " }}}
 
 " {{{ Vundle finalization
@@ -104,7 +156,7 @@ set completeopt=longest,menuone
 
 " {{{ Configure Solarized color scheme
 set mouse=a
-set t_Co=256
+"set t_Co=256
 set background=dark
 
 "let g:solarized_termcolors=256
@@ -125,6 +177,7 @@ nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
 
 "nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
+nnoremap <silent> <Leader>jr :redraw!<CR>
 
 noremap <C-\>t :TagbarToggle<CR>
 nnoremap <C-\>t :TagbarToggle<CR>
@@ -150,7 +203,7 @@ cmap w!! w !sudo tee % >/dev/null
 "nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
 
 if &term == 'xterm' || &term == 'screen'
-    set t_Co=256
+"    set t_Co=256
 endif
 
 let g:airline_theme = 'solarized'
@@ -169,11 +222,13 @@ set cursorline
 set showmatch
 set hlsearch
 
-set t_Co=256
-let g:solarized_termtrans=0    "default value is 0
+" {{{ BROKEN COLOR CONFIG!?
+"set t_Co=256
+"let g:solarized_termtrans=0    "default value is 0
 "let g:solarized_termcolors=256    "default value is 16
-set background=dark
-colorscheme solarized
+"set background=dark
+"colorscheme solarized
+" }}}
 
 nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
@@ -181,7 +236,9 @@ nnoremap <silent> <Leader>x :bp\|bd #<CR>
 "let g:cscope_cmd = 'pycscope'
 "let g:pymode_lint_write = 1
 let g:syntastic_check_on_wq = 0
+"let g:syntastic_java_javac_config_file_enabled = 1
 let g:riv_global_leader = "<C-J>"
+let g:syntastic_java_javac_classpath = ""
 
 " Tmux hack?
 map <Esc>[B <Down>
@@ -207,7 +264,16 @@ map <Esc>[C <Right>
 "    let &bg=envvimbg
 "endif
 
-" {{{ CScope setup
+if empty($TMUX)
+    " Do nothing...
+else
+    set t_ku=[A
+    set t_kd=[B
+    set t_kr=[C
+    set t_kl=[D
+endif
+
+" {{{ CScope setup (Disabled)
 "if has("cscope")
 if 0
     set csprg=/usr/bin/cscope
@@ -274,10 +340,28 @@ if 0
 endif
 " }}}
 
+" {{{ Go code config
 set runtimepath+=$GOROOT/misc/vim
-
-" {{{ NeoCompl cache setup
-let g:neocomplcache_enable_auto_delimiter = 0
 " }}}
+
+let s:onlySourcePattern = '^\(.*[.]gradle$\|.*[.]java$\|.*[.]cpp$\|.*[.]h$\|.*[.]thrift$\|.*[.]xml$\)\@!.*[[file]]'
+
+function! FunJmOnlySource()
+    let g:NERDTreeIgnore += [s:onlySourcePattern]
+endfunction
+
+command! JmOnlySource call FunJmOnlySource()
+
+function! FunJmEverything()
+    call filter(g:NERDTreeIgnore, 'v:val !==# "' . s:onlySourcePattern . '"')
+endfunction
+
+command! JmEverything call FunJmEverything()
+
+function! FunResetNerdIgnore()
+    let g:NERDTreeIgnore = []
+endfunction
+
+command! JmResetNerdTreeIgnore call FunResetNerdIgnore()
 
 " vim: fdm=marker:

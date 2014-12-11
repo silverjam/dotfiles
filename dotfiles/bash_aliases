@@ -4,6 +4,8 @@ alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
 alias vimr='vim --remote'
 alias gvimr='gvim --remote'
+alias vim="'vim' --servername $HOSTNAME"
+alias vi="'vim' --servername $HOSTNAME"
 
 #set -o vi
 
@@ -63,15 +65,15 @@ function apath_adt()
 {
     echo "Adding ADT and ANT's Ant to the path..."
 
-    export PATH=$MY_ANDROID_SDK/platform-tools:$PATH
-    export PATH=$MY_ANDROID_SDK/tools:$PATH
+    export PATH=$PATH:$MY_ANDROID_SDK/platform-tools
+    export PATH=$PATH:$MY_ANDROID_SDK/tools
 
     export ANDROID_HOME=$MY_ANDROID_SDK
     export ANDROID_SDK=$MY_ANDROID_SDK
 
     ECLIPSE_ANT=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
 
-    export PATH=$ECLIPSE_ANT:$PATH
+    export PATH=$PATH:$ECLIPSE_ANT
 }
 
 function sfastboot()
@@ -278,15 +280,17 @@ else
 	readlink='readlink'
 	realpath='realpath'
 
-    alias ls='ls --color'
+    alias ls='ls --color -F'
 fi
 
+alias sl=ls
+
 if [[ -n $MANUAL_HOSTNAME ]]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@'$MANUAL_HOSTNAME'\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@'$MANUAL_HOSTNAME'\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 elif [[ -z $not_linux ]]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' \n\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 else
-	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w'"\$(__git_ps1)"' \n\$ '
+	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 fi
 
 # If this is an xterm set the title to user@host:dir
@@ -335,3 +339,10 @@ alias f6='fg %6'
 alias f7='fg %7'
 alias f8='fg %8'
 alias f9='fg %9'
+
+alias p=popd
+alias up='cd ..'
+
+alias jnice='schedtool -B -n 1 -e ionice -n 1'
+
+export TERM=xterm-256color
