@@ -1,0 +1,77 @@
+#!/usr/bin/env python
+
+import sys
+import termios
+import contextlib
+
+import subprocess
+
+adbid = sys.argv[1]
+
+def send_adb_keyevent(key):
+    #subprocess.call(["adb", "-s", adbid, "shell", "input", "keyevent", key])
+    adbproc.stdin.write("input keyevent " + key + "\n")
+
+@contextlib.contextmanager
+def raw_mode(file):
+    old_attrs = termios.tcgetattr(file.fileno())
+    new_attrs = old_attrs[:]
+    new_attrs[3] = new_attrs[3] & ~(termios.ECHO | termios.ICANON)
+    try:
+        termios.tcsetattr(file.fileno(), termios.TCSADRAIN, new_attrs)
+        yield
+    finally:
+        termios.tcsetattr(file.fileno(), termios.TCSADRAIN, old_attrs)
+
+key_back = 0x7f
+
+def main():
+    print 'exit with ^C or ^D'
+    with raw_mode(sys.stdin):
+        try:
+            while True:
+                ch = sys.stdin.read(1)
+                if not ch or ch == chr(4):
+                    break
+                if ch == 'w':
+                    send_adb_keyevent("KEYCODE_DPAD_UP")
+                elif ch == 's':
+                    send_adb_keyevent("KEYCODE_DPAD_DOWN")
+                elif ch == 'a':
+                    send_adb_keyevent("KEYCODE_DPAD_LEFT")
+                elif ch == 'd':
+                    send_adb_keyevent("KEYCODE_DPAD_RIGHT")
+                elif ch == '\n' or ch == ' ':
+                    send_adb_keyevent("KEYCODE_DPAD_CENTER")
+                elif ch == '\n' or ch == ' ':
+                    send_adb_keyevent("KEYCODE_DPAD_CENTER")
+                elif ord(ch) == key_back:
+                    send_adb_keyevent("KEYCODE_BACK")
+                elif ch == 'm':
+                    send_adb_keyevent("KEYCODE_MENU")
+                elif ch == 'h':
+                    send_adb_keyevent("KEYCODE_HOME")
+                elif ch == 'i':
+                    send_adb_keyevent("KEYCODE_MEDIA_REWIND")
+                elif ch == 'o':
+                    send_adb_keyevent("KEYCODE_MEDIA_PLAY_PAUSE")
+                elif ch == 'p':
+                    send_adb_keyevent("KEYCODE_MEDIA_FAST_FORWARD")
+                elif ch == '8':
+                    send_adb_keyevent("KEYCODE_F8")
+                elif ch == '9':
+                    send_adb_keyevent("KEYCODE_F9")
+                else:
+                    print '<<<Unhandled "%02x">>>' % ord(ch)
+        except (KeyboardInterrupt, EOFError):
+            pass
+
+if __name__ == '__main__':
+    adbproc = subprocess.Popen(["adb", "-s", adbid, "shell"], stdin=subprocess.PIPE)
+    #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #adbproc.stdout.close()
+    #adbproc.stderr.close()
+    try:
+        main()
+    finally:
+        adbproc.terminate()
