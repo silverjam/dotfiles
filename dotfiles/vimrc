@@ -130,13 +130,13 @@ Plugin 'tpope/vim-dispatch'
 Plugin 'vim-scripts/Mark--Karkat'
 "Plugin 'naseer/logcat'
 Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'airblade/vim-gitgutter'
+"Plugin 'airblade/vim-gitgutter'
 Plugin 'Blackrush/vim-gocode'
 "Plugin 'Shougo/neosnippet-snippets'
 "Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-"Plugin 'ardagnir/united-front'
+Plugin 'ardagnir/united-front'
 Plugin 'scrooloose/syntastic'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'vim-scripts/Align'
@@ -178,6 +178,8 @@ nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
 "nnoremap <silent> <F8> :TlistToggle<CR>
 nnoremap <silent> <Leader>x :bp\|bd #<CR>
 nnoremap <silent> <Leader>jr :redraw!<CR>
+nnoremap <silent> <Leader>jng :JmNavGet<CR>
+nnoremap <silent> <Leader>jne :JmNavEval<CR>
 
 noremap <C-\>t :TagbarToggle<CR>
 nnoremap <C-\>t :TagbarToggle<CR>
@@ -363,5 +365,34 @@ function! FunResetNerdIgnore()
 endfunction
 
 command! JmResetNerdTreeIgnore call FunResetNerdIgnore()
+
+function! FunShellHere()
+    :!$SHELL -c "cd %:h && exec $SHELL"
+endfunction
+
+command! JmShellHere call FunShellHere()
+
+function! FunNavGet()
+    let l:cmd = ':e +' . line('.') . ' ' . expand('%:p')
+    let l:line = line('.')
+    let l:ctx  = (line('.') - 3) . "\t" . getline(l:line - 3) . "\n"
+    let l:ctx .= (line('.') - 2) . "\t" . getline(l:line - 2) . "\n"
+    let l:ctx .= (line('.') - 1) . "\t" . getline(l:line - 1) . "\n"
+    let l:ctx .= (line('.') - 0) . "\t" . getline(l:line)     . "\n"
+    let l:ctx .= (line('.') + 1) . "\t" . getline(l:line + 1) . "\n"
+    let l:ctx .= (line('.') + 2) . "\t" . getline(l:line + 2) . "\n"
+    let l:ctx .= (line('.') + 3) . "\t" . getline(l:line + 3)
+    let @n = l:cmd . "\n\n" . l:ctx . "\n"
+endfunction
+
+command! JmNavGet call FunNavGet()
+
+function! FunNavEval ()
+    let l:line = getline('.')
+    :wincmd p
+    exec l:line
+endfunction
+
+command! JmNavEval call FunNavEval()
 
 " vim: fdm=marker:
