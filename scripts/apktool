@@ -1,4 +1,4 @@
 #!/bin/bash
 
-D=$(dirname $(readlink -f ${BASH_SOURCE}))
+D=$(dirname $(greadlink -f ${BASH_SOURCE}))
 java -jar $D/apktool1.5.2/apktool.jar ${*}

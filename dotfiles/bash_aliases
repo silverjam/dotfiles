@@ -349,3 +349,11 @@ alias up='cd ..'
 alias jnice='schedtool -B -n 1 -e ionice -n 1'
 
 export TERM=xterm-256color
+
+ssh_devbox() {
+    set -x
+    tmp=`mktemp -t 'bashrc'`
+    xterm -e "bash -c \"echo \$DISPLAY\" >$tmp"
+    DISPLAY="`cat $tmp`" ssh -Y -X devbox
+    set +x
+}
