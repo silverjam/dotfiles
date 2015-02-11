@@ -357,3 +357,6 @@ ssh_devbox() {
     DISPLAY="`cat $tmp`" ssh -Y -X devbox
     set +x
 }
+
+alias start_docserv='~/dev/doxygen/start_docserv'
+alias stop_docserv='kill `cat ~/dev/doxygen/docserv.pid`'
