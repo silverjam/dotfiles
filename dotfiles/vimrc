@@ -140,6 +140,8 @@ Plugin 'honza/vim-snippets'
 Plugin 'scrooloose/syntastic'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'vim-scripts/Align'
+Plugin 'wting/rust.vim'
+Plugin 'derekwyatt/vim-scala'
 " }}}
 
 " {{{ Vundle finalization
@@ -394,5 +396,7 @@ function! FunNavEval ()
 endfunction
 
 command! JmNavEval call FunNavEval()
+
+let papp_include_html=1
 
 " vim: fdm=marker:
