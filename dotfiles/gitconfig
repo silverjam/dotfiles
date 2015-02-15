@@ -65,3 +65,9 @@
 #    smtpsslcertpath = '/etc/ssl/certs'
 
 # vim: filetype=gitconfig
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[user]
+	name = Jason Mobarak
+	email = x@jason.mobarak.name
