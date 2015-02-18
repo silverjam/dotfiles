@@ -1,16 +1,58 @@
 #!/usr/bin/env python
 
+import contextlib
+import fcntl
+import os
+import subprocess
 import sys
 import termios
-import contextlib
+import time
 
-import subprocess
+def show_help_and_quit():
+    print """Usage: %s [-h|--help] <adb_id>
+
+Control an android device with the local keyboard.
+
+Directional control, use the arrow keys or <A, W, S, D> keys for direction
+control:
+
+         w         =>          UP
+   a     s     d   =>   LEFT  DOWN  RIGHT
+
+Additional controls:
+    <SPACE, ENTER>     - Send SELECT key (d-pad center)
+    <BACKSPACE, DEL>   - Send BACK key
+    <TAB>              - Send TAB key
+    <H>                - Send HOME key
+    <M>                - Send MENU key
+    <I>                - Send REWIND key
+    <O>                - Send PLAY/PAUSE key
+    <P>                - Send FAST_FORWARD key
+    <8>                - Send F8 key
+    <9>                - Send F9 key
+    <L>                - Line mode, sends a line of text
+""" % (os.path.split(sys.argv[0])[1],)
+
+    sys.exit(0)
+
+
+if len(sys.argv) <= 1:
+    show_help_and_quit()
+
+if '-h' in sys.argv or '--help' in sys.argv:
+    show_help_and_quit()
+
 
 adbid = sys.argv[1]
 
+
 def send_adb_keyevent(key):
-    #subprocess.call(["adb", "-s", adbid, "shell", "input", "keyevent", key])
     adbproc.stdin.write("input keyevent " + key + "\n")
+
+
+def send_adb_text(text):
+    adbproc.stdin.write("input text \"" + str.join("%s", text.split()) + "\"\n")
+
 
 @contextlib.contextmanager
 def raw_mode(file):
@@ -23,29 +65,99 @@ def raw_mode(file):
     finally:
         termios.tcsetattr(file.fileno(), termios.TCSADRAIN, old_attrs)
 
-key_back = 0x7f
+
+@contextlib.contextmanager
+def cooked_mode(file):
+    old_attrs = termios.tcgetattr(file.fileno())
+    new_attrs = old_attrs[:]
+    new_attrs[3] = new_attrs[3] | (termios.ECHO | termios.ICANON)
+    try:
+        termios.tcsetattr(file.fileno(), termios.TCSADRAIN, new_attrs)
+        yield
+    finally:
+        termios.tcsetattr(file.fileno(), termios.TCSADRAIN, old_attrs)
+
+
+key_backspace = '\x7f'
+key_left_seq = '\x1b[D'
+key_up_seq = '\x1b[A'
+key_right_seq = '\x1b[C'
+key_down_seq = '\x1b[B'
+key_shifttab_seq = '\x1b[Z'
+
+
+def make_stdin_nonblocking():
+    fd = sys.stdin.fileno()
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
+
+
+def make_stdin_blocking():
+    fd = sys.stdin.fileno()
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    fcntl.fcntl(fd, fcntl.F_SETFL, fl &~ os.O_NONBLOCK)
+
+
+def get_next():
+    ch = None
+    try:
+        make_stdin_nonblocking()
+        ch = sys.stdin.read(1)
+    except IOError as e:
+        if e.errno != 11: # resource temporarily unavailable (EAGAIN)
+            raise
+    finally:
+        make_stdin_blocking()
+    return ch
+
+
+def read_keypress():
+    ch = sys.stdin.read(1)
+    if ch == '\x1b': # escape
+        ch1 = get_next()
+        if not ch1:
+            return ch
+        ch2 = get_next()
+        if not ch2:
+            return ch + ch2
+        return ch + ch1 + ch2
+    else:
+        return ch
+
 
 def main():
     print 'exit with ^C or ^D'
     with raw_mode(sys.stdin):
         try:
             while True:
-                ch = sys.stdin.read(1)
+                ch = read_keypress()
                 if not ch or ch == chr(4):
                     break
-                if ch == 'w':
+                if ch == 'w' or ch == key_up_seq:
                     send_adb_keyevent("KEYCODE_DPAD_UP")
-                elif ch == 's':
+                elif ch == 's' or ch == key_down_seq:
                     send_adb_keyevent("KEYCODE_DPAD_DOWN")
-                elif ch == 'a':
+                elif ch == 'a' or ch == key_left_seq:
                     send_adb_keyevent("KEYCODE_DPAD_LEFT")
-                elif ch == 'd':
+                elif ch == 'd' or ch == key_right_seq:
                     send_adb_keyevent("KEYCODE_DPAD_RIGHT")
                 elif ch == '\n' or ch == ' ':
                     send_adb_keyevent("KEYCODE_DPAD_CENTER")
                 elif ch == '\n' or ch == ' ':
                     send_adb_keyevent("KEYCODE_DPAD_CENTER")
-                elif ord(ch) == key_back:
+                elif ch == 'l':
+                    with cooked_mode(sys.stdin):
+                        try:
+                            print '********** ENTERING LINE MODE, ENTER SENDS, CTRL-C EXITS ***********'
+                            line = sys.stdin.readline().strip('\n')
+                            send_adb_text(line)
+                        except KeyboardInterrupt:
+                            continue
+                elif ch == '\t':
+                    send_adb_keyevent("KEYCODE_TAB")
+                elif ch == key_shifttab_seq:
+                    print '********** DOES NOT WORK YET ***********'
+                elif ch == key_backspace:
                     send_adb_keyevent("KEYCODE_BACK")
                 elif ch == 'm':
                     send_adb_keyevent("KEYCODE_MENU")
@@ -62,15 +174,24 @@ def main():
                 elif ch == '9':
                     send_adb_keyevent("KEYCODE_F9")
                 else:
-                    print '<<<Unhandled "%02x">>>' % ord(ch)
+                    print '<<<Unhandled %r>>>' % ch
         except (KeyboardInterrupt, EOFError):
             pass
 
 if __name__ == '__main__':
+
+    try:
+        subprocess.check_call(["adb", "-s", adbid, "shell", "exit 0"])
+    except subprocess.CalledProcessError:
+        print 'ADB command failed, invalid adbid specified?'
+        sys.exit(1)
+
     adbproc = subprocess.Popen(["adb", "-s", adbid, "shell"], stdin=subprocess.PIPE)
-    #, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #adbproc.stdout.close()
-    #adbproc.stderr.close()
+        # To hide the output of adb:
+        ##, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ##adbproc.stdout.close()
+        ##adbproc.stderr.close()
+
     try:
         main()
     finally:
