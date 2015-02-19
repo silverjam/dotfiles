@@ -7,6 +7,21 @@ import itertools
 import multiprocessing as MP
 import tempfile
 
+def print_help():
+    print """Usage: %s [<test|--h|--help>] <logfile1> <logfile2> [<logfile>...]
+
+Merges 2 or more Android logs files, logged with the "threadtime" format, e.g. from
+a command like "adb logcat -v threadtime".
+
+Log files must be already sorted themselves and mostly continuous, that is:
+without large gaps in time (some logs from Android at startup will include a
+big skip in the log timestamps because the system hasn't configured the current
+time yet...).
+
+Android itself will merge log files if you request log entries from multiple
+buffers (e.g. system and radio) but for log buffers that are stored offline a
+tool like this is needed.
+"""
 
 def genr_lines(fp):
     for line in fp:
@@ -214,6 +229,8 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] == "test":
         tests()
+    elif len(sys.argv) <= 1 or '-h' in sys.argv or '--help' in sys.argv:
+        print_help()
     else:
         files = sys.argv[1:]
         main(files)
