@@ -360,3 +360,7 @@ ssh_devbox() {
 
 alias start_docserv='~/dev/doxygen/start_docserv'
 alias stop_docserv='kill `cat ~/dev/doxygen/docserv.pid`'
+
+ssh_source() {
+    echo $SSH_CONNECTION | cut -d' ' -f1
+}

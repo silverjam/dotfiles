@@ -20,17 +20,17 @@ control:
    a     s     d   =>   LEFT  DOWN  RIGHT
 
 Additional controls:
-    <SPACE, ENTER>     - Send SELECT key (d-pad center)
-    <BACKSPACE, DEL>   - Send BACK key
-    <TAB>              - Send TAB key
-    <H>                - Send HOME key
-    <M>                - Send MENU key
-    <I>                - Send REWIND key
-    <O>                - Send PLAY/PAUSE key
-    <P>                - Send FAST_FORWARD key
-    <8>                - Send F8 key
-    <9>                - Send F9 key
-    <L>                - Line mode, sends a line of text
+    <SPACE, ENTER>         - Send SELECT key (d-pad center)
+    <ESC, BACKSPACE, DEL>  - Send BACK key
+    <TAB>                  - Send TAB key
+    <H>                    - Send HOME key
+    <M>                    - Send MENU key
+    <I>                    - Send REWIND key
+    <O>                    - Send PLAY/PAUSE key
+    <P>                    - Send FAST_FORWARD key
+    <8>                    - Send F8 key
+    <9>                    - Send F9 key
+    <L>                    - Line mode, sends a line of text
 """ % (os.path.split(sys.argv[0])[1],)
 
     sys.exit(0)
@@ -84,6 +84,7 @@ key_up_seq = '\x1b[A'
 key_right_seq = '\x1b[C'
 key_down_seq = '\x1b[B'
 key_shifttab_seq = '\x1b[Z'
+key_escape = "\x1b"
 
 
 def make_stdin_nonblocking():
@@ -157,7 +158,7 @@ def main():
                     send_adb_keyevent("KEYCODE_TAB")
                 elif ch == key_shifttab_seq:
                     print '********** DOES NOT WORK YET ***********'
-                elif ch == key_backspace:
+                elif ch == key_backspace or ch == key_escape:
                     send_adb_keyevent("KEYCODE_BACK")
                 elif ch == 'm':
                     send_adb_keyevent("KEYCODE_MENU")
