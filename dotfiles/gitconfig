@@ -27,6 +27,11 @@
     push-origin-master = !git pom
     restack = rebase -v -i HEAD~15
     lg15 = !git lg -n 15
+    lg14 = !git lg -n 14
+    lg16 = !git lg -n 16
+    lg5 = !git lg -n 5
+    lg4 = !git lg -n 4
+    lg6 = !git lg -n 6
     cp = cherry-pick
     change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ $`echo $VAR` = \\\"$OLD\\\" ]]; then export $VAR=\\\"$NEW\\\"; fi\" $@; }; f"
     resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
@@ -68,6 +73,9 @@
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
-[user]
-	name = Jason Mobarak
-	email = x@jason.mobarak.name
+
+#[user]
+#	name = Jason Mobarak
+#	email = x@jason.mobarak.name
+
+# vim:ft=gitconfig:

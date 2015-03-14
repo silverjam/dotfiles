@@ -4,8 +4,6 @@ alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
 alias vimr='vim --remote'
 alias gvimr='gvim --remote'
-alias vim="'vim' --servername $HOSTNAME"
-alias vi="'vim' --servername $HOSTNAME"
 
 #set -o vi
 
@@ -218,10 +216,6 @@ fi
 #    exit $?
 #fi
 
-if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
-    shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
-fi
-
 alias branch-name='echo jam-`date +%Y%m%d`'
 alias donesound='mplayer /home/jam/Downloads/Transfer complete.mp3'
 
@@ -286,6 +280,10 @@ else
     alias ls='ls --color -F'
 
     export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
+fi
+
+if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
+    shopt -s direxpand &> /dev/null || (echo "Failed to set direxpand option")
 fi
 
 alias sl=ls
@@ -354,7 +352,7 @@ ssh_devbox() {
     set -x
     tmp=`mktemp -t 'bashrc'`
     xterm -e "bash -c \"echo \$DISPLAY\" >$tmp"
-    DISPLAY="`cat $tmp`" ssh -Y -X devbox
+    DISPLAY="`cat $tmp`" ssh -Y -X ${*} devbox
     set +x
 }
 
