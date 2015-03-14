@@ -10,11 +10,25 @@ _notify="/usr/local/bin/terminal-notifier"
 
 D=$( (cd `dirname $0` >/dev/null; pwd -P) )
 
+sleep_file="$D/check_ocs.sleeprec"
+
+if [[ -f $sleep_file ]]; then
+
+    sleep_expires=$(cat $sleep_file)
+    current_time=$(gdate +%s)
+
+    if [[ $current_time -ge $sleep_expires ]]; then
+        rm $sleep_file
+    else
+        exit 0
+    fi
+fi
+
 msg="Hey, you're not connected to chat!"
 group_id="groupid:chat.connection.checker"
 title="Chat Connection Checker"
 
-if ! $_netstat -p tcp | $_grep -q ocs; then
+if ! $_netstat -p tcp | $_grep -q 'ly.*sip'; then
     $_notify \
         -message "$msg" \
         -activate $bundle_id \

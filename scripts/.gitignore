@@ -8,3 +8,4 @@ lextab.py*
 parsetab.py*
 parser.out
 clang-ctags
+check_ocs.sleeprec

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+D=$( (cd `dirname $0` >/dev/null; pwd -P) )
+
+sleep_file="$D/check_ocs.sleeprec"
+
+gdate -d "5am tomorrow" "+%s" >$sleep_file
