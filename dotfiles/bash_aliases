@@ -362,3 +362,21 @@ alias stop_docserv='kill `cat ~/dev/doxygen/docserv.pid`'
 ssh_source() {
     echo $SSH_CONNECTION | cut -d' ' -f1
 }
+
+all_devices() {
+    adb devices | grep -v "List of dev" | grep -v '^$' | awk '{print $1}'
+}
+
+adb_all() {
+    for dev in `all_devices`; do
+        adb -s $dev shell getprop ro.product.model
+        adb -s $dev ${*}
+    done
+}
+
+adb_all_p() {
+    for dev in `all_devices`; do
+        adb -s $dev ${*} &
+    done
+    wait
+}
