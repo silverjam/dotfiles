@@ -69,9 +69,8 @@ function apath_adt()
     export ANDROID_HOME=$MY_ANDROID_SDK
     export ANDROID_SDK=$MY_ANDROID_SDK
 
-    ECLIPSE_ANT=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
-
-    export PATH=$PATH:$ECLIPSE_ANT
+    local eclipse_ant=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
+    export PATH=$PATH:$eclipse_ant
 }
 
 function sfastboot()
@@ -137,8 +136,8 @@ export COLOR_GRAY='\e[0;30m'
 export COLOR_LIGHT_GRAY='\e[0;37m'
 
 cd() {
-   MAX=20
-   LEN=${#DIRSTACK[@]}
+   local MAX=20
+   local LEN=${#DIRSTACK[@]}
 
    if [ $# -eq 0 ] || [ "$1" = "-" ]; then
       builtin cd "$@"
@@ -350,9 +349,10 @@ export TERM=xterm-256color
 
 ssh_devbox() {
     set -x
-    tmp=`mktemp -t 'bashrc'`
+    local tmp=`mktemp -t 'bashrcXXXX'`
     xterm -e "bash -c \"echo \$DISPLAY\" >$tmp"
-    DISPLAY="`cat $tmp`" ssh -Y -X ${*} devbox
+    export DISPLAY="`cat $tmp`" ssh -Y -X ${*} devbox
+    rm -vf $tmp
     set +x
 }
 
@@ -379,4 +379,21 @@ adb_all_p() {
         adb -s $dev ${*} &
     done
     wait
+}
+
+tmux_update_env() {
+
+    local tmp=`mktemp -t 'bashrcXXXX'`
+
+    tmux show-environment \
+        | sed -e 's/^-\(.*\)/unset \1/' \
+              -e 's/\(.*=\)\(.*\)/export \1"\2"/' \
+    >$tmp
+
+    echo ">>> Updating env with new vars from tmux:"
+    cat $tmp
+    echo "... done."
+
+    eval `cat $tmp`
+    rm -vf $tmp
 }
