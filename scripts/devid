@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import pprint
+import subprocess
+import json
+
+if len(sys.argv) < 2:
+    sys.stderr.write("""usage: devid <command / device id>
+
+    Commands:
+        list        - list all devices in registry
+        who         - list who's connected
+        <device id> - echo the adb id for a deivce
+    """)
+
+    sys.exit(1)
+
+
+device_registry = os.path.expanduser("~/.adb_device_registry.json")
+
+adb_to_dev_name = json.load(file(device_registry))
+
+dev_name_to_adb = dict(
+        (V, K) for (K, V) in adb_to_dev_name.iteritems() )
+
+arg = sys.argv[1]
+
+if arg in adb_to_dev_name:
+    print( adb_to_dev_name[arg] )
+
+if arg in dev_name_to_adb:
+    print( dev_name_to_adb[arg] )
+
+if arg == "list":
+    pprint.pprint( dev_name_to_adb )
+
+if arg == "who":
+    output = subprocess.check_output(["adb", "devices"])
+    for line in output.splitlines():
+        if line.endswith("device"):
+            devid = line.split()[0]
+            if devid in adb_to_dev_name:
+                print adb_to_dev_name[devid],
+            print "(%s)" % (devid,)

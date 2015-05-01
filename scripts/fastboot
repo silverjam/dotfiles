@@ -1,0 +1,25 @@
+#!/bin/bash
+
+_realpath() {
+    ( cd $* 2>&1 >/dev/null; pwd -P )
+}
+
+D=$( _realpath `dirname $0` )
+
+PATH=$( (
+    IFS=:
+    new_path=
+    for p in $PATH; do
+        rp=$( _realpath $p )
+        if [[ $rp != $D ]]; then
+            new_path="${new_path}:${p}"
+        fi
+    done
+    echo "$new_path" | sed s@^.@@
+ ) )
+
+if [[ -n $FASTBOOT_VENDOR_ID ]]; then
+    fastboot -i $FASTBOOT_VENDOR_ID $*
+else
+    fastboot $*
+fi
