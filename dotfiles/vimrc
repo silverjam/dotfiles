@@ -145,6 +145,7 @@ Plugin 'wting/rust.vim'
 Plugin 'derekwyatt/vim-scala'
 Plugin '29decibel/codeschool-vim-theme'
 Plugin 'twerth/ir_black'
+Plugin 'tpope/vim-unimpaired'
 " }}}
 
 " {{{ Vundle finalization

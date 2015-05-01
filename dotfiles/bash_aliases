@@ -360,7 +360,11 @@ alias start_docserv='~/dev/doxygen/start_docserv'
 alias stop_docserv='kill `cat ~/dev/doxygen/docserv.pid`'
 
 ssh_source() {
-    echo $SSH_CONNECTION | cut -d' ' -f1
+    if [[ -z $SSH_CONNECTION ]]; then
+        echo $SSH_CLIENT | cut -d' ' -f1
+    else
+        echo $SSH_CONNECTION | cut -d' ' -f1
+    fi
 }
 
 all_devices() {
