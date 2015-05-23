@@ -105,7 +105,7 @@ def get_next():
         make_stdin_nonblocking()
         ch = sys.stdin.read(1)
     except IOError as e:
-        if e.errno != 11: # resource temporarily unavailable (EAGAIN)
+        if e.errno != 11 and e.errno != 35: # resource temporarily unavailable (EAGAIN)
             raise
     finally:
         make_stdin_blocking()
@@ -170,6 +170,8 @@ def main():
                     send_adb_keyevent("KEYCODE_MEDIA_PLAY_PAUSE")
                 elif ch == 'p':
                     send_adb_keyevent("KEYCODE_MEDIA_FAST_FORWARD")
+                elif ch == '7':
+                    send_adb_keyevent("KEYCODE_F7")
                 elif ch == '8':
                     send_adb_keyevent("KEYCODE_F8")
                 elif ch == '9':
