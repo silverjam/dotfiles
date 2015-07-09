@@ -66,7 +66,7 @@ let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 let g:nailgun_port = 44666
 let g:javacomplete_ng = '/usr/bin/ng-nailgun'
 let g:netrw_liststyle=3
-
+"
 "let g:tmux_navigator_no_mappings = 1
 
 "let g:EasyMotion_leader_key = '<Leader>'
@@ -114,6 +114,7 @@ Plugin 'vim-scripts/gtags.vim'
 Plugin 'vim-scripts/groovy.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'morhetz/gruvbox'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-fugitive'
 Plugin 'bling/vim-airline'
@@ -142,6 +143,10 @@ Plugin 'junegunn/vim-easy-align'
 Plugin 'vim-scripts/Align'
 Plugin 'wting/rust.vim'
 Plugin 'derekwyatt/vim-scala'
+Plugin '29decibel/codeschool-vim-theme'
+Plugin 'twerth/ir_black'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'vim-scripts/oceandeep'
 " }}}
 
 " {{{ Vundle finalization
@@ -158,15 +163,26 @@ set completeopt=longest,menuone
 
 " {{{ Configure Solarized color scheme
 set mouse=a
-"set t_Co=256
+set t_Co=256
+"let g:solarized_termcolors=256    "default value is 16
 set background=dark
 
 "let g:solarized_termcolors=256
-let g:solarized_termtrans=1
-let g:solarized_contrast="high"
-let g:solarized_visibility="normal"
+"let g:solarized_termtrans=1
+"let g:solarized_contrast="high"
+"let g:solarized_visibility="normal"
 
-colorscheme solarized
+"colorscheme solarized
+colorscheme gruvbox
+"colorscheme ir_black
+
+
+" Disable Background Color Erase (BCE) so that color schemes
+" work properly when Vim is used inside tmux and GNU screen.
+if &term =~ '256color'
+    set t_ut=
+endif
+
 " }}}
 
 let mapleader = ","
@@ -210,7 +226,8 @@ if &term == 'xterm' || &term == 'screen'
 "    set t_Co=256
 endif
 
-let g:airline_theme = 'solarized'
+"let g:airline_theme = 'solarized'
+"let g:airline_theme = 'slate'
 let g:airline_left_sep='›'
 let g:airline_right_sep='‹'
 set laststatus=2

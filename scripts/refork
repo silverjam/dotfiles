@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+import io
+import os
+import sys
+import time
+
+RECOMPILE = "/tmp/refork.continue"
+
+def refork(fp):
+
+    fp.write(unicode(os.getpid()))
+    fp.close()
+
+    while True:
+        if os.path.exists(RECOMPILE):
+            os.remove(RECOMPILE)
+            break
+        time.sleep(0.5)
+
+with io.open('/tmp/refork.pid', 'w') as fp:
+    refork(fp)
+
+# vim: ft=python:
