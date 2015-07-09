@@ -6,6 +6,8 @@ import pprint
 import subprocess
 import json
 
+from distutils.spawn import find_executable
+
 if len(sys.argv) < 2:
     sys.stderr.write("""usage: devid <command / device id>
 
@@ -44,3 +46,24 @@ if arg == "who":
             if devid in adb_to_dev_name:
                 print adb_to_dev_name[devid],
             print "(%s)" % (devid,)
+
+def find_editor():
+    try:
+        editor = os.environ["EDITOR"]
+        if os.path.exists(editor):
+            return editor
+    except KeyError:
+        pass
+    editor = find_executable("editor")
+    if editor:
+        return editor
+    editor = find_executable("vi")
+    if editor:
+        return editor
+    editor = find_executable("nano")
+    if editor:
+        return editor
+    raise Exception("could not find an editor, set $EDITOR")
+
+if arg == "edit":
+    subprocess.call([find_editor(), device_registry])
