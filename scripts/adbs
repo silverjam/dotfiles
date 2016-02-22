@@ -1,0 +1,36 @@
+#!/bin/bash
+
+adb_command_pattern="\
+-d|-e|-s|-p|-H|-P|devices|connect|disconnect|\
+push|pull|sync|shell|emu|logcat|forward|reverse|jdwp|\
+install|install-multiple|uninstall|bugreport|backup|restore|\
+disable-verity|enable-verity|keygen|help|version|wait-for-device|\
+start-server|kill-server|get-state|get-serialno|get-devpath|\
+remount|reboot|sideload|root|unroot|usb|tcpip"
+
+if echo $1 | egrep -q -- "$adb_command_pattern"; then
+    exec adb $@
+fi
+
+dev=`devid $1`
+
+if [[ -z $dev ]]; then
+
+    echo ">>>>> Invalid DEVID <<<<<"
+    echo
+
+    echo "Valid (connected) DEVIDs:"
+    echo
+    devid who-tabbed
+
+    echo
+    echo "usage: adbs <DEVID> <[adb commands / options]>"
+    echo "   where DEVID can be a DEVID or an adb command / options"
+
+    exit 1
+fi
+
+echo "Seletced device $1 (DSN: $dev)"
+
+args=( $@ )
+exec adb -s "$dev" ${args[@]:1}

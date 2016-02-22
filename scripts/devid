@@ -38,13 +38,14 @@ if arg in dev_name_to_adb:
 if arg == "list":
     pprint.pprint( dev_name_to_adb )
 
-if arg == "who":
+if arg == "who" or arg == "who-tabbed":
+    tabbed = arg == "who-tabbed" and "\t" or ""
     output = subprocess.check_output(["adb", "devices"])
     for line in output.splitlines():
         if line.endswith("device"):
             devid = line.split()[0]
             if devid in adb_to_dev_name:
-                print adb_to_dev_name[devid],
+                print tabbed + adb_to_dev_name[devid],
             print "(%s)" % (devid,)
 
 def find_editor():
