@@ -269,7 +269,7 @@ if [[ $(uname) == "Darwin" ]]; then
     readlink='greadlink'
     realpath='grealpath'
 
-    export JAVA_HOME=$(/usr/libexec/java_home -v 1.)
+    export JAVA_HOME=$(/usr/libexec/java_home -v ${MAC_JAVA_VERSION:-1.6})
 else
     _ls='ls'
     not_linux=
