@@ -351,7 +351,8 @@ ssh_devbox() {
     set -x
     local tmp=`mktemp -t 'bashrcXXXX'`
     xterm -e "bash -c \"echo \$DISPLAY\" >$tmp"
-    export DISPLAY="`cat $tmp`" ssh -Y -X ${*} devbox
+    export DISPLAY="`cat $tmp`"
+    ssh -Y -X ${*} devbox
     rm -vf $tmp
     set +x
 }

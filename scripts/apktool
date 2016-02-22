@@ -1,4 +1,4 @@
 #!/bin/bash
 
-D=$(dirname $(readlink -f ${BASH_SOURCE}))
+D=$( (cd `dirname $0` >/dev/null; pwd -P) )
 java -jar $D/apktool.d/apktool.jar ${*}

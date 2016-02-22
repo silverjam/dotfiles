@@ -1,6 +1,7 @@
 #!/bin/bash
 
-bundle_id=com.adiumX.adiumX
+bundle_id=com.microsoft.Lync
+#bundle_id=com.adiumX.adiumX
 #bundle_id=com.microsoft.Communicator
 
 _dirname="/usr/bin/dirname"
