@@ -29,6 +29,8 @@ export MY_ADT_PLUGINS=$MY_ANDROID_ADT/eclipse/plugins
 # Link to current NDK
 export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
 
+export EDITOR=vi
+
 function g()
 {
     # Run in subshell (to preserve parent's $PWD):
@@ -297,8 +299,8 @@ fi
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+xterm*|rxvt*|screen*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\w\a\]$PS1"
     ;;
 *)
     ;;
@@ -326,7 +328,10 @@ alias ger6=$ger6
 gere='gerrit ge'
 alias gere=$gere
 
-export LANG="en_US.UTF-8"
+#export LC_ALL=en_US.UTF-8
+#export LANG=en_US.UTF-8
+#export LANGUAGE=en_US.UTF-8
+export LC_CTYPE=en_US.UTF-8
 
 alias j=jobs
 
@@ -345,7 +350,7 @@ alias up='cd ..'
 
 alias jnice='schedtool -B -n 1 -e ionice -n 1'
 
-export TERM=xterm-256color
+#export TERM=xterm-256color
 
 ssh_devbox() {
     set -x
@@ -386,7 +391,7 @@ adb_all_p() {
     wait
 }
 
-tmux_update_env() {
+tmux-update-env() {
 
     local tmp=`mktemp -t 'bashrcXXXX'`
 
@@ -402,3 +407,46 @@ tmux_update_env() {
     eval `cat $tmp`
     rm -vf $tmp
 }
+
+j-scratch-dir() {
+    mkdir -p $HOME/scratch
+    local scratch_dir=$HOME/scratch/$((RANDOM))
+    if [[ -d $scratch_dir ]]; then
+        scratch_dir=$HOME/scratch/$((RANDOM))
+    fi
+    if [[ -d $scratch_dir ]]; then
+        echo "!!! second attempt to create a temp dir failed"
+        return 1
+    fi
+    mkdir $scratch_dir
+    cd $scratch_dir
+}
+
+j-set-tmux-title() {
+    printf "\033k$1\033\\"
+}
+
+eclipse () {
+    open -n $HOME/dev/eclipse-mars/Eclipse.app
+}
+
+j-vid-to-gif () {
+
+    local FUNC_USAGE="Usage: ${FUNCNAME[0]} <input.mov> <output.gif>" 
+
+    : ${1?$FUNC_USAGE}
+    : ${2?$FUNC_USAGE}
+
+    ffmpeg -i "$1" -vf scale=800:-1 -r 10 -f image2pipe -vcodec ppm - |\
+    convert -delay 5 -layers Optimize -loop 0 - "$2"
+}
+
+#ss-to-wiki() {
+#    $HOME/dev/c-ss-to-wiki/app/Main.hs $@
+#}
+
+#export LESSOPEN="| src-hilite-lesspipe.sh %s"
+#export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
+#export LESS=" -R "
+#alias less='less -m -N -g -i -J --underline-special --SILENT'
+alias more='less'

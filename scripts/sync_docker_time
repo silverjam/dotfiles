@@ -1,0 +1,2 @@
+#!/bin/bash
+docker-machine ssh default3 "sudo sh -c \"date -u -s '$(gdate --rfc-3339=ns)'\""

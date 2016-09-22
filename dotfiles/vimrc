@@ -1,5 +1,4 @@
 " {{{ Basic vim config
-
 set nocp
 set hidden
 set nu
@@ -26,7 +25,7 @@ endfunction
 
 
 " {{{ Vundle Init
-syntax on
+"syntax on
 filetype off " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -37,12 +36,18 @@ let g:miniBufExplVSplit = 30
 let g:miniBufExplorerAutoStart = 0
 
 " {{{ Whitspace stuff
-"flag problematic whitespace (trailing and spaces before tabs)
-"Note you get the same by doing let c_space_errors=1 but
-"this rule really applys to everything.
+
+""" Flag problematic whitespace (trailing and spaces before tabs)
+"""Note you get the same by doing let c_space_errors=1 but
+"""this rule really applys to everything.
+
 "highlight RedundantSpaces term=standout ctermbg=red guibg=red
 "match RedundantSpaces /\s\+$\| \+\ze\t/ "\ze sets end of match so only spaces highlighted
-set list listchars=tab:»·,trail:·
+
+"set list
+"set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+"set list listchars=tab:»·,trail:·
+
 " }}}
 
 " {{{ Back-up / swapfile config
@@ -102,11 +107,24 @@ highlight GitGutterDeleteDefault ctermbg=0
 " }}}
 
 " {{{ Vim plugins
+
+"Plugin 'Valloric/YouCompleteMe'
+"Plugin 'cilquirm/javacomplete'
+"Plugin 'naseer/logcat'
+"Plugin 'Shougo/neosnippet-snippets'
+"Plugin 'nathanaelkane/vim-indent-guides'
+"Plugin 'ardagnir/united-front'
+"Plugin 'brookhong/cscope.vim'
+"Plugin '29decibel/codeschool-vim-theme'
+"Plugin 'twerth/ir_black'
+"Plugin 'vim-scripts/oceandeep'
+"Plugin 'morhetz/gruvbox'
+
+"Plugin 'airblade/vim-gitgutter'
 Plugin 'gmarik/Vundle.vim'
 Plugin 'tomtom/vimtlib'
 Plugin 'tomtom/tinykeymap_vim'
 Plugin 'vim-scripts/taglist.vim'
-Plugin 'brookhong/cscope.vim'
 Plugin 'Rykka/riv.vim'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'tfnico/vim-gradle'
@@ -114,39 +132,29 @@ Plugin 'vim-scripts/gtags.vim'
 Plugin 'vim-scripts/groovy.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'altercation/vim-colors-solarized'
-Plugin 'morhetz/gruvbox'
 Plugin 'tpope/vim-sensible'
 Plugin 'tpope/vim-fugitive'
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdtree'
 Plugin 'rking/ag.vim'
 Plugin 'majutsushi/tagbar'
-"Plugin 'Valloric/YouCompleteMe'
 Plugin 'solarnz/thrift.vim'
 Plugin 'Lokaltog/vim-easymotion'
-"Plugin 'cilquirm/javacomplete'
 Plugin 'silverjam/javacomplete'
 Plugin 'eagletmt/neco-ghc'
 Plugin 'tpope/vim-dispatch'
 Plugin 'vim-scripts/Mark--Karkat'
-"Plugin 'naseer/logcat'
 Plugin 'christoomey/vim-tmux-navigator'
-"Plugin 'airblade/vim-gitgutter'
 Plugin 'Blackrush/vim-gocode'
-"Plugin 'Shougo/neosnippet-snippets'
-"Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
-"Plugin 'ardagnir/united-front'
 Plugin 'scrooloose/syntastic'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'vim-scripts/Align'
 Plugin 'wting/rust.vim'
 Plugin 'derekwyatt/vim-scala'
-Plugin '29decibel/codeschool-vim-theme'
-Plugin 'twerth/ir_black'
 Plugin 'tpope/vim-unimpaired'
-Plugin 'vim-scripts/oceandeep'
 " }}}
 
 " {{{ Vundle finalization
@@ -162,26 +170,29 @@ set completeopt=longest,menuone
 " }}}
 
 " {{{ Configure Solarized color scheme
-set mouse=a
-set t_Co=256
+
+"set t_Co=256
 "let g:solarized_termcolors=256    "default value is 16
-set background=dark
 
-"let g:solarized_termcolors=256
-"let g:solarized_termtrans=1
-"let g:solarized_contrast="high"
-"let g:solarized_visibility="normal"
+set mouse=a
+let g:solarized_termtrans=1
+"let g:solarized_contrast="normal"
+"let g:solarized_contrast="low"
+"let g:solarized_visibility="low"
+"let g:solarized_visibility="high"
 
-"colorscheme solarized
-colorscheme gruvbox
+colorscheme solarized
+"colorscheme gruvbox
 "colorscheme ir_black
-
+"
+set background=dark
 
 " Disable Background Color Erase (BCE) so that color schemes
 " work properly when Vim is used inside tmux and GNU screen.
-if &term =~ '256color'
-    set t_ut=
-endif
+
+"if &term =~ '256color'
+"    set t_ut=
+"endif
 
 " }}}
 
@@ -201,11 +212,11 @@ nnoremap <silent> <Leader>jne :JmNavEval<CR>
 
 noremap <C-\>t :TagbarToggle<CR>
 nnoremap <C-\>t :TagbarToggle<CR>
+
 noremap <C-\>n :NERDTreeToggle<CR>
 nnoremap <C-\>n :NERDTreeToggle<CR>
 
-set tags+=~/dev/openjdk6/tags
-
+"set tags+=~/dev/openjdk6/tags
 "nmap <Leader>gr :Gtags -r<SPACE>
 "nmap <Leader>gl :Gtags -f %<CR>
 "nmap <C-n> :cn<CR>
@@ -222,28 +233,30 @@ cmap w!! w !sudo tee % >/dev/null
 "nnoremap <silent> <Leader>+ :exe "resize " . (winheight(0) * 3/2)<CR>
 "nnoremap <silent> <Leader>- :exe "resize " . (winheight(0) * 2/3)<CR>
 
-if &term == 'xterm' || &term == 'screen'
+" {{{ xterm hack for solarized (DISABLED)
+"if &term == 'xterm' || &term == 'screen'
 "    set t_Co=256
-endif
+"endif
+" }}}
 
-"let g:airline_theme = 'solarized'
-"let g:airline_theme = 'slate'
-let g:airline_left_sep='›'
-let g:airline_right_sep='‹'
+" {{{ airline unicode
+"let g:airline_left_sep='›'
+"let g:airline_right_sep='‹'
+" }}}
+let g:airline_theme = 'solarized'
+let g:airline_left_sep='>'
+let g:airline_right_sep='<'
 set laststatus=2
 
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
 let g:indent_guides_enable_on_vim_startup = 1
 
-set list
-set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
-
 set cursorline
 set showmatch
 set hlsearch
 
-" {{{ BROKEN COLOR CONFIG!?
+" {{{ BROKEN COLOR CONFIG!? (DISABLED)
 "set t_Co=256
 "let g:solarized_termtrans=0    "default value is 0
 "let g:solarized_termcolors=256    "default value is 16
@@ -256,8 +269,8 @@ nnoremap <silent> <Leader>x :bp\|bd #<CR>
 
 "let g:cscope_cmd = 'pycscope'
 "let g:pymode_lint_write = 1
-let g:syntastic_check_on_wq = 0
 "let g:syntastic_java_javac_config_file_enabled = 1
+let g:syntastic_check_on_wq = 0
 let g:riv_global_leader = "<C-J>"
 let g:syntastic_java_javac_classpath = ""
 
@@ -294,13 +307,13 @@ else
     set t_kl=[D
 endif
 
-" {{{ CScope setup (Disabled)
+" {{{ CScope setup (DISABLED)
 "if has("cscope")
-if 0
-    set csprg=/usr/bin/cscope
-    set csto=0
-    set cst
-
+"if 0
+"    set csprg=/usr/bin/cscope
+"    set csto=0
+"    set cst
+"
 "    let parent=1
 "    let dir = "./"
 "    while parent <= 10
@@ -326,39 +339,38 @@ if 0
 "    unlet parent
 "    unlet dir
 "    unlet cscope_db
-
-    function! LoadCscope()
-      let db = findfile("cscope.out", ".;")
-      if (!empty(db))
-        let path = strpart(db, 0, match(db, "/cscope.out$"))
-        set nocscopeverbose " suppress 'duplicate connection' error
-        exe "cs add " . db . " " . path
-        set cscopeverbose
-      endif
-    endfunction
-
-    au BufEnter /* call LoadCscope()
-
-	noremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
-	noremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
-	nnoremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
-	noremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-	nnoremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
-	noremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
-	nnoremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
-
-endif
+"
+"    function! LoadCscope()
+"      let db = findfile("cscope.out", ".;")
+"      if (!empty(db))
+"        let path = strpart(db, 0, match(db, "/cscope.out$"))
+"        set nocscopeverbose " suppress 'duplicate connection' error
+"        exe "cs add " . db . " " . path
+"        set cscopeverbose
+"      endif
+"    endfunction
+"
+"    au BufEnter /* call LoadCscope()
+"
+"noremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>ct :cstag <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>cs :cs find s <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>cg :cs find g <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>cc :cs find c <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>ct :cs find t <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>ce :cs find e <C-R>=expand("<cword>")<CR><CR>
+"noremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+"nnoremap <C-\>cf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+"noremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"nnoremap <C-\>ci :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+"noremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+"nnoremap <C-\>cd :cs find d <C-R>=expand("<cword>")<CR><CR>
+"endif
 " }}}
 
 " {{{ Go code config
