@@ -1,0 +1,167 @@
+" Vim Config
+
+syntax on
+
+" {{{ Basic vim config
+set nocp
+set hidden
+set number
+
+if version >= 703
+    set colorcolumn=80
+endif
+
+set expandtab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+" }}}
+
+" {{{ Vundle Init
+filetype off " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" }}}
+
+Plugin 'gmarik/Vundle.vim'
+Plugin 'tpope/vim-sensible'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'rking/ag.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tpope/vim-dispatch'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'kien/ctrlp.vim'
+Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'https://github.com/PProvost/vim-ps1'
+Plugin 'https://github.com/evanmiller/nginx-vim-syntax'
+Plugin 'https://github.com/mustache/vim-mustache-handlebars'
+Plugin 'Quramy/vim-js-pretty-template'
+Plugin 'janko-m/vim-test'
+Plugin 'vim-scripts/bats.vim'
+
+" {{{ Vundle finalization
+call vundle#end()
+filetype plugin indent on
+filetype on
+" }}}
+
+" {{{ Back-up / swapfile config
+set backup
+set swapfile
+set backupdir=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
+set directory=~/.vim-tmp,~/tmp,/var/tmp,/tmp,$HOME/Local\ Settings/Temp,.
+" }}}
+
+" {{{ CtrlP config
+let g:ctrlp_cmd = 'CtrlPBuffer'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
+let g:ctrlp_max_files = 0
+" }}}
+
+let g:airline_theme = 'solarized'
+let g:airline_left_sep='›'
+let g:airline_right_sep='‹'
+set laststatus=2
+
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+let g:indent_guides_enable_on_vim_startup = 1
+
+set cursorline
+set showmatch
+set hlsearch
+
+noremap <C-\>n :NERDTreeToggle<CR>
+nnoremap <C-\>n :NERDTreeToggle<CR>
+
+let mapleader = ","
+
+nnoremap <silent> <c-a>h :TmuxNavigateLeft<cr>
+nnoremap <silent> <c-a>j :TmuxNavigateDown<cr>
+nnoremap <silent> <c-a>k :TmuxNavigateUp<cr>
+nnoremap <silent> <c-a>l :TmuxNavigateRight<cr>
+nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
+
+"nnoremap <silent> <F8> :TlistToggle<CR>
+nnoremap <silent> <Leader>x :bp\|bd #<CR>
+
+set mouse+=a
+
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
+    set ttymouse=xterm2
+endif
+
+let g:solarized_termtrans=1
+
+colorscheme solarized
+"set background=light
+set background=dark
+
+" {{{ TMux hacks
+
+if empty($TMUX)
+    " Cursor shape
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+else
+    map <Esc>[B <Down>
+    map <Esc>[D <Left>
+    map <Esc>[A <Up>
+    map <Esc>[C <Right>
+    set t_ku=[A
+    set t_kd=[B
+    set t_kr=[C
+    set t_kl=[D
+    " Cursor shape
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+endif
+
+" }}}
+
+function! FunShellHere()
+    :!$SHELL -c "cd %:h && exec $SHELL"
+endfunction
+
+command! JmShellHere call FunShellHere()
+
+" {{{ Vim/TMux title integration
+
+if !empty($TMUX)
+
+    " Teach vim the tmux escape sequences for changing pane title
+    set t_ts=]2;
+    set t_fs=\\;
+
+    " Turn on setting the title.
+    set title
+    set titleold=
+
+    " The following causes vim to refresh the title each time we change buffers.
+    " Otherwise it will only set the title once at startup.
+    augroup RefreshTitle
+      autocmd!
+      " The concatenation of the colon is a hack to prevent vim from
+      " interpreting the string as a modeline.
+      autocmd BufEnter * let &titlestring = "vim" . ":" . expand("%:t")
+    augroup END
+endif
+
+" }}}
+
+set undodir=$HOME/.vim/undo " where to save undo histories
+set undolevels=1000         " How many undos
+set undoreload=10000        " number of lines to save for undo
+silent call system('mkdir -p ' . &undodir)
+set undofile                " Save undo's after file closes
+
+" make test commands execute using dispatch.vim
+let test#strategy = "dispatch"
+
+" vim: fdm=marker
