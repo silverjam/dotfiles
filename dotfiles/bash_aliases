@@ -218,7 +218,6 @@ fi
 #fi
 
 alias branch-name='echo jam-`date +%Y%m%d`'
-alias donesound='mplayer /home/jam/Downloads/Transfer complete.mp3'
 
 export MY_ECLIPSE=$MY_ANDROID_ADT/eclipse/eclipse
 alias launch_adt='screen -dmS eclipse $MY_ECLIPSE'
@@ -307,26 +306,16 @@ xterm*|rxvt*|screen*)
 esac
 
 this_dir=$(dirname $($readlink -f ${BASH_SOURCE}))
+
 source $this_dir/../git-completion.bash
 source $this_dir/../git-prompt.sh
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-alias gerrit-git='/opt/git17/bin/git'
-
 start_ssh_ctrl() {
     local server=$1; shift 1
     screen -dmS sshm_$server ssh -v -M -N -S /tmp/ssh_ctrl_$server $server
 }
-
-ger4='gerrit g4'
-alias ger4=$ger4
-
-ger6='gerrit g6'
-alias ger6=$ger6
-
-gere='gerrit ge'
-alias gere=$gere
 
 #export LC_ALL=en_US.UTF-8
 #export LANG=en_US.UTF-8
@@ -450,3 +439,7 @@ j-vid-to-gif () {
 #export LESS=" -R "
 #alias less='less -m -N -g -i -J --underline-special --SILENT'
 alias more='less'
+
+export PATH=/Users/212570525/.captain/bin:$PATH
+
+eval "$(hub alias -s)"

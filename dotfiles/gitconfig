@@ -12,6 +12,7 @@
 
     ci = commit --verbose
     cia = commit -a --verbose
+    ciap = !git commit -a --verbose && git push
 
     mff = merge --ff-only
     mffpom = !git mff  && git pom
@@ -60,6 +61,8 @@
     editcornflakes = !vim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<$\\|^=======$\\|^>>>>>>>$'
     findcornflakes = grep '^<<<<<<<$'
 
+    sui = submodule update --init
+    sur = submodule update --remote
 
 [filter "media"]
 	clean = git-media-clean %f

@@ -34,12 +34,13 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'kien/ctrlp.vim'
 Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
-Plugin 'https://github.com/PProvost/vim-ps1'
-Plugin 'https://github.com/evanmiller/nginx-vim-syntax'
-Plugin 'https://github.com/mustache/vim-mustache-handlebars'
+Plugin 'PProvost/vim-ps1'
+Plugin 'evanmiller/nginx-vim-syntax'
+Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'Quramy/vim-js-pretty-template'
 Plugin 'janko-m/vim-test'
 Plugin 'vim-scripts/bats.vim'
+Plugin 'tpope/vim-fugitive'
 
 " {{{ Vundle finalization
 call vundle#end()
@@ -74,10 +75,21 @@ set cursorline
 set showmatch
 set hlsearch
 
-noremap <C-\>n :NERDTreeToggle<CR>
-nnoremap <C-\>n :NERDTreeToggle<CR>
+let mapleader = "\<Space>"
 
-let mapleader = ","
+noremap <Leader>n :NERDTreeToggle<CR>
+nnoremap <Leader>n :NERDTreeToggle<CR>
+
+nnoremap <Leader>o :CtrlP<CR>
+nnoremap <Leader>b :CtrlPBuffer<CR>
+nnoremap <Leader>w :w<CR>
+
+vmap <Leader>y "+y
+vmap <Leader>d "+d
+nmap <Leader>p "+p
+nmap <Leader>P "+P
+vmap <Leader>p "+p
+vmap <Leader>P "+P
 
 nnoremap <silent> <c-a>h :TmuxNavigateLeft<cr>
 nnoremap <silent> <c-a>j :TmuxNavigateDown<cr>
