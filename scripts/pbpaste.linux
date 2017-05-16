@@ -1,2 +1,8 @@
 #!/bin/bash
-xsel --clipboard --output ${*}
+
+if [[ $(uname) == Darwin ]]; then
+    /usr/bin/pbpaste ${*}
+else
+    xsel --clipboard --input ${*}
+    xsel --clipboard --output ${*}
+fi
