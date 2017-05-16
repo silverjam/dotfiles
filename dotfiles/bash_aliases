@@ -2,6 +2,7 @@
 
 alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
+
 alias vimr='vim --remote'
 alias gvimr='gvim --remote'
 
@@ -265,13 +266,16 @@ export HISTFILE=~/.bash_eternal_history
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 if [[ $(uname) == "Darwin" ]]; then
+
     not_linux=1
     _ls='gls'
     readlink='greadlink'
     realpath='grealpath'
 
     export JAVA_HOME=$(/usr/libexec/java_home -v ${MAC_JAVA_VERSION:-1.6})
+    alias vi="vim"
 else
+
     _ls='ls'
     not_linux=
     readlink='readlink'
@@ -280,6 +284,9 @@ else
     alias ls='ls --color -F'
 
     export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
+
+    alias vim="'vim' --servername $HOSTNAME"
+    alias vi="'vim' --servername $HOSTNAME"
 fi
 
 if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
@@ -443,3 +450,4 @@ alias more='less'
 export PATH=/Users/212570525/.captain/bin:$PATH
 
 eval "$(hub alias -s)"
+alias atom=$HOME/.atom/atom
