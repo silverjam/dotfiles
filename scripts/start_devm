@@ -1,0 +1,15 @@
+#!/bin/bash
+
+VBoxManage startvm "DispOpt Dev" --type headless
+
+devm_ip=$(VBoxManage guestproperty enumerate "DispOpt Dev" | grep '/Net/.*/IP' | grep 192.168.99 | sed 's@.*value: \(.*\), time.*@\1@')
+
+cat >$HOME/.ssh/config.d/devm <<EOF
+# Date: $(date)
+Host devm
+    User dev
+    Port 22
+    HostName $devm_ip
+    Compression yes
+    ForwardX11 yes
+EOF
