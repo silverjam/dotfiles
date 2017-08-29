@@ -1,0 +1,38 @@
+" Vim Config
+
+syntax on
+
+" {{{ Basic vim config
+set nocp
+set hidden
+set number
+
+if version >= 703
+    set colorcolumn=80
+endif
+
+set expandtab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+" }}}
+
+" {{{ Vundle Init
+filetype off " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" }}}
+
+Plugin 'tmux-plugins/vim-tmux'
+Plugin 'tpope/vim-sensible'
+Plugin 'altercation/vim-colors-solarized'
+
+" {{{ Vundle finalization
+call vundle#end()
+filetype plugin indent on
+filetype on
+" }}}
+
+let g:solarized_termtrans=1
+colorscheme solarized
+set background=dark

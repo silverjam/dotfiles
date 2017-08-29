@@ -265,6 +265,8 @@ export HISTFILE=~/.bash_eternal_history
 
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
+alias vi="vim"
+
 if [[ $(uname) == "Darwin" ]]; then
 
     not_linux=1
@@ -272,8 +274,7 @@ if [[ $(uname) == "Darwin" ]]; then
     readlink='greadlink'
     realpath='grealpath'
 
-    export JAVA_HOME=$(/usr/libexec/java_home -v ${MAC_JAVA_VERSION:-1.6})
-    alias vi="vim"
+    #export JAVA_HOME=$(/usr/libexec/java_home -v ${MAC_JAVA_VERSION:-1.6})
 else
 
     _ls='ls'
@@ -283,10 +284,10 @@ else
 
     alias ls='ls --color -F'
 
-    export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
+    #export JAVA_HOME=$(dirname $(dirname $($realpath $(which javac))))
 
-    alias vim="'vim' --servername $HOSTNAME"
-    alias vi="'vim' --servername $HOSTNAME"
+    #alias vim="'vim' --servername $HOSTNAME"
+    #alias vi="'vim' --servername $HOSTNAME"
 fi
 
 if [[ -z $SCHROOT_CHROOT_NAME ]] && [[ -z $not_linux ]]; then
