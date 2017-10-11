@@ -12,6 +12,7 @@ umask 022
 
 export PATH=$HOME/dev/depot_tools:$PATH
 export PATH=$HOME/dev/internal:$PATH
+export PATH=$HOME/dev/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/chroot:$PATH
 export PATH=$HOME/dev/Sysmods/Scripts:$PATH
@@ -274,6 +275,8 @@ if [[ $(uname) == "Darwin" ]]; then
     readlink='greadlink'
     realpath='grealpath'
 
+    alias ls='ls -G -F'
+
     #export JAVA_HOME=$(/usr/libexec/java_home -v ${MAC_JAVA_VERSION:-1.6})
 else
 
@@ -452,3 +455,16 @@ export PATH=/Users/212570525/.captain/bin:$PATH
 
 eval "$(hub alias -s)"
 alias atom=$HOME/.atom/atom
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
+
+export PATH="$HOME/.cargo/bin:$PATH"
+
+export PATH=$PATH:$HOME/gcc-arm-none-eabi/bin
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

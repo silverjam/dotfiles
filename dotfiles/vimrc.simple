@@ -65,12 +65,12 @@ let g:ctrlp_max_files = 0
 let g:airline_theme = 'solarized'
 let g:airline_left_sep='›'
 let g:airline_right_sep='‹'
-set laststatus=2
 
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
 let g:indent_guides_enable_on_vim_startup = 1
 
+set laststatus=2 " always display the status line
 set cursorline
 set showmatch
 set hlsearch

@@ -24,8 +24,18 @@ call vundle#begin()
 " }}}
 
 Plugin 'tmux-plugins/vim-tmux'
+Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'tpope/vim-sensible'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'jamessan/vim-gnupg'
+Plugin 'kien/ctrlp.vim'
+Plugin 'rking/ag.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'justinmk/vim-sneak'
+Plugin 'tpope/vim-dispatch'
+Plugin 'racer-rust/vim-racer'
+
+let g:sneak#label = 1
 
 " {{{ Vundle finalization
 call vundle#end()
@@ -33,6 +43,64 @@ filetype plugin indent on
 filetype on
 " }}}
 
+" {{{ CtrlP config
+let g:ctrlp_cmd = 'CtrlPBuffer'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
+let g:ctrlp_max_files = 0
+" }}}
+
+" {{{ TMux navigation support
+
+" let g:tmux_navigator_no_mappings = 1
+
+" nnoremap <silent> <c-a>h :TmuxNavigateLeft<cr>
+" nnoremap <silent> <c-a>j :TmuxNavigateDown<cr>
+" nnoremap <silent> <c-a>k :TmuxNavigateUp<cr>
+" nnoremap <silent> <c-a>l :TmuxNavigateRight<cr>
+" nnoremap <silent> <c-a>\ :TmuxNavigatePrevious<cr>
+
+" }}}
+
+
+" {{{ Color config
 let g:solarized_termtrans=1
 colorscheme solarized
 set background=dark
+" }}}
+
+let mapleader = "\<Space>"
+
+set clipboard=unnamed,unnamedplus " Use system clipboard by default
+
+set laststatus=2 " always display the status line
+set cursorline
+set showmatch
+set hlsearch
+
+nnoremap <silent> <Leader>x :bp\|bd #<CR>
+
+noremap <Leader>n :NERDTreeToggle<CR>
+nnoremap <Leader>n :NERDTreeToggle<CR>
+
+noremap <Leader>y :only<CR>
+nnoremap <Leader>y :only<CR>
+
+noremap <Leader>o :CtrlPBuffer<CR>
+nnoremap <Leader>o :CtrlPBuffer<CR>
+
+noremap <Leader>m :Make<CR>
+nnoremap <Leader>m :Make<CR>
+
+" Mouse support
+set mouse+=a
+
+if &term =~ '^screen'
+    " tmux knows the extended mouse mode
+    set ttymouse=xterm2
+endif
+
+set et ts=2 sts=2 sw=2
+
+let g:racer_experimental_completer = 1
+let g:racer_cmd = "~/.cargo/bin/racer"
