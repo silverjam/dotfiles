@@ -1,47 +1,60 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-#Install TLP first!
-#sudo add-apt-repository ppa:linrunner/tlp
-#sudo apt-get update
-#sudo apt-get install tlp tlp-rdw
+# Requirements
+# tlp, tlp-rdw, python3-gi, notify-send
 
-#Configure TLP (optional): http://askubuntu.com/questions/285434/is-there-a-power-saving-application-similar-to-jupiter
+# Installing TLP:
+# sudo add-apt-repository ppa:linrunner/tlp
+# sudo apt update
+# sudo apt install tlp tlp-rdw
 
-#Documentation of TLP: http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
+# Configure TLP (optional): 
+# http://askubuntu.com/questions/285434/is-there-a-power-saving-application-similar-to-jupiter
 
-import gobject
-import gtk
-import appindicator
+# Documentation of TLP: http://linrunner.de/en/tlp/docs/tlp-linux-advanced-power-management.html
+
+
+from gi.repository import GObject as gobject
+from gi import require_version
+
+require_version('Gtk', '3.0')
+require_version('AppIndicator3', '0.1')
+
+from gi.repository import Gtk as gtk
+from gi.repository import AppIndicator3 as appindicator
 import subprocess
-import pynotify
 import time
 
-# code necessary to use pynotify:
+
 
 def sendmessage(title, message, image):
-  pynotify.init("TLP Indicator")
-  notice = pynotify.Notification(title, message, image)
-  notice.show()
-  time.sleep(1)
-  notice.update(title, message, image)
-  notice.show()
-  return
-
-# define functions
+  """ Send a notification message
+  Args:
+      title (str) : The title
+      message (str) : The message
+      image (str) : The image
+  """
+  if "None" in message:
+      message = "No changes made."
+      image = "/usr/share/icons/Humanity/status/48/dialog-info.svg"
+  subprocess.call(['notify-send', '-i', image, title, message])
 
 def start_AC(response):
+  """ Apply power saving settings for AC power source. """
   command = "gksu tlp ac"
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=None, shell=True)
-  output = str(process.communicate())[2:25]
+  output = str(process.communicate())[3:25]
   sendmessage("TLP Indicator",output, "/usr/share/icons/Humanity/status/48/gpm-ac-adapter.svg")
 
 def start_BAT(response):
+  """ Apply power saving settings for battery power source. """
   command = "gksu tlp bat"
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=None, shell=True)
-  output = str(process.communicate())[2:30]
+  output = str(process.communicate())[3:30]
   sendmessage("TLP Indicator",output, "/usr/share/icons/Humanity/status/48/battery-low.svg")
 
 def check(response):
+  """ Show TLP stat output. """
   command = "tlp-stat -r"
   process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=None, shell=True)
   output = str(process.communicate())
@@ -51,19 +64,20 @@ def check(response):
     sendmessage("TLP Indicator","AC Mode is on!", "/usr/share/icons/Humanity/status/48/dialog-info.svg")
 
 def quit(response):
+  """ Quit TLP Indicator. """
   sendmessage("TLP Indicator","TLP Indicator quits. TLP itself is still running.", "/usr/share/icons/Humanity/status/48/gpm-ac-adapter.svg")
   time.sleep(1)
   raise SystemExit
 
 if __name__ == "__main__":
-  ind = appindicator.Indicator ("TLP-manager",
+  ind = appindicator.Indicator.new ("TLP-manager",
                               "battery-040-charging",
-                              appindicator.CATEGORY_HARDWARE)
-  ind.set_status (appindicator.STATUS_ACTIVE)
- 
+                              appindicator.IndicatorCategory.HARDWARE)
+  ind.set_status (appindicator.IndicatorStatus.ACTIVE)
+
   # create a menu
   menu = gtk.Menu()
- 
+
   # create items
   AC_item = gtk.MenuItem("AC-Mode")
   BAT_item = gtk.MenuItem("Battery Mode")
@@ -81,13 +95,13 @@ if __name__ == "__main__":
   BAT_item.connect_object("activate", start_BAT, "BAT MODE")
   check_item.connect_object("activate", check, "CHECK")
   quit_item.connect_object ("activate", quit, "QUIT")
- 
+
   # show items
   AC_item.show()
   BAT_item.show()
   check_item.show()
   quit_item.show()
- 
+
   ind.set_menu(menu)
- 
+
   gtk.main()
