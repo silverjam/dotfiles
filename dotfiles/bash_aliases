@@ -31,7 +31,7 @@ export MY_ADT_PLUGINS=$MY_ANDROID_ADT/eclipse/plugins
 # Link to current NDK
 export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
 
-export EDITOR=vi
+export EDITOR=vim
 
 function g()
 {
