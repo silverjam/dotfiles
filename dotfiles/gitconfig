@@ -6,7 +6,7 @@
 
 [alias]
     co = checkout
-    cob = checkout -b
+    cob = "!f(){ git checkout -b silverjam/$1; }; f"
 
     st = status
 

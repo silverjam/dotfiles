@@ -34,6 +34,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'justinmk/vim-sneak'
 Plugin 'tpope/vim-dispatch'
 Plugin 'racer-rust/vim-racer'
+Plugin 'vim-scripts/DoxyGen-Syntax'
+Plugin 'purescript-contrib/purescript-vim'
 
 let g:sneak#label = 1
 

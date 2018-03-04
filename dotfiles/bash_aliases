@@ -139,32 +139,6 @@ export COLOR_YELLOW='\e[1;33m'
 export COLOR_GRAY='\e[0;30m'
 export COLOR_LIGHT_GRAY='\e[0;37m'
 
-cd() {
-   local MAX=20
-   local LEN=${#DIRSTACK[@]}
-
-   if [ $# -eq 0 ] || [ "$1" = "-" ]; then
-      builtin cd "$@"
-      pushd -n $OLDPWD > /dev/null
-   else
-      pushd "$@" > /dev/null || return 1
-   fi
-
-   if [ $LEN -gt 1 ]; then
-      for i in `seq 1 $LEN`; do
-         eval "p=~$i"
-         if [ "$p" = "$PWD" ]; then
-            popd -n +$i > /dev/null
-            break
-         fi
-      done
-   fi
-
-   if [ $LEN -ge $MAX ]; then
-      popd -n -0 > /dev/null
-   fi
-}
-
 update_history() {
     history -n
 }
@@ -454,7 +428,7 @@ alias more='less'
 export PATH=/Users/212570525/.captain/bin:$PATH
 
 eval "$(hub alias -s)"
-alias atom=$HOME/.atom/atom
+#alias atom=$HOME/.atom/atom
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
@@ -468,3 +442,38 @@ export PATH=$PATH:$HOME/gcc-arm-none-eabi/bin
 export PATH="$PATH:$HOME/.rvm/bin"
 
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+[ -f ~/.local_stuff.bash ] && source ~/.local_stuff.bash
+
+cd() {
+   local MAX=20
+   local LEN=${#DIRSTACK[@]}
+
+   if [ $# -eq 0 ] || [ "$1" = "-" ]; then
+      builtin cd "$@"
+      pushd -n $OLDPWD > /dev/null
+   else
+      pushd "$@" > /dev/null || return 1
+   fi
+
+   if [ $LEN -gt 1 ]; then
+      for i in `seq 1 $LEN`; do
+         eval "p=~$i"
+         if [ "$p" = "$PWD" ]; then
+            popd -n +$i > /dev/null
+            break
+         fi
+      done
+   fi
+
+   if [ $LEN -ge $MAX ]; then
+      popd -n -0 > /dev/null
+   fi
+}
+
+f() {
+  find . -name $*
+}
+
+# added by travis gem
+[ -f /Users/jason/.travis/travis.sh ] && source /Users/jason/.travis/travis.sh
