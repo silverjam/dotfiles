@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export EDITOR=vim
+
 alias chmox='chmod +x'
 alias keys='. ~/keys.sh'
 
@@ -10,108 +12,102 @@ alias gvimr='gvim --remote'
 
 umask 022
 
-export PATH=$HOME/dev/depot_tools:$PATH
 export PATH=$HOME/dev/internal:$PATH
 export PATH=$HOME/dev/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/scripts:$PATH
 export PATH=$HOME/dev/Sysmods/chroot:$PATH
-export PATH=$HOME/dev/Sysmods/Scripts:$PATH
+#export PATH=$HOME/dev/depot_tools:$PATH
+#export PATH=$HOME/dev/Sysmods/Scripts:$PATH
+#export PATH=$HOME/dev/Sysmods/ag:$PATH
+#export PATH=$HOME/dev/Sysmods/jq.pkg/bin:$PATH
+#export PATH=$HOME/dev/Sysmods/gterm-solarized:$PATH
+
 #export PATH=$HOME/.cabal/bin:$PATH
-export PATH=$HOME/dev/Sysmods/ag:$PATH
-export PATH=$HOME/dev/Sysmods/jq.pkg/bin:$PATH
-export PATH=$HOME/dev/Sysmods/gterm-solarized:$PATH
 
-# Base dir for all Android development tools / libraries / kits
-export MY_ANDROID_BASE=$HOME/dev/Android
-# Link to current 'sdk' directory within ADT
-export MY_ANDROID_SDK=$MY_ANDROID_BASE/AndroidSdk
-# Link to current 'Android Development Toolkit'
-export MY_ANDROID_ADT=$MY_ANDROID_BASE/ADT
-export MY_ADT_PLUGINS=$MY_ANDROID_ADT/eclipse/plugins
-# Link to current NDK
-export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
+## Base dir for all Android development tools / libraries / kits
+#export MY_ANDROID_BASE=$HOME/dev/Android
+## Link to current 'sdk' directory within ADT
+#export MY_ANDROID_SDK=$MY_ANDROID_BASE/AndroidSdk
+## Link to current 'Android Development Toolkit'
+#export MY_ANDROID_ADT=$MY_ANDROID_BASE/ADT
+#export MY_ADT_PLUGINS=$MY_ANDROID_ADT/eclipse/plugins
+## Link to current NDK
+#export MY_ANDROID_NDK=$MY_ANDROID_BASE/AndroidNdk
 
-export EDITOR=vim
-
-function g()
-{
-    # Run in subshell (to preserve parent's $PWD):
-    (
-        while `true`; do
-            if [[ `pwd` == "/" ]]; then
-                echo "!!! Script gradlew not found in any parent path"
-                return
-            fi
-            if [[ -e `pwd`/gradlew ]]; then
-                `pwd`/gradlew ${*}
-                return
-            fi
-            cd ..
-        done
-    )
-}
-
-function fname()
-{
-    find . -iname "*$1*"
-}
-
-function get_ant_dir()
-{
-    cd $MY_ADT_PLUGINS;
-    $_ls -1 --color=never --directory --group-directories-first \
-        org.apache.ant* | head -1
-}
-
-function apath_adt()
-{
-    echo "Adding ADT and ANT's Ant to the path..."
-
-    export PATH=$PATH:$MY_ANDROID_SDK/platform-tools
-    export PATH=$PATH:$MY_ANDROID_SDK/tools
-
-    export ANDROID_HOME=$MY_ANDROID_SDK
-    export ANDROID_SDK=$MY_ANDROID_SDK
-
-    local eclipse_ant=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
-    export PATH=$PATH:$eclipse_ant
-}
-
-function sfastboot()
-{
-    sudo $MY_ANDROID_SDK/platform-tools/fastboot ${*}
-}
-
-function apath_ndk()
-{
-    echo "Add the Android NDK to the path..."
-
-    export ANDROID_NDK=$MY_ANDROID_NDK
-    export PATH=$ANDROID_NDK:$PATH
-}
-
-function setup_aosp_var()
-{
-    echo "Setting up AOSP_PATH variable..."
-
-    export AOSP_PATH=$MY_ANDROID_BASE/AOSP/WC
-}
-
-function apath_ndk_arm_toolchain()
-{
-    echo "Adding static Android ARM toolchain to the path..."
-
-    export PATH=$PATH:$MY_ANDROID_BASE/ArmToolchain/bin
-}
-
-function setup_android()
-{
-    apath_adt
-    apath_ndk
-    setup_aosp_var
-    apath_ndk_arm_toolchain
-}
-
+#function g()
+#{
+#    # Run in subshell (to preserve parent's $PWD):
+#    (
+#        while `true`; do
+#            if [[ `pwd` == "/" ]]; then
+#                echo "!!! Script gradlew not found in any parent path"
+#                return
+#            fi
+#            if [[ -e `pwd`/gradlew ]]; then
+#                `pwd`/gradlew ${*}
+#                return
+#            fi
+#            cd ..
+#        done
+#    )
+#}
+#
+#function get_ant_dir()
+#{
+#    cd $MY_ADT_PLUGINS;
+#    $_ls -1 --color=never --directory --group-directories-first \
+#        org.apache.ant* | head -1
+#}
+#
+#function apath_adt()
+#{
+#    echo "Adding ADT and ANT's Ant to the path..."
+#
+#    export PATH=$PATH:$MY_ANDROID_SDK/platform-tools
+#    export PATH=$PATH:$MY_ANDROID_SDK/tools
+#
+#    export ANDROID_HOME=$MY_ANDROID_SDK
+#    export ANDROID_SDK=$MY_ANDROID_SDK
+#
+#    local eclipse_ant=$MY_ADT_PLUGINS/$(get_ant_dir)/bin/
+#    export PATH=$PATH:$eclipse_ant
+#}
+#
+#function sfastboot()
+#{
+#    sudo $MY_ANDROID_SDK/platform-tools/fastboot ${*}
+#}
+#
+#function apath_ndk()
+#{
+#    echo "Add the Android NDK to the path..."
+#
+#    export ANDROID_NDK=$MY_ANDROID_NDK
+#    export PATH=$ANDROID_NDK:$PATH
+#}
+#
+#function setup_aosp_var()
+#{
+#    echo "Setting up AOSP_PATH variable..."
+#
+#    export AOSP_PATH=$MY_ANDROID_BASE/AOSP/WC
+#}
+#
+#function apath_ndk_arm_toolchain()
+#{
+#    echo "Adding static Android ARM toolchain to the path..."
+#
+#    export PATH=$PATH:$MY_ANDROID_BASE/ArmToolchain/bin
+#}
+#
+#function setup_android()
+#{
+#    apath_adt
+#    apath_ndk
+#    setup_aosp_var
+#    apath_ndk_arm_toolchain
+#}
+#
 #function setup_devdroid()
 #{
 #    export DEVDROID=$HOME/dev/devdroid
@@ -193,15 +189,15 @@ fi
 #    exit $?
 #fi
 
-alias branch-name='echo jam-`date +%Y%m%d`'
-
-export MY_ECLIPSE=$MY_ANDROID_ADT/eclipse/eclipse
-alias launch_adt='screen -dmS eclipse $MY_ECLIPSE'
-
-export MY_ANDROID_STUDIO=$MY_ANDROID_BASE/android-studio/bin/studio.sh
-alias launch_as='screen -dmS studio $MY_ANDROID_STUDIO'
-
-set MOZILLA_FIVE_HOME=/usr/lib/firefox
+#alias branch-name='echo jam-`date +%Y%m%d`'
+#
+#export MY_ECLIPSE=$MY_ANDROID_ADT/eclipse/eclipse
+#alias launch_adt='screen -dmS eclipse $MY_ECLIPSE'
+#
+#export MY_ANDROID_STUDIO=$MY_ANDROID_BASE/android-studio/bin/studio.sh
+#alias launch_as='screen -dmS studio $MY_ANDROID_STUDIO'
+#
+#set MOZILLA_FIVE_HOME=/usr/lib/firefox
 
 #cp_p()
 #{
@@ -274,17 +270,17 @@ fi
 alias sl=ls
 
 if [[ -n $MANUAL_HOSTNAME ]]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@'$MANUAL_HOSTNAME'\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
+	PS1='${debian_chroot:+<<$debian_chroot>> }\[\033[01;32m\]\u@'$MANUAL_HOSTNAME'\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 elif [[ -z $not_linux ]]; then
-	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
+	PS1='${debian_chroot:+<<$debian_chroot>> }\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 else
-	PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
+	PS1='${debian_chroot:+<<$debian_chroot>> }\u@\h:\w'"\$(__git_ps1)"' ${BUILD_PS1_TAG}\n\$ '
 fi
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*|screen*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\w\a\]$PS1"
+    PS1="\[\e]0;${debian_chroot:+<<$debian_chroot>> }\w\a\]$PS1"
     ;;
 *)
     ;;
@@ -347,23 +343,23 @@ ssh_source() {
     fi
 }
 
-all_devices() {
-    adb devices | grep -v "List of dev" | grep -v '^$' | awk '{print $1}'
-}
-
-adb_all() {
-    for dev in `all_devices`; do
-        adb -s $dev shell getprop ro.product.model
-        adb -s $dev ${*}
-    done
-}
-
-adb_all_p() {
-    for dev in `all_devices`; do
-        adb -s $dev ${*} &
-    done
-    wait
-}
+#all_devices() {
+#    adb devices | grep -v "List of dev" | grep -v '^$' | awk '{print $1}'
+#}
+#
+#adb_all() {
+#    for dev in `all_devices`; do
+#        adb -s $dev shell getprop ro.product.model
+#        adb -s $dev ${*}
+#    done
+#}
+#
+#adb_all_p() {
+#    for dev in `all_devices`; do
+#        adb -s $dev ${*} &
+#    done
+#    wait
+#}
 
 tmux-update-env() {
 
@@ -400,9 +396,9 @@ j-set-tmux-title() {
     printf "\033k$1\033\\"
 }
 
-eclipse () {
-    open -n $HOME/dev/eclipse-mars/Eclipse.app
-}
+#eclipse () {
+#    open -n $HOME/dev/eclipse-mars/Eclipse.app
+#}
 
 j-vid-to-gif () {
 
@@ -425,25 +421,38 @@ j-vid-to-gif () {
 #alias less='less -m -N -g -i -J --underline-special --SILENT'
 alias more='less'
 
-export PATH=/Users/212570525/.captain/bin:$PATH
-
-eval "$(hub alias -s)"
+#export PATH=/Users/212570525/.captain/bin:$PATH
 #alias atom=$HOME/.atom/atom
+#export PATH=$PATH:$HOME/gcc-arm-none-eabi/bin
+
+if which hub &>/dev/null; then
+  eval "$(hub alias -s)"
+fi
+
+if which fzf-share &>/dev/null; then
+  source "$(fzf-share)/completion.bash"
+fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
-export PATH="$HOME/.cargo/bin:$PATH"
-
-export PATH=$PATH:$HOME/gcc-arm-none-eabi/bin
+if [[ -d "$HOME/.cargo/bin" ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+if [[ -d "$HOME/.rvm/bin" ]]; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+fi
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
+  source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+fi
 
-[ -f ~/.local_stuff.bash ] && source ~/.local_stuff.bash
+if [[ -f ~/.local_stuff.bash ]]; then
+  source ~/.local_stuff.bash
+fi
 
 cd() {
    local MAX=20
@@ -473,6 +482,11 @@ cd() {
 
 f() {
   find . -name $*
+}
+
+start_emacs() {
+  emacs &> /dev/null &
+  disown
 }
 
 # added by travis gem
