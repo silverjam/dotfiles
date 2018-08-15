@@ -22,7 +22,7 @@ filetype off " required
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " }}}
-
+"
 Plugin 'tmux-plugins/vim-tmux'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'tpope/vim-sensible'
@@ -36,8 +36,36 @@ Plugin 'tpope/vim-dispatch'
 Plugin 'racer-rust/vim-racer'
 Plugin 'vim-scripts/DoxyGen-Syntax'
 Plugin 'purescript-contrib/purescript-vim'
+Plugin 'junegunn/vim-easy-align'
+
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'whiteinge/diffconflicts'
+
+"Plugin 'vim-syntastic/syntastic'
+"Plugin 'maralla/validator.vim'
 
 let g:sneak#label = 1
+
+"let g:syntastic_debug = 2
+
+let g:syntastic_clang_tidy_config_file = '/Users/jason/dev/piksi_buildroot/.clang_complete'
+let g:syntastic_cpp_config_file = '/Users/jason/dev/piksi_buildroot/.clang_complete'
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 1
+
+let g:syntastic_c_checkers = ['clang_tidy']
+let g:syntastic_cpp_checkers = ['clang_tidy']
+
+"let g:syntastic_c_clang_tidy_exec = '/Users/jason/dev/scripts/clang-tidy'
+"let g:syntastic_cpp_clang_tidy_exec = '/Users/jason/dev/scripts/clang-tidy'
 
 " {{{ Vundle finalization
 call vundle#end()
@@ -69,6 +97,7 @@ let g:ctrlp_max_files = 0
 let g:solarized_termtrans=1
 colorscheme solarized
 set background=dark
+"set background=light
 " }}}
 
 let mapleader = "\<Space>"
@@ -94,15 +123,31 @@ nnoremap <Leader>o :CtrlPBuffer<CR>
 noremap <Leader>m :Make<CR>
 nnoremap <Leader>m :Make<CR>
 
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
+
 " Mouse support
 set mouse+=a
+
+"set iskeyword-=_
 
 if &term =~ '^screen'
     " tmux knows the extended mouse mode
     set ttymouse=xterm2
 endif
 
-set et ts=2 sts=2 sw=2
-
 let g:racer_experimental_completer = 1
 let g:racer_cmd = "~/.cargo/bin/racer"
+
+set et
+set ts=2
+set sts=2
+set sw=2
+set ai
+set completeopt+=longest,menuone
+
+autocmd FileType c setlocal cindent
+autocmd FileType cpp setlocal cindent
