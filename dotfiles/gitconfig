@@ -12,21 +12,9 @@
 
     ci = commit --verbose
     cia = commit -a --verbose
-    ciap = !git commit -a --verbose && git push
-
-    mff = merge --ff-only
-    mffpom = !git mff  && git pom
-
-    pull-r = "!git pull --recurse-submodules=on-demand; git submodule update --remote"
-    pull-rr = "!git pull --rebase --recurse-submodules=on-demand; git submodule update --remote"
-    update-r = submodule update --recursive --remote
-    push-r = push --recurse-submodules=on-demand
 
     # Update all remotes
     rup = remote update --prune
-
-    po = push origin
-    pom = push origin master
 
     branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
     branchlog = !sh -c \"git log `git oldest-ancestor`..\"
@@ -41,20 +29,11 @@
     lg4 = !git lg -n 4
     lg6 = !git lg -n 6
 
-    cp = cherry-pick
-
     # Potentially very destructive, reset your working copy to a clean "just cloned" state
     wipe = "!git reset --hard;git clean -fdx"
 
-    push-origin-master = !git pom
-    commit-add = !git mff
-    checkout-branch = !git cob
-    checkout-master = !git com
-    push-origin-master = !git pom
     restack = !sh -c \"git rebase -v -i `git oldest-ancestor`\"
 
-    # Not sure how this works anymore
-    change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ $`echo $VAR` = \\\"$OLD\\\" ]]; then export $VAR=\\\"$NEW\\\"; fi\" $@; }; f"
 
     # Conflict resolution
     resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
@@ -62,10 +41,58 @@
     findcornflakes = grep '^<<<<<<<$'
 
     sui = submodule update --init
-    sur = submodule update --remote
+    suir = submodule update --init --recursive
+
+# Older things that aren't used anymore:
+#
+# ## Not sure how this works anymore
+#    change-commits = "!f() { VAR=$1; OLD=$2; NEW=$3; shift 3; git filter-branch --env-filter \"if [[ $`echo $VAR` = \\\"$OLD\\\" ]]; then export $VAR=\\\"$NEW\\\"; fi\" $@; }; f"
+#
+#    push-origin-master = !git pom
+#    commit-add = !git mff
+#    checkout-branch = !git cob
+#    checkout-master = !git com
+#    push-origin-master = !git pom
+#    cp = cherry-pick
+#
+#    po = push origin
+#    pom = push origin master
+#    ciap = !git commit -a --verbose && git push
+#
+#    mff = merge --ff-only
+#    mffpom = !git mff  && git pom
+#
+#    pull-r = "!git pull --recurse-submodules=on-demand; git submodule update --remote"
+#    pull-rr = "!git pull --rebase --recurse-submodules=on-demand; git submodule update --remote"
+#    update-r = submodule update --recursive --remote
+#    push-r = push --recurse-submodules=on-demand
+
 
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
 
-# vim: filetype=gitconfig
+[user]
+	name = Jason Mobarak
+	email = jason@swiftnav.com
+
+[alias]
+	cob2 = "!f(){ git checkout -b silverjam/$1; }; f"
+
+[merge]
+	tool = diffconflicts
+
+[mergetool "diffconflicts"]
+	cmd = vim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
+	trustExitCode = true
+
+[mergetool]
+	keepBackup = false
+
+[gc]
+	autoDetach = false
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -8,7 +8,7 @@ set hidden
 set number
 
 if version >= 703
-    set colorcolumn=80
+    set colorcolumn=120
 endif
 
 set expandtab
@@ -149,5 +149,5 @@ set sw=2
 set ai
 set completeopt+=longest,menuone
 
-autocmd FileType c setlocal cindent
-autocmd FileType cpp setlocal cindent
+autocmd FileType c setlocal cindent et
+autocmd FileType cpp setlocal cindent et
