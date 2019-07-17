@@ -23,17 +23,19 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " }}}
 "
+Plugin 'VundleVim/Vundle.vim'
 Plugin 'tmux-plugins/vim-tmux'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'tpope/vim-sensible'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'jamessan/vim-gnupg'
-Plugin 'kien/ctrlp.vim'
+"Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'rking/ag.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'justinmk/vim-sneak'
 Plugin 'tpope/vim-dispatch'
-Plugin 'racer-rust/vim-racer'
+"Plugin 'racer-rust/vim-racer'
 Plugin 'vim-scripts/DoxyGen-Syntax'
 Plugin 'purescript-contrib/purescript-vim'
 Plugin 'junegunn/vim-easy-align'
@@ -42,27 +44,30 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'whiteinge/diffconflicts'
 
-"Plugin 'vim-syntastic/syntastic'
-"Plugin 'maralla/validator.vim'
+Plugin 'justmao945/vim-clang'
+Plugin 'w0rp/ale'
+" Plugin 'lepture/vim-jinja'
+Plugin 'Glench/Vim-Jinja2-Syntax'
+Plugin 'arrufat/vala.vim'
+Plugin 'dag/vim-fish'
+Plugin 'cstrahan/vim-capnp'
+Plugin 'lambdatoast/elm.vim'
 
 let g:sneak#label = 1
 
 "let g:syntastic_debug = 2
 
-let g:syntastic_clang_tidy_config_file = '/Users/jason/dev/piksi_buildroot/.clang_complete'
-let g:syntastic_cpp_config_file = '/Users/jason/dev/piksi_buildroot/.clang_complete'
-
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-
-let g:syntastic_c_checkers = ['clang_tidy']
-let g:syntastic_cpp_checkers = ['clang_tidy']
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 1
+"
+"let g:syntastic_c_checkers = ['clang_tidy']
+"let g:syntastic_cpp_checkers = ['clang_tidy']
 
 "let g:syntastic_c_clang_tidy_exec = '/Users/jason/dev/scripts/clang-tidy'
 "let g:syntastic_cpp_clang_tidy_exec = '/Users/jason/dev/scripts/clang-tidy'
@@ -73,11 +78,19 @@ filetype plugin indent on
 filetype on
 " }}}
 
+let g:ale_python_auto_pipenv = 1
+
 " {{{ CtrlP config
 let g:ctrlp_cmd = 'CtrlPBuffer'
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 let g:ctrlp_max_files = 0
+
+let g:ctrlp_prompt_mappings = {
+	\ 'ToggleType(1)':      ['<c-b>', '<c-down>'],
+	\ 'ToggleType(-1)':       ['<c-f>', '<c-up>'],
+	\ }
+
 " }}}
 
 " {{{ TMux navigation support
@@ -139,15 +152,29 @@ if &term =~ '^screen'
     set ttymouse=xterm2
 endif
 
-let g:racer_experimental_completer = 1
-let g:racer_cmd = "~/.cargo/bin/racer"
+"let g:racer_experimental_completer = 1
+"let g:racer_cmd = "~/.cargo/bin/racer"
+
+nnoremap <silent> <Leader>jr :redraw!<CR>
 
 set et
 set ts=2
 set sts=2
 set sw=2
 set ai
+
 set completeopt+=longest,menuone
 
 autocmd FileType c setlocal cindent et
 autocmd FileType cpp setlocal cindent et
+
+set exrc
+set secure
+
+set wildmode=longest,list,full
+set completeopt=longest,menu,menuone,preview,noinsert,noselect
+
+let g:clang_auto = 0
+
+let g:ale_python_flake8_executable = 'python3'
+let g:ale_python_flake8_options = '-m flake8'

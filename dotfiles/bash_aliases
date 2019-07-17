@@ -441,15 +441,6 @@ if [[ -d "$HOME/.cargo/bin" ]]; then
   export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-if [[ -d "$HOME/.rvm/bin" ]]; then
-  export PATH="$PATH:$HOME/.rvm/bin"
-fi
-
-if [[ -s "$HOME/.rvm/scripts/rvm" ]]; then
-  source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-fi
-
 if [[ -f ~/.local_stuff.bash ]]; then
   source ~/.local_stuff.bash
 fi
@@ -457,14 +448,12 @@ fi
 cd() {
    local MAX=20
    local LEN=${#DIRSTACK[@]}
-
    if [ $# -eq 0 ] || [ "$1" = "-" ]; then
       builtin cd "$@"
       pushd -n $OLDPWD > /dev/null
    else
       pushd "$@" > /dev/null || return 1
    fi
-
    if [ $LEN -gt 1 ]; then
       for i in `seq 1 $LEN`; do
          eval "p=~$i"
@@ -474,7 +463,6 @@ cd() {
          fi
       done
    fi
-
    if [ $LEN -ge $MAX ]; then
       popd -n -0 > /dev/null
    fi
@@ -489,6 +477,9 @@ start_emacs() {
   disown
 }
 
+export GOOGLE_IDP_ID=C02x4yyeb
+export GOOGLE_SP_ID=115297745755
+
 alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
 
 # added by travis gem
@@ -497,5 +488,34 @@ alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; to
 export PATH=$HOME/.nix-profile/bin:$PATH
 
 ssh-man() {
-  ssh vitani.local man $* | less
+  if [[ -n "$VITANI" ]]; then
+    ssh $VITANI man $* | less
+  else
+    ssh vitani.local man $* | less
+  fi
 }
+
+if [ -e /Users/jason/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/jason/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+source $HOME/.rvm_setup.bash
+
+export PATH="/usr/local/sbin:$PATH"
+# export PATH="$HOME/miniconda3/bin:$PATH"  # commented out by conda initialize  # commented out by conda initialize
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/jason/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/jason/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/jason/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/jason/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+export PATH="$HOME/.cargo/bin:$PATH"
