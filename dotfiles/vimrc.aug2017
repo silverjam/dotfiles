@@ -52,6 +52,9 @@ Plugin 'arrufat/vala.vim'
 Plugin 'dag/vim-fish'
 Plugin 'cstrahan/vim-capnp'
 Plugin 'lambdatoast/elm.vim'
+Plugin 'vmchale/dhall-vim'
+Plugin 'martinda/Jenkinsfile-vim-syntax'
+Plugin 'sheerun/vim-polyglot'
 
 let g:sneak#label = 1
 
@@ -178,3 +181,9 @@ let g:clang_auto = 0
 
 let g:ale_python_flake8_executable = 'python3'
 let g:ale_python_flake8_options = '-m flake8'
+
+set undodir=$HOME/.vim/undo//
+set undofile
+
+set directory^=$HOME/.vim/swap//
+

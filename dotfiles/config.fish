@@ -10,8 +10,10 @@ alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; to
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
-bass source ~/.nix-profile/etc/profile.d/nix.sh
-bass source ~/.rvm_setup.bash
+! command -v bass || bass source ~/.nix-profile/etc/profile.d/nix.sh
+
+#bass source ~/.rvm_setup.bash
+rvm default
 
 set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
 
@@ -54,16 +56,24 @@ function docker_rm
     | xargs docker rm
 end
 
+function shake
+  ./Shakefile.hs
+end
+
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
-function aws_cfg_field -a field
+function _aws_cfg_field -a field
   grep $field ~/.aws/credentials|cut -d= -f2 | sed 's@^ *@@'
 end
 
 function aws_google_auth_env
-  export AWS_ACCESS_KEY_ID=(aws_cfg_field aws_access_key_id)
-  export AWS_SECRET_ACCESS_KEY=(aws_cfg_field aws_secret_access_key)
-  export AWS_SESSION_TOKEN=(aws_cfg_field aws_session_token)
+  export AWS_ACCESS_KEY_ID=(_aws_cfg_field aws_access_key_id)
+  export AWS_SECRET_ACCESS_KEY=(_aws_cfg_field aws_secret_access_key)
+  export AWS_SESSION_TOKEN=(_aws_cfg_field aws_session_token)
   export AWS_DEFAULT_REGION=us-west-2
   export AWS_REGION=us-west-2
 end
+
+export HELM_HOME=$HOME/helm
+
+alias k kubectl
