@@ -1,6 +1,11 @@
-set PATH $HOME/dev/scripts $PATH
-set PATH $HOME/.local/bin $PATH
-set PATH $HOME/.cargo/bin $PATH
+test -d $HOME/dev/scripts 
+and set PATH $HOME/dev/scripts $PATH
+
+test -d $HOME/.local/bin
+and set PATH $HOME/.local/bin $PATH
+
+test -d $HOME/.cargo/bin
+and set PATH $HOME/.cargo/bin $PATH
 
 alias p=prevd
 alias j=jobs
@@ -10,10 +15,12 @@ alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; to
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
-! command -v bass; or bass source ~/.nix-profile/etc/profile.d/nix.sh
+command -v bass
+and test -f ~/.nix-profile/etc/profile.d/nix.sh
+and bass source ~/.nix-profile/etc/profile.d/nix.sh
 
-#bass source ~/.rvm_setup.bash
-rvm default
+command -v rvm
+and rvm default
 
 set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
 
