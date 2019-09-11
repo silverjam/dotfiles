@@ -10,7 +10,7 @@ alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; to
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
-! command -v bass || bass source ~/.nix-profile/etc/profile.d/nix.sh
+! command -v bass; or bass source ~/.nix-profile/etc/profile.d/nix.sh
 
 #bass source ~/.rvm_setup.bash
 rvm default
