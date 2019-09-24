@@ -7,6 +7,8 @@ and set PATH $HOME/.local/bin $PATH
 test -d $HOME/.cargo/bin
 and set PATH $HOME/.cargo/bin $PATH
 
+set -gx PATH $PATH $HOME/.krew/bin
+
 alias p=prevd
 alias j=jobs
 
@@ -15,9 +17,10 @@ alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; to
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
-command -v bass
-and test -f ~/.nix-profile/etc/profile.d/nix.sh
-and bass source ~/.nix-profile/etc/profile.d/nix.sh
+if functions --query bass
+  test -f ~/.nix-profile/etc/profile.d/nix.sh
+  and bass source ~/.nix-profile/etc/profile.d/nix.sh
+end
 
 command -v rvm
 and rvm default
@@ -64,7 +67,7 @@ function docker_rm
 end
 
 function shake
-  ./Shakefile.hs
+  ./Shakefile.hs $argv
 end
 
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
