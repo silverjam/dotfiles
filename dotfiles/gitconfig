@@ -42,6 +42,7 @@
 
     sui = submodule update --init
     suir = submodule update --init --recursive
+    suirc = submodule update --init --recursive --checkout
 
 # Older things that aren't used anymore:
 #
