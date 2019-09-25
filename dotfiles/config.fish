@@ -86,5 +86,6 @@ function aws_google_auth_env
 end
 
 export HELM_HOME=$HOME/helm
+export EDITOR=vi
 
 alias k kubectl
