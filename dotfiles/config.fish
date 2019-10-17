@@ -10,7 +10,8 @@ and set PATH $HOME/.local/bin $PATH
 test -d $HOME/.cargo/bin
 and set PATH $HOME/.cargo/bin $PATH
 
-set -gx PATH $PATH $HOME/.krew/bin
+test -d $HOME/.krew/bin
+and set -gx PATH $PATH $HOME/.krew/bin
 
 alias p=prevd
 alias j=jobs
@@ -93,6 +94,7 @@ function aws_google_auth_env
 end
 
 export HELM_HOME=$HOME/helm
+export EDITOR=vi
 
 alias k kubectl
 
