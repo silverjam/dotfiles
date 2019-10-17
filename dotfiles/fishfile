@@ -5,3 +5,4 @@ evanlucas/fish-kubectl-completions
 oh-my-fish/plugin-aws
 silverjam/sdkman-for-fish
 jorgebucaran/fish-nvm
+abaez/fish-rustup

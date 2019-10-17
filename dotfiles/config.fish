@@ -1,6 +1,9 @@
 test -d $HOME/dev/scripts 
 and set PATH $HOME/dev/scripts $PATH
 
+test -d $HOME/dev/Sysmods/scripts 
+and set PATH $HOME/dev/Sysmods/scripts $PATH
+
 test -d $HOME/.local/bin
 and set PATH $HOME/.local/bin $PATH
 
@@ -22,10 +25,15 @@ if functions --query bass
   and bass source ~/.nix-profile/etc/profile.d/nix.sh
 end
 
-command -v rvm
-and rvm default
+if command -v iterm-profile >/dev/null ^/dev/null
+  set BACKGROUND (iterm-profile)
+else
+  set BACKGROUND dark
+end
 
-set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
+#set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
+#set -U FZF_DEFAULT_OPTS "--color light"
+set -U FZF_DEFAULT_OPTS "--color $BACKGROUND"
 
 function kp --description "Kill processes"
   set -l __kp__pid ''
@@ -87,3 +95,13 @@ end
 export HELM_HOME=$HOME/helm
 
 alias k kubectl
+
+alias f1='fg %1'
+alias f2='fg %2'
+alias f3='fg %3'
+alias f4='fg %4'
+alias f5='fg %5'
+alias f6='fg %6'
+alias f7='fg %7'
+alias f8='fg %8'
+alias f9='fg %9'

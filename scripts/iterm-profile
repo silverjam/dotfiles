@@ -1,0 +1,3 @@
+#!/bin/sh
+$HOME/Library/ApplicationSupport/iTerm2/iterm2env/versions/*/bin/python3 \
+  "$HOME/Library/Application Support/iTerm2/Scripts/iterm2-profile.py"

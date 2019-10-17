@@ -112,8 +112,13 @@ let g:ctrlp_prompt_mappings = {
 " {{{ Color config
 let g:solarized_termtrans=1
 colorscheme solarized
-set background=dark
-"set background=light
+
+if empty($BACKGROUND)
+    set background=dark
+else
+    let envvimbg=$BACKGROUND
+    let &background=envvimbg
+endif
 " }}}
 
 let mapleader = "\<Space>"
@@ -180,7 +185,7 @@ set completeopt=longest,menu,menuone,preview,noinsert,noselect
 let g:clang_auto = 0
 
 let g:ale_python_flake8_executable = 'python3'
-let g:ale_python_flake8_options = '-m flake8'
+let g:ale_python_flake8_options = '-m flake8 --max-line-length=120'
 
 set undodir=$HOME/.vim/undo//
 set undofile
