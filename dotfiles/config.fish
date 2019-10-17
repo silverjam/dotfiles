@@ -13,6 +13,9 @@ and set PATH $HOME/.cargo/bin $PATH
 test -d $HOME/.krew/bin
 and set -gx PATH $PATH $HOME/.krew/bin
 
+test -d /snap/bin
+and set PATH /snap/bin $PATH
+
 alias p=prevd
 alias j=jobs
 
