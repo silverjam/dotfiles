@@ -1,0 +1,35 @@
+! clear control
+! clear mod1
+! keycode 37 = Alt_L Meta_L
+! keycode 64 = Control_L
+! add control = Control_L Control_R
+! add mod1 = Alt_L Meta_L
+! remove mod4 = Super_L
+! add control = Super_L
+
+clear control
+clear mod1
+clear mod4
+
+! keycode 37  = Super_L     
+keycode 37  = Control_L
+! left  Ctrl becomes Ctrl
+
+keycode 64  = Control_L
+! left  Alt  becomes Control 
+
+keycode 133 = Alt_L Meta_L
+! left  Win  becomes Alt
+
+keycode 108 = Super_L
+! right Alt  becomes Super_L
+
+keycode 134 = Alt_R Meta_R
+! right Win  becomes Alt
+
+keycode 105 = Control_R
+! right Ctrl becomes Control_R
+
+add control = Control_L Control_R
+add mod1 = Alt_L Meta_L
+add mod4 = Super_L Super_R
