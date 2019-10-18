@@ -24,10 +24,12 @@ if functions --query bass
   and bass source ~/.nix-profile/etc/profile.d/nix.sh
 end
 
-if command -v iterm-profile >/dev/null ^/dev/null
-  set BACKGROUND (iterm-profile)
-else
-  set BACKGROUND dark
+if test -z "$BACKGROUND"
+  if command -v iterm-profile >/dev/null ^/dev/null
+    set BACKGROUND (iterm-profile)
+  else
+    set BACKGROUND dark
+  end
 end
 
 #set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
@@ -112,4 +114,6 @@ alias j=jobs
 alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
 
 alias vifish='vim ~/.config/fish/config.fish'
-alias refish='source ~/.config/fish/config.fish'
+alias refresh-fish='source ~/.config/fish/config.fish'
+
+alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
