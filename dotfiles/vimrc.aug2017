@@ -31,7 +31,8 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'jamessan/vim-gnupg'
 "Plugin 'kien/ctrlp.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'rking/ag.vim'
+"Plugin 'rking/ag.vim'
+Plugin 'jremmen/vim-ripgrep'
 Plugin 'scrooloose/nerdtree'
 Plugin 'justinmk/vim-sneak'
 Plugin 'tpope/vim-dispatch'
@@ -61,7 +62,9 @@ let g:sneak#label = 1
 "let g:syntastic_debug = 2
 
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
+if exists("SyntasticStatuslineFlag")
+  set statusline+=%{SyntasticStatuslineFlag()}
+endif
 set statusline+=%*
 
 "let g:syntastic_always_populate_loc_list = 1
@@ -111,7 +114,11 @@ let g:ctrlp_prompt_mappings = {
 
 " {{{ Color config
 let g:solarized_termtrans=1
-colorscheme solarized
+try
+  colorscheme solarized
+catch /^Vim\%((\a\+)\)\=:E185/
+  colorscheme default
+endtry
 
 if empty($BACKGROUND)
     set background=dark
