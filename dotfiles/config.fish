@@ -16,11 +16,6 @@ and set -gx PATH $PATH $HOME/.krew/bin
 test -d /snap/bin
 and set PATH /snap/bin $PATH
 
-alias p=prevd
-alias j=jobs
-
-alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
-
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
@@ -110,3 +105,11 @@ alias f6='fg %6'
 alias f7='fg %7'
 alias f8='fg %8'
 alias f9='fg %9'
+
+alias p=prevd
+alias j=jobs
+
+alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
+
+alias vifish='vim ~/.config/fish/config.fish'
+alias refish='source ~/.config/fish/config.fish'
