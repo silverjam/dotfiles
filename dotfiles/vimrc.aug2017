@@ -32,7 +32,8 @@ Plugin 'jamessan/vim-gnupg'
 "Plugin 'kien/ctrlp.vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 "Plugin 'rking/ag.vim'
-Plugin 'jremmen/vim-ripgrep'
+"Plugin 'jremmen/vim-ripgrep'
+Plugin 'dyng/ctrlsf.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'justinmk/vim-sneak'
 Plugin 'tpope/vim-dispatch'
@@ -89,7 +90,7 @@ let g:ale_python_auto_pipenv = 1
 " {{{ CtrlP config
 let g:ctrlp_cmd = 'CtrlPBuffer'
 let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
+"let g:ctrlp_user_command = ['.git/', 'cd %s && git ls-files --exclude-standard -co']
 let g:ctrlp_max_files = 0
 
 let g:ctrlp_prompt_mappings = {
@@ -199,3 +200,4 @@ set undofile
 
 set directory^=$HOME/.vim/swap//
 
+nmap <Leader>f <Plug>CtrlSFPrompt
