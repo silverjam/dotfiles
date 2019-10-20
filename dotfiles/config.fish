@@ -4,6 +4,9 @@ and set PATH $HOME/dev/scripts $PATH
 test -d $HOME/dev/Sysmods/scripts 
 and set PATH $HOME/dev/Sysmods/scripts $PATH
 
+test -d /ansible/$USER/git/sysmods/scripts
+and set PATH /ansible/$USER/git/sysmods/scripts $PATH
+
 test -d $HOME/.local/bin
 and set PATH $HOME/.local/bin $PATH
 
@@ -30,7 +33,11 @@ if functions --query bass
 end
 
 function has_cmd
-  command -v $argv >/dev/null ^/dev/null
+  if command -v $argv >/dev/null ^/dev/null
+    return 0
+  else
+    return 1
+  end
 end
 
 if test -z "$BACKGROUND"
@@ -90,14 +97,15 @@ end
 
 export GROOVY_HOME=/usr/local/opt/groovy/libexec
 
-function _aws_cfg_field -a field
-  grep $field ~/.aws/credentials|cut -d= -f2 | sed 's@^ *@@'
+function _aws_cfg_field -a field profile
+  ini_flatten ~/.aws/credentials | grep "$profile"'[.]'"$field" |cut -d= -f2 | sed 's@^ *@@'
 end
 
-function aws_google_auth_env
-  export AWS_ACCESS_KEY_ID=(_aws_cfg_field aws_access_key_id)
-  export AWS_SECRET_ACCESS_KEY=(_aws_cfg_field aws_secret_access_key)
-  export AWS_SESSION_TOKEN=(_aws_cfg_field aws_session_token)
+function aws_google_auth_env -a profile
+  test -n "$profile"; or set profile default
+  export AWS_ACCESS_KEY_ID=(_aws_cfg_field aws_access_key_id $profile)
+  export AWS_SECRET_ACCESS_KEY=(_aws_cfg_field aws_secret_access_key $profile)
+  export AWS_SESSION_TOKEN=(_aws_cfg_field aws_session_token $profile)
   export AWS_DEFAULT_REGION=us-west-2
   export AWS_REGION=us-west-2
 end

@@ -57,6 +57,7 @@ Plugin 'lambdatoast/elm.vim'
 Plugin 'vmchale/dhall-vim'
 Plugin 'martinda/Jenkinsfile-vim-syntax'
 Plugin 'sheerun/vim-polyglot'
+Plugin 'gsiano/vmux-clipboard'
 
 let g:sneak#label = 1
 
@@ -201,3 +202,6 @@ set undofile
 set directory^=$HOME/.vim/swap//
 
 nmap <Leader>f <Plug>CtrlSFPrompt
+
+map <silent> <leader>y :WriteToVmuxClipboard<cr>
+map <silent> <leader>p :ReadFromVmuxClipboard<cr>
