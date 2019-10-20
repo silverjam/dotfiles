@@ -20,12 +20,21 @@ set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
 if functions --query bass
+
   test -f ~/.nix-profile/etc/profile.d/nix.sh
   and bass source ~/.nix-profile/etc/profile.d/nix.sh
+
+  test -s /usr/local/rvm/scripts/rvm
+  and bass source /usr/local/rvm/scripts/rvm
+
+end
+
+function has_cmd
+  command -v $argv >/dev/null ^/dev/null
 end
 
 if test -z "$BACKGROUND"
-  if command -v iterm-profile >/dev/null ^/dev/null
+  if has_cmd iterm-profile
     set BACKGROUND (iterm-profile)
   else
     set BACKGROUND dark
@@ -96,12 +105,15 @@ end
 export HELM_HOME=$HOME/helm
 export EDITOR=vi
 
-command -v exa >/dev/null ^/dev/null
-and alias ls=exa
+has_cmd exa; and alias ls=exa
 
-if command -v bat >/dev/null ^/dev/null
+if has_cmd bat
   alias less=bat
   alias cat=bat
+end
+
+if not has_cmd ag; and has_cmd rg
+  alias ag=rg
 end
 
 alias k kubectl
