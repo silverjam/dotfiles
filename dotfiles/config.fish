@@ -47,8 +47,10 @@ function has_cmd
 end
 
 if test -z "$BACKGROUND"
-  if has_cmd iterm-profile
-    set BACKGROUND (iterm-profile)
+  if has_cmd iterm-exists and has_cmd iterm-profile
+    if iterm-exists
+      set BACKGROUND (iterm-profile)
+    end
   else
     set BACKGROUND dark
   end
@@ -155,3 +157,11 @@ alias refresh-fish='source ~/.config/fish/config.fish'
 alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
 
 alias mosh='mosh --server="env BACKGROUND=$BACKGROUND mosh-server"'
+
+function k-filter-logs -a num
+  kubectl logs -f (kubectl get pods | grep run-filter | grep Running | tail +$num | head -1 | awk '{print $1}')
+end
+
+function k-stats-logs -a num
+  kubectl logs -f (kubectl get pods | grep run-stats | grep Running | tail +$num | head -1 | awk '{print $1}')
+end
