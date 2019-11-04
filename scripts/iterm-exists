@@ -1,0 +1,2 @@
+#!/bin/bash
+test -e $HOME/Library/ApplicationSupport/iTerm2/iterm2env/versions/*/bin/python3
