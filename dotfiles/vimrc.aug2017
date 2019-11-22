@@ -199,6 +199,8 @@ let g:clang_auto = 0
 let g:ale_python_flake8_executable = 'python3'
 let g:ale_python_flake8_options = '-m flake8 --max-line-length=120'
 
+let g:ale_python_pylint_change_directory = 0
+
 set undodir=$HOME/.vim/undo//
 set undofile
 
@@ -286,3 +288,5 @@ vmap <leader>cf  <Plug>(coc-format-selected)
 " run code actions
 vmap <leader>ca  <Plug>(coc-codeaction-selected)
 nmap <leader>ca  <Plug>(coc-codeaction-selected)
+
+let g:NERDTreeIgnore = ['\~$', '__pycache__']

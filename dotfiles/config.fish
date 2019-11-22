@@ -30,8 +30,8 @@ set -U pure_color_mute (set_color normal)
 
 if functions --query bass
 
-  test -f ~/.nix-profile/etc/profile.d/nix.sh
-  and bass source ~/.nix-profile/etc/profile.d/nix.sh
+  #  test -f ~/.nix-profile/etc/profile.d/nix.sh
+  #and bass source ~/.nix-profile/etc/profile.d/nix.sh
 
   test -s /usr/local/rvm/scripts/rvm
   and bass source /usr/local/rvm/scripts/rvm
