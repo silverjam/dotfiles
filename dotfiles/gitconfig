@@ -99,3 +99,5 @@
 	required = true
 [diff "sopsdiffer"]
 	textconv = sops -d
+[credential]
+	helper = store
