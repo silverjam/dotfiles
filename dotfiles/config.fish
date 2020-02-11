@@ -19,12 +19,6 @@ and set -gx PATH $PATH $HOME/.krew/bin
 test -d /snap/bin
 and set PATH /snap/bin $PATH
 
-test -d /opt/miniconda/bin
-and set PATH /opt/miniconda/bin $PATH
-
-test -f /opt/miniconda/etc/fish/conf.d/conda.fish
-and source /opt/miniconda/etc/fish/conf.d/conda.fish
-
 set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
@@ -165,3 +159,9 @@ end
 function k-stats-logs -a num
   kubectl logs -f (kubectl get pods | grep run-stats | grep Running | tail +$num | head -1 | awk '{print $1}')
 end
+# BEGIN ANSIBLE MANAGED BLOCK - conda config
+test -d /opt/miniconda/bin
+and set PATH /opt/miniconda/bin $PATH
+test -f /opt/miniconda/etc/fish/conf.d/conda.fish
+and source /opt/miniconda/etc/fish/conf.d/conda.fish
+# END ANSIBLE MANAGED BLOCK - conda config
