@@ -196,8 +196,11 @@ set completeopt=longest,menu,menuone,preview,noinsert,noselect
 
 let g:clang_auto = 0
 
-let g:ale_python_flake8_executable = 'python3'
-let g:ale_python_flake8_options = '-m flake8 --max-line-length=120'
+"let g:ale_python_flake8_executable = 'python3'
+"let g:ale_python_flake8_options = '-m flake8 --max-line-length=120'
+
+" Equivalent to the above.
+let g:ale_linters = {'python': ['pylint']}
 
 let g:ale_python_pylint_change_directory = 0
 
@@ -290,3 +293,5 @@ vmap <leader>ca  <Plug>(coc-codeaction-selected)
 nmap <leader>ca  <Plug>(coc-codeaction-selected)
 
 let g:NERDTreeIgnore = ['\~$', '__pycache__']
+
+map <C-a> <Nop>

@@ -12,6 +12,7 @@
 
     ci = commit --verbose
     cia = commit -a --verbose
+#    giap = !git-ciap
 
     # Update all remotes
     rup = remote update --prune
