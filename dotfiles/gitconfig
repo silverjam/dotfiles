@@ -44,6 +44,7 @@
     sui = submodule update --init
     suir = submodule update --init --recursive
     suirc = submodule update --init --recursive --checkout
+    ss = submodule update --init --recursive --checkout --jobs=4
 
 # Older things that aren't used anymore:
 #
