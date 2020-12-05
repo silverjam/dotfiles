@@ -20,15 +20,16 @@
     branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
     branchlog = !sh -c \"git log `git oldest-ancestor`..\"
 
-    lg = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
-    lg19 = !git lg -n 19
-    lg10 = !git lg -n 10
-    lg15 = !git lg -n 15
-    lg14 = !git lg -n 14
-    lg16 = !git lg -n 16
-    lg5 = !git lg -n 5
-    lg4 = !git lg -n 4
-    lg6 = !git lg -n 6
+    ll = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+    lg = !git ll -n 10
+    lg19 = !git ll -n 19
+    lg10 = !git ll -n 10
+    lg15 = !git ll -n 15
+    lg14 = !git ll -n 14
+    lg16 = !git ll -n 16
+    lg5 = !git ll -n 5
+    lg4 = !git ll -n 4
+    lg6 = !git ll -n 6
 
     # Potentially very destructive, reset your working copy to a clean "just cloned" state
     wipe = "!git reset --hard;git clean -fdx"
@@ -42,9 +43,9 @@
     findcornflakes = grep '^<<<<<<<$'
 
     sui = submodule update --init
-    suir = submodule update --init --recursive
+    suir = submodule update --init --recursive --jobs=4
     suirc = submodule update --init --recursive --checkout
-    ss = submodule update --init --recursive --checkout --jobs=4
+    ss = submodule update --init --recursive --jobs=4
 
 # Older things that aren't used anymore:
 #
