@@ -126,6 +126,11 @@ if not has_cmd ag; and has_cmd rg
   alias ag=rg
 end
 
+if has_cmd nvim
+  alias vi=nvim
+  alias vim=nvim
+end
+
 alias k kubectl
 
 alias f1='fg %1'
@@ -159,9 +164,3 @@ end
 function k-stats-logs -a num
   kubectl logs -f (kubectl get pods | grep run-stats | grep Running | tail +$num | head -1 | awk '{print $1}')
 end
-# BEGIN ANSIBLE MANAGED BLOCK - conda config
-test -d /opt/miniconda/bin
-and set PATH /opt/miniconda/bin $PATH
-test -f /opt/miniconda/etc/fish/conf.d/conda.fish
-and source /opt/miniconda/etc/fish/conf.d/conda.fish
-# END ANSIBLE MANAGED BLOCK - conda config
