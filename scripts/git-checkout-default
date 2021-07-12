@@ -17,15 +17,28 @@ def checkout_branch(branch_name):
 
 
 def get_default_branch():
+    res = subprocess.run(
+        ["git", "config", "--worktree", "--get",
+         "git-checkout-default.default-branch"],
+        check=False, capture_output=True,
+    )
+    if res.returncode == 0:
+        return res.stdout.decode('utf-8')
     origin_name = "origin"
     res = subprocess.run(
-        f"git remote show {origin_name}".split(), check=True, capture_output=True,
+        f"git remote show {origin_name}".split(),
+        check=True, capture_output=True,
     )
     for line in res.stdout.decode("utf-8").splitlines():
         if line.strip().startswith("HEAD branch:"):
-            return line.replace("HEAD branch:", "").strip()
-
-    raise NotImplementedError(f"No remote called {origin_name!r}")
+            default_branch = line.replace("HEAD branch:", "").strip()
+            subprocess.run(
+                ["git", "config", "--worktree",
+                 "git-checkout-default.default-branch", default_branch],
+                check=True,
+            )
+            return default_branch
+    raise ValueError(f"No remote called {origin_name!r}")
 
 
 def get_current_branch():

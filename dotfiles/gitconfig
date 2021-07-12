@@ -72,6 +72,11 @@
 
     ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
 
+    cod = !git-checkout-default
+    checkout-default = !git-checkout-default
+    checkout-main = !git-checkout-default
+    checkout-master = !git-checkout-default
+
 
 [filter "media"]
 	clean = git-media-clean %f
