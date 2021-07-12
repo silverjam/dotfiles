@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+import subprocess
+
+
+def run(*args):
+    default_branch = get_default_branch()
+    current_branch = get_current_branch()
+    if default_branch != current_branch:
+        checkout_branch(default_branch)
+    else:
+        print(f"Already on {default_branch}")
+        return 1
+
+
+def checkout_branch(branch_name):
+    subprocess.run(f"git checkout {branch_name}".split())
+
+
+def get_default_branch():
+    origin_name = "origin"
+    res = subprocess.run(
+        f"git remote show {origin_name}".split(), check=True, capture_output=True,
+    )
+    for line in res.stdout.decode("utf-8").splitlines():
+        if line.strip().startswith("HEAD branch:"):
+            return line.replace("HEAD branch:", "").strip()
+
+    raise NotImplementedError(f"No remote called {origin_name!r}")
+
+
+def get_current_branch():
+    res = subprocess.run("git branch --show-current".split(), capture_output=True)
+    for line in res.stdout.decode("utf-8").splitlines():
+        return line.strip()
+
+    raise NotImplementedError("Don't know what to do!")
+
+
+if __name__ == "__main__":
+    import sys
+
+    sys.exit(run(*sys.argv[1:]))

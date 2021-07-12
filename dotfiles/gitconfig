@@ -61,7 +61,6 @@
 #
 #    po = push origin
 #    pom = push origin master
-#    ciap = !git commit -a --verbose && git push
 #
 #    mff = merge --ff-only
 #    mffpom = !git mff  && git pom
@@ -70,6 +69,8 @@
 #    pull-rr = "!git pull --rebase --recurse-submodules=on-demand; git submodule update --remote"
 #    update-r = submodule update --recursive --remote
 #    push-r = push --recurse-submodules=on-demand
+
+    ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
 
 
 [filter "media"]
