@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+# Origin: https://www.peterbe.com/plog/gcm
+#   (Slightly modified to add caching support)
+
 import subprocess
 
 
