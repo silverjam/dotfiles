@@ -84,7 +84,7 @@
 
 [user]
 	name = Jason Mobarak
-	email = jason@swiftnav.com
+	email = jason@swift-nav.com
 
 [alias]
 	cob2 = "!f(){ git checkout -b silverjam/$1; }; f"
