@@ -164,3 +164,5 @@ end
 function k-stats-logs -a num
   kubectl logs -f (kubectl get pods | grep run-stats | grep Running | tail +$num | head -1 | awk '{print $1}')
 end
+
+set fish_greeting
