@@ -1,3 +1,0 @@
-export PS1="($SCHROOT_CHROOT_NAME) $PS1"
-export DISPLAY=:0.0
-xhost +
