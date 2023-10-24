@@ -146,7 +146,7 @@ alias f9='fg %9'
 alias p=prevd
 alias j=jobs
 
-alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
+#alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
 
 alias vifish='vim ~/.config/fish/config.fish'
 alias refresh-fish='source ~/.config/fish/config.fish'
@@ -155,7 +155,7 @@ alias refish=refresh-fish
 alias refresh-fish='source ~/.config/fish/config.fish'
 alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
 
-alias mosh='mosh --server="env BACKGROUND=$BACKGROUND mosh-server"'
+#alias mosh='mosh --server="env BACKGROUND=$BACKGROUND mosh-server"'
 
 function k-filter-logs -a num
   kubectl logs -f (kubectl get pods | grep run-filter | grep Running | tail +$num | head -1 | awk '{print $1}')
