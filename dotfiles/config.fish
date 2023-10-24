@@ -113,7 +113,7 @@ function aws_google_auth_env -a profile
 end
 
 export HELM_HOME=$HOME/helm
-export EDITOR=vi
+export EDITOR=nvim
 
 has_cmd exa; and alias ls=exa
 
