@@ -46,25 +46,6 @@ let
     fishPlugins.bass
   ];
 
-  # Not currently used
-  libs = with pkgs; [
-      rabbitmq-c
-      nix-ld
-      autoconf
-      automake
-      cmake
-      bzip2.dev
-      libedit.dev
-      libtool
-      lzma.dev
-      ncurses.dev
-      openssl.dev
-      pkg-config
-      readline.dev
-      tk.dev
-      zlib.dev
-  ];
-
 in
 
 {
@@ -84,20 +65,7 @@ in
     ])
   ;
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
   home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-
     ".config/fish/functions/functions.fish".text = ''
       if test -f $HOME/dev/dotfiles/scripts/functions.fish
         source $HOME/dev/dotfiles/scripts/functions.fish
@@ -143,6 +111,18 @@ in
   programs.home-manager.enable = true;
   programs.starship.enable = true;
 }
+
+    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
+    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
+    # # symlink to the Nix store copy.
+    # ".screenrc".source = dotfiles/screenrc;
+
+    # # You can also set the file content immediately.
+    # ".gradle/gradle.properties".text = ''
+    #   org.gradle.console=verbose
+    #   org.gradle.daemon.idletimeout=3600000
+    # '';
+
 
 #    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.zlib.dev}/lib/pkgconfig:${pkgs.bzip2.dev}/lib/pkgconfig:${pkgs.ncurses.dev}/lib/pkgconfig:${pkgs.libedit.dev}/lib/pkgconfig:${pkgs.readline.dev}/lib/pkgconfig:${pkgs.lzma.dev}/lib/pkgconfig:${pkgs.tk.dev}/lib/pkgconfig:${pkgs.rabbitmq-c}/lib/pkgconfig";
 #    LD_LIBRARY_PATH = "${pkgs.openssl}/lib:${pkgs.zlib}/lib:${pkgs.bzip2}/lib:${pkgs.ncurses}/lib:${pkgs.libedit}/lib:${pkgs.readline}/lib:${pkgs.lzma}/lib:${pkgs.tk}/lib:${pkgs.rabbitmq-c}/lib";
