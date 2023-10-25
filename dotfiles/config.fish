@@ -1,8 +1,8 @@
 test -d $HOME/dev/scripts 
 and set PATH $HOME/dev/scripts $PATH
 
-test -d $HOME/dev/Sysmods/scripts 
-and set PATH $HOME/dev/Sysmods/scripts $PATH
+test -d $HOME/dev/dotfiles/scripts 
+and set PATH $HOME/dev/dotfiles/scripts $PATH
 
 test -d /ansible/$USER/git/sysmods/scripts
 and set PATH /ansible/$USER/git/sysmods/scripts $PATH
@@ -129,6 +129,14 @@ end
 if has_cmd nvim
   alias vi=nvim
   alias vim=nvim
+end
+
+if has_cmd pyenv
+# set -Ux PYENV_VIRTUALENV_DISABLE_PROMPT 1
+  set -Ux PYENV_ROOT "$HOME/.pyenv"
+
+  pyenv init - | source
+#  pyenv virtualenv-init - | source
 end
 
 alias k kubectl
