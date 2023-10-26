@@ -34,10 +34,10 @@ let
     kubectl
     kubectx
     postgresql
+    terraform
   ];
 
-  editors = with pkgs; [
-    vscode
+  apps = with pkgs; [
     neovim
   ];
 
@@ -55,11 +55,11 @@ in
   home.stateVersion = "23.05"; # Warning: read docs before changing
 
   home.packages =
-    devenv
+       apps
     ++ cloud
-    ++ editors
-    ++ shell
+    ++ devenv
     ++ languages
+    ++ shell
     ++ tools
     ++ (with pkgs; [
     ])
@@ -96,17 +96,18 @@ in
     '';
     plugins = [
       { 
-      	name = "";
-	src = pkgs.fetchFromGitHub {
-	  owner = "jorgebucaran";
-	  repo = "nvm.fish";
-	  rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
-	  sha256 = "LV5NiHfg4JOrcjW7hAasUSukT43UBNXGPi1oZWPbnCA=";
-	};
+        name = "";
+        src = pkgs.fetchFromGitHub {
+          owner = "jorgebucaran";
+          repo = "nvm.fish";
+          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
+          sha256 = "LV5NiHfg4JOrcjW7hAasUSukT43UBNXGPi1oZWPbnCA=";
+        };
       }
     ];
   };
 
+  programs.eza.enable = true;
   programs.fzf.enable = true;
   programs.home-manager.enable = true;
   programs.starship.enable = true;
