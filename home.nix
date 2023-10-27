@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let 
 
@@ -83,8 +83,13 @@ in
       end
       complete -c aws -f -a "(__fish_complete_aws)"
     '';
+  };
 
-    ".vscode/settings.json".source = dotfiles/vscode-settings.json;
+  home.activation = {
+    linkDotfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD ln -sf $VERBOSE_ARG \
+          ${builtins.toPath ./dotfiles/vscode-settings.json} $HOME/.config/Code/User/settings.json
+    '';
   };
 
   home.sessionVariables = {

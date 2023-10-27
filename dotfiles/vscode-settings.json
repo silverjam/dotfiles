@@ -16,5 +16,6 @@
     },
     "terminal.integrated.commandsToSkipShell": [
         "-workbench.action.quickOpen"
-    ]
+    ],
+    "git.autofetch": true
 }
