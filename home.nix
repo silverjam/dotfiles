@@ -16,10 +16,12 @@ let
     jq
     screen
     xz
+    ripgrep
   ];
 
   languages = with pkgs; [
     conda
+    deno
     nodejs
     nodejs.pkgs.pnpm
     rustup
@@ -67,8 +69,8 @@ in
 
   home.file = {
     ".config/fish/functions/functions.fish".text = ''
-      if test -f $HOME/dev/dotfiles/scripts/functions.fish
-        source $HOME/dev/dotfiles/scripts/functions.fish
+      if test -f $HOME/dev/dotfiles/dotfiles/functions.fish
+        source $HOME/dev/dotfiles/dotfiles/functions.fish
       end
       if test -f $HOME/dev/scripts/functions.fish
         source $HOME/dev/scripts/functions.fish
@@ -81,6 +83,8 @@ in
       end
       complete -c aws -f -a "(__fish_complete_aws)"
     '';
+
+    ".vscode/settings.json".source = dotfiles/vscode-settings.json;
   };
 
   home.sessionVariables = {

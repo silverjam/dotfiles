@@ -1,0 +1,20 @@
+{
+    "workbench.colorTheme": "Gruvbox Dark (Medium)",
+    "cSpell.userWords": [
+        "keycloak",
+        "urlencode"
+    ],
+    "cSpell.ignoreWords": [
+        "CREDS",
+        "rabbitmq",
+        "yurtsplatform"
+    ],
+    "vim.handleKeys": {
+        "<C-s>": false,
+        "<C-p>": false,
+        "<C-c>": false
+    },
+    "terminal.integrated.commandsToSkipShell": [
+        "-workbench.action.quickOpen"
+    ]
+}
