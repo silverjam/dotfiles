@@ -1,5 +1,5 @@
 {
-    "workbench.colorTheme": "Gruvbox Dark (Medium)",
+    "workbench.colorTheme": "Omni",
     "cSpell.userWords": [
         "keycloak",
         "urlencode"
@@ -17,5 +17,6 @@
     "terminal.integrated.commandsToSkipShell": [
         "-workbench.action.quickOpen"
     ],
-    "git.autofetch": true
+    "git.autofetch": true,
+    "git.confirmSync": false
 }

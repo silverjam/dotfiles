@@ -14,9 +14,10 @@ let
     gh
     git
     jq
-    screen
-    xz
     ripgrep
+    screen
+    tree
+    xz
   ];
 
   languages = with pkgs; [
