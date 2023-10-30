@@ -1,13 +1,14 @@
 {
-    "workbench.colorTheme": "Omni",
+    "workbench.colorTheme": "Pop Dark",
     "cSpell.userWords": [
-        "keycloak",
-        "urlencode"
     ],
     "cSpell.ignoreWords": [
         "CREDS",
+        "autofetch",
         "rabbitmq",
-        "yurtsplatform"
+        "yurtsplatform",
+        "keycloak",
+        "urlencode"
     ],
     "vim.handleKeys": {
         "<C-s>": false,

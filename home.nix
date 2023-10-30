@@ -14,6 +14,7 @@ let
     gh
     git
     jq
+    pandoc
     ripgrep
     screen
     tree
