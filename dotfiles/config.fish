@@ -174,3 +174,5 @@ function k-stats-logs -a num
 end
 
 set fish_greeting
+
+fish_default_key_bindings
