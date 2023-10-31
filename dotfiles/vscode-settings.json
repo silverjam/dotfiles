@@ -5,10 +5,12 @@
     "cSpell.ignoreWords": [
         "CREDS",
         "autofetch",
-        "rabbitmq",
-        "yurtsplatform",
         "keycloak",
-        "urlencode"
+        "rabbitmq",
+        "sqlalchemy",
+        "urlencode",
+        "werkzeug",
+        "yurtsplatform"
     ],
     "vim.handleKeys": {
         "<C-s>": false,
@@ -19,5 +21,6 @@
         "-workbench.action.quickOpen"
     ],
     "git.autofetch": true,
-    "git.confirmSync": false
+    "git.confirmSync": false,
+    "files.insertFinalNewline": true
 }
