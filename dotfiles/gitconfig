@@ -6,7 +6,7 @@
 
 [alias]
     co = checkout
-    cob = "!f(){ git checkout -b silverjam/$1; }; f"
+    cob = "!f(){ git checkout -b jmob/$1; }; f"
 
     st = status
 
@@ -36,10 +36,9 @@
 
     restack = !sh -c \"git rebase -v -i `git oldest-ancestor`\"
 
-
     # Conflict resolution
     resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
-    editcornflakes = !vim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<$\\|^=======$\\|^>>>>>>>$'
+    editcornflakes = !nvim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<$\\|^=======$\\|^>>>>>>>$'
     findcornflakes = grep '^<<<<<<<$'
 
     sui = submodule update --init
@@ -87,7 +86,7 @@
 	email = jason@swift-nav.com
 
 [alias]
-	cob2 = "!f(){ git checkout -b silverjam/$1; }; f"
+	cob2 = "!f(){ git checkout -b jmob/$1; }; f"
 
 [merge]
 	tool = diffconflicts

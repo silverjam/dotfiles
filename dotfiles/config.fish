@@ -30,6 +30,8 @@ if functions --query bass
   test -s /usr/local/rvm/scripts/rvm
   and bass source /usr/local/rvm/scripts/rvm
 
+  test -f $HOME/.cargo/env
+  and bass source $HOME/.cargo/env
 end
 
 function has_cmd

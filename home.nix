@@ -2,11 +2,6 @@
 
 let 
 
-  devenv = with pkgs; [
-    cachix
-    (import (fetchTarball https://install.devenv.sh/latest)).default # devenv
-  ];
-
   tools = with pkgs; [
     awscli2
     delta
@@ -17,6 +12,8 @@ let
     pandoc
     ripgrep
     screen
+    socat
+    swappy
     tree
     xz
   ];
@@ -26,19 +23,24 @@ let
     deno
     nodejs
     nodejs.pkgs.pnpm
-    rustup
     pyenv
     python3
+    python3Packages.pyyaml
+    rustup
   ];
 
   cloud = with pkgs; [
     docker
     docker-compose
-    helm
+    k3d
+    kubernetes-helm
+    kustomize
     kubectl
     kubectx
     postgresql
     terraform
+    istioctl
+    pgcli
   ];
 
   apps = with pkgs; [
@@ -61,7 +63,6 @@ in
   home.packages =
        apps
     ++ cloud
-    ++ devenv
     ++ languages
     ++ shell
     ++ tools
@@ -71,18 +72,22 @@ in
 
   home.file = {
     ".config/fish/functions/functions.fish".text = ''
+
       if test -f $HOME/dev/dotfiles/dotfiles/functions.fish
         source $HOME/dev/dotfiles/dotfiles/functions.fish
       end
+
       if test -f $HOME/dev/scripts/functions.fish
         source $HOME/dev/scripts/functions.fish
       end
     '';
  
     ".config/fish/completions/aws.fish".text = ''
+
       function __fish_complete_aws
         env COMP_LINE=(commandline -pc) aws_completer | tr -d ' '
       end
+
       complete -c aws -f -a "(__fish_complete_aws)"
     '';
   };
@@ -96,6 +101,7 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
+    PYTHONPATH = "$HOME/.nix-profile/lib/python3.11/site-packages/";
   };
 
   programs.bat.enable = true;
@@ -104,15 +110,27 @@ in
     enable = true;
     shellInit = ''
       source $HOME/dev/dotfiles/dotfiles/config.fish
+
+      export EDITOR=nvim
+      export PYTHONPATH=$HOME/.nix-profile/lib/python3.11/site-packages
     '';
     plugins = [
       { 
-        name = "";
+        name = "nvm";
         src = pkgs.fetchFromGitHub {
           owner = "jorgebucaran";
           repo = "nvm.fish";
           rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
           sha256 = "LV5NiHfg4JOrcjW7hAasUSukT43UBNXGPi1oZWPbnCA=";
+        };
+      }
+      { 
+        name = "pyenv";
+        src = pkgs.fetchFromGitHub {
+          owner = "oh-my-fish";
+          repo = "plugin-pyenv";
+          rev = "df70a415aba3680a1670dfcfeedf04177ef3273d";
+          sha256 = "qIPe1q3rrR7QdZ2Mr+KuSMxGgZ76QfmV2Q87ZEj4n0U=";
         };
       }
     ];
@@ -123,33 +141,3 @@ in
   programs.home-manager.enable = true;
   programs.starship.enable = true;
 }
-
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-
-
-#    PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig:${pkgs.zlib.dev}/lib/pkgconfig:${pkgs.bzip2.dev}/lib/pkgconfig:${pkgs.ncurses.dev}/lib/pkgconfig:${pkgs.libedit.dev}/lib/pkgconfig:${pkgs.readline.dev}/lib/pkgconfig:${pkgs.lzma.dev}/lib/pkgconfig:${pkgs.tk.dev}/lib/pkgconfig:${pkgs.rabbitmq-c}/lib/pkgconfig";
-#    LD_LIBRARY_PATH = "${pkgs.openssl}/lib:${pkgs.zlib}/lib:${pkgs.bzip2}/lib:${pkgs.ncurses}/lib:${pkgs.libedit}/lib:${pkgs.readline}/lib:${pkgs.lzma}/lib:${pkgs.tk}/lib:${pkgs.rabbitmq-c}/lib";
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
-    # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-
-

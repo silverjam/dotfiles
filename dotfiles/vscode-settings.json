@@ -5,6 +5,7 @@
     "cSpell.ignoreWords": [
         "CREDS",
         "autofetch",
+        "isinstance",
         "keycloak",
         "rabbitmq",
         "sqlalchemy",
@@ -22,5 +23,9 @@
     ],
     "git.autofetch": true,
     "git.confirmSync": false,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "python.analysis.typeCheckingMode": "strict",
+    "githubPullRequests.ignoredPullRequestBranches": [
+        "main"
+    ]
 }
