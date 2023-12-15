@@ -122,6 +122,7 @@ has_cmd exa; and alias ls=exa
 if has_cmd bat
   alias less=bat
   alias cat=bat
+  alias cats "bat -p"
 end
 
 if not has_cmd ag; and has_cmd rg
@@ -133,13 +134,13 @@ if has_cmd nvim
   alias vim=nvim
 end
 
-if has_cmd pyenv
-# set -Ux PYENV_VIRTUALENV_DISABLE_PROMPT 1
-  set -Ux PYENV_ROOT "$HOME/.pyenv"
-
-  pyenv init - | source
-#  pyenv virtualenv-init - | source
-end
+#if has_cmd pyenv
+##  set -Ux PYENV_VIRTUALENV_DISABLE_PROMPT 1
+#  set -Ux PYENV_ROOT "$HOME/.pyenv"
+#
+#  pyenv init - | source
+##  pyenv virtualenv-init - | source
+#end
 
 alias k kubectl
 
@@ -158,7 +159,9 @@ alias j=jobs
 
 #alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
 
-alias vifish='vim ~/.config/fish/config.fish'
+set SOURCE_DIR (dirname (status -f))
+
+alias vifish="nvim $SOURCE_DIR/config.fish"
 alias refresh-fish='source ~/.config/fish/config.fish'
 alias refish=refresh-fish
 

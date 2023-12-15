@@ -1,0 +1,8 @@
+#!/bin/bash
+
+d=$(dirname $(dirname $(readlink -f $(which swappy))))
+
+if ! echo $d | grep -q nix; then
+	echo "ERROR: not a nix store" >&2
+	exit 1
+fi

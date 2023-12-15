@@ -7,12 +7,17 @@ let
     delta
     fzf
     gh
+    ghostunnel
     git
+    go
+    htop
+    just
     jq
     pandoc
     ripgrep
     screen
     socat
+    smem
     swappy
     tree
     xz
@@ -33,6 +38,7 @@ let
     docker
     docker-compose
     k3d
+    k9s
     kubernetes-helm
     kustomize
     kubectl
