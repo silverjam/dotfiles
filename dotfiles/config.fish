@@ -24,7 +24,7 @@ set -U pure_color_mute (set_color normal)
 
 if functions --query bass
 
-  #  test -f ~/.nix-profile/etc/profile.d/nix.sh
+  #test -f ~/.nix-profile/etc/profile.d/nix.sh
   #and bass source ~/.nix-profile/etc/profile.d/nix.sh
 
   test -s /usr/local/rvm/scripts/rvm
@@ -43,17 +43,15 @@ function has_cmd
 end
 
 if test -z "$BACKGROUND"
-  if has_cmd iterm-exists and has_cmd iterm-profile
-    if iterm-exists
-      set BACKGROUND (iterm-profile)
-    end
-  else
+#  if has_cmd iterm-exists and has_cmd iterm-profile
+#    if iterm-exists
+#      set BACKGROUND (iterm-profile)
+#    end
+#  else
     set BACKGROUND dark
-  end
+#  end
 end
 
-#set -U FZF_DEFAULT_OPTS "--color info:254,prompt:37,spinner:108,pointer:235,marker:235"
-#set -U FZF_DEFAULT_OPTS "--color light"
 set -U FZF_DEFAULT_OPTS "--color $BACKGROUND"
 
 function kp --description "Kill processes"
@@ -95,12 +93,6 @@ function docker_rm
     | xargs docker rm
 end
 
-function shake
-  ./Shakefile.hs $argv
-end
-
-export GROOVY_HOME=/usr/local/opt/groovy/libexec
-
 function _aws_cfg_field -a field profile
   ini_flatten ~/.aws/credentials | grep "$profile"'[.]'"$field" |cut -d= -f2 | sed 's@^ *@@'
 end
@@ -118,6 +110,10 @@ export HELM_HOME=$HOME/helm
 export EDITOR=nvim
 
 has_cmd exa; and alias ls=exa
+
+if has_cmd just
+  alias j=just
+end
 
 if has_cmd bat
   alias less=bat
@@ -142,6 +138,12 @@ end
 ##  pyenv virtualenv-init - | source
 #end
 
+if has_cmd fdfind
+  alias fd fdfind
+end
+
+alias bork="echo bork"
+
 alias k kubectl
 
 alias f1='fg %1'
@@ -155,28 +157,13 @@ alias f8='fg %8'
 alias f9='fg %9'
 
 alias p=prevd
-alias j=jobs
-
-#alias aws-google-auth='touch $HOME/.aws/credentials; touch $HOME/.aws/config; touch $HOME/.aws/saml_cache.xml; docker run -v $HOME/.aws:/root/.aws --rm -it -e GOOGLE_USERNAME=jason@swift-nav.com -e GOOGLE_IDP_ID=C02x4yyeb -e GOOGLE_SP_ID=115297745755 -e AWS_DEFAULT_REGION=us-west-2 -e AWS_PROFILE=default cevoaustralia/aws-google-auth'
 
 set SOURCE_DIR (dirname (status -f))
 
 alias vifish="nvim $SOURCE_DIR/config.fish"
-alias refresh-fish='source ~/.config/fish/config.fish'
-alias refish=refresh-fish
+alias refish="echo sourcing: $SOURCE_DIR/config.fish; source $SOURCE_DIR/config.fish"
 
-alias refresh-fish='source ~/.config/fish/config.fish'
 alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
-
-#alias mosh='mosh --server="env BACKGROUND=$BACKGROUND mosh-server"'
-
-function k-filter-logs -a num
-  kubectl logs -f (kubectl get pods | grep run-filter | grep Running | tail +$num | head -1 | awk '{print $1}')
-end
-
-function k-stats-logs -a num
-  kubectl logs -f (kubectl get pods | grep run-stats | grep Running | tail +$num | head -1 | awk '{print $1}')
-end
 
 set fish_greeting
 
