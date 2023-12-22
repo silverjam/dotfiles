@@ -161,10 +161,21 @@ alias p=prevd
 set SOURCE_DIR (dirname (status -f))
 
 alias vifish="nvim $SOURCE_DIR/config.fish"
-alias refish="echo sourcing: $SOURCE_DIR/config.fish; source $SOURCE_DIR/config.fish"
+alias refish="source $SOURCE_DIR/config.fish"
 
 alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
+
+alias vifuncs='nvim ~/dev/dotfiles/dotfiles/functions.fish; refish'
+alias vifuncs-local='nvim ~/dev/scripts/functions.fish; refish'
 
 set fish_greeting
 
 fish_default_key_bindings
+
+if test -f $HOME/dev/dotfiles/dotfiles/functions.fish
+  source $HOME/dev/dotfiles/dotfiles/functions.fish
+end
+
+if test -f $HOME/dev/scripts/functions.fish
+  source $HOME/dev/scripts/functions.fish
+end

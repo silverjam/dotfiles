@@ -2,11 +2,11 @@ function ts-domain
   tailscale status --json | jq -r '.CertDomains[0]'
 end
 
-function battery
+function pwr-battery
   system76-power profile battery
 end
 
-function balanced
+function pwr-balanced
   system76-power profile balanced
 end
 

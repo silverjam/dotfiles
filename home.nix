@@ -77,16 +77,7 @@ in
   ;
 
   home.file = {
-    ".config/fish/functions/functions.fish".text = ''
-
-      if test -f $HOME/dev/dotfiles/dotfiles/functions.fish
-        source $HOME/dev/dotfiles/dotfiles/functions.fish
-      end
-
-      if test -f $HOME/dev/scripts/functions.fish
-        source $HOME/dev/scripts/functions.fish
-      end
-    '';
+    ".config/fish/functions/functions.fish".text = "";
  
     ".config/fish/completions/aws.fish".text = ''
 
