@@ -2,6 +2,15 @@
 
 let 
 
+  pipxPackages = with pkgs; [
+    python311Packages.pipx
+    python311Packages.argcomplete
+    python311Packages.platformdirs
+    python311Packages.packaging
+    python311Packages.userpath
+    python311Packages.tox
+  ];
+
   tools = with pkgs; [
     awscli2
     delta
@@ -21,7 +30,7 @@ let
     swappy
     tree
     xz
-  ];
+  ] ++ pipxPackages;
 
   languages = with pkgs; [
     conda
@@ -50,7 +59,6 @@ let
   ];
 
   apps = with pkgs; [
-    neovim
   ];
 
   shell = with pkgs; [
@@ -106,10 +114,13 @@ in
   programs.fish = {
     enable = true;
     shellInit = ''
-      source $HOME/dev/dotfiles/dotfiles/config.fish
-
       export EDITOR=nvim
       export PYTHONPATH=$HOME/.nix-profile/lib/python3.11/site-packages
+
+      set -p PATH /nix/var/nix/profiles/default/bin
+      set -p PATH $HOME/.nix-profile/bin
+
+      source $HOME/dev/dotfiles/dotfiles/config.fish
     '';
     plugins = [
       { 
@@ -128,6 +139,15 @@ in
           repo = "plugin-pyenv";
           rev = "df70a415aba3680a1670dfcfeedf04177ef3273d";
           sha256 = "qIPe1q3rrR7QdZ2Mr+KuSMxGgZ76QfmV2Q87ZEj4n0U=";
+        };
+      }
+      { 
+        name = "zellij.fish";
+        src = pkgs.fetchFromGitHub {
+          owner = "kpbaks";
+          repo = "zellij.fish";
+          rev = "4ccafc9f3433ef75defa98c5e17d52342943d6a6";
+          sha256 = "miiwxKW5XJpO3G9XerJIZkmfSyuyzvx2IG6rMdk7qxA=";
         };
       }
     ];

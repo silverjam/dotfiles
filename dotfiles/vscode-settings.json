@@ -32,6 +32,7 @@
     ],
     "githubPullRequests.pullBranch": "never",
     "keyboard.dispatch": "keyCode",
-    "python.defaultInterpreterPath": "/home/jmob/.conda/envs/platform_be/bin/python",
-    "python.condaPath": "/home/jmob/.conda/condabin/conda"
+    "python.defaultInterpreterPath": "/home/jmob/.pyenv/versions/3.10.13/envs/platform_be/bin/python",
+    "python.condaPath": "/home/jmob/.conda/condabin/conda",
+    "vim.smartRelativeLine": true
 }
