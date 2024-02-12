@@ -1,22 +1,31 @@
-function ts-domain
+function s-ts-domain
     tailscale status --json | jq -r '.CertDomains[0]'
 end
 
-function pwr-battery
+function s-pwr-battery
     system76-power profile battery
 end
 
-function pwr-balanced
+function s-pwr-balanced
     system76-power profile balanced
 end
 
-function klog
+function s-klog
     argparse 'n/namespace=' -- $argv
     if set -q _flag_namespace
         kail --ns=$_flag_namespace --output=raw --deploy=$args[1] | fblog
     else
         kail --output=raw --deploy=$args[1] | fblog
     end
+end
+
+function s-zellij
+    zellij --layout compact \
+        options \
+        --theme gruvbox-dark \
+        --session-name shell \
+        --attach-to-session true \
+        --pane-frames false
 end
 
 #function zellij_tab_name_update --on-variable PWD
@@ -38,3 +47,7 @@ end
 #        command nohup zellij action rename-tab $tab_name >/dev/null 2>&1 &
 #    end
 #end
+
+function s-poetry-venv
+    source <(poetry env list --full-path | grep Activated | awk '{print $1}')/bin/activate.fish
+end

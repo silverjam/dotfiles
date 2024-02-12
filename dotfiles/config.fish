@@ -166,6 +166,8 @@ alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
 alias vifuncs='nvim ~/dev/dotfiles/dotfiles/functions.fish; refish'
 alias vifuncs-local='nvim ~/dev/scripts/functions.fish; refish'
 
+alias vi-home-manager='nvim ~/dev/dotfiles/home.nix'
+
 set fish_greeting
 
 fish_default_key_bindings

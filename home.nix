@@ -25,6 +25,7 @@ let
     pandoc
     ripgrep
     screen
+    shfmt
     socat
     smem
     swappy

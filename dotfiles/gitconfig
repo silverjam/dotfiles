@@ -1,50 +1,112 @@
-[color]
-    ui = auto
-
-[push]
-    default = simple
-
 [alias]
-    co = checkout
-    cob = "!f(){ git checkout -b jmob/$1; }; f"
+  co = checkout
+  cob = "!f(){ git checkout -b jmob/$1; }; f"
 
-    st = status
+  cod = !git-checkout-default
 
-    ci = commit --verbose
-    cia = commit -a --verbose
-#    giap = !git-ciap
+  st = status
 
-    # Update all remotes
-    rup = remote update --prune
+  ci = commit --verbose
+  cia = commit -a --verbose
 
-    branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
-    branchlog = !sh -c \"git log `git oldest-ancestor`..\"
+  # Update all remotes
+  rup = remote update --prune
 
-    ll = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
-    lg = !git ll -n 10
-    lg19 = !git ll -n 19
-    lg10 = !git ll -n 10
-    lg15 = !git ll -n 15
-    lg14 = !git ll -n 14
-    lg16 = !git ll -n 16
-    lg5 = !git ll -n 5
-    lg4 = !git ll -n 4
-    lg6 = !git ll -n 6
+  # Blame, but ignore whitespace and tries harder to find the original author of a line
+  bl = blame -wMCCC
 
-    # Potentially very destructive, reset your working copy to a clean "just cloned" state
-    wipe = "!git reset --hard;git clean -fdx"
+  # Blame, but blame a function
+  blf = blame -wMCCC -L :$1
 
-    restack = !sh -c \"git rebase -v -i `git oldest-ancestor`\"
+  branchdiff = !sh -c \"git diff `git oldest-ancestor`..\"
+  branchlog = !sh -c \"git log `git oldest-ancestor`..\"
 
-    # Conflict resolution
-    resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
-    editcornflakes = !nvim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<$\\|^=======$\\|^>>>>>>>$'
-    findcornflakes = grep '^<<<<<<<$'
+  stash-all = !git stash save --include-untracked
+  sa = !git stash-all
 
-    sui = submodule update --init
-    suir = submodule update --init --recursive --jobs=4
-    suirc = submodule update --init --recursive --checkout
-    ss = submodule update --init --recursive --jobs=4
+  ll = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+  lg = !git ll -n 10
+  lg19 = !git ll -n 19
+  lg10 = !git ll -n 10
+  lg15 = !git ll -n 15
+  lg14 = !git ll -n 14
+  lg16 = !git ll -n 16
+  lg5 = !git ll -n 5
+  lg4 = !git ll -n 4
+  lg6 = !git ll -n 6
+
+  unstage = reset HEAD --
+  undo = reset --mixed HEAD^
+
+  # VERY DESTRUCTIVE, will eset your working copy to a clean "just cloned" state, ALL UNVERSIONED FILES AND IGNORED DATA WILL BE LOST!!!
+  wipe = "!bash -c \"read -p 'Wiping everything Are you sure? ' -n 1 REPLY; echo \\$REPLY | grep -vq '^[Yy]' && exit 1 || echo ; git reset --hard ; git clean -fdx\""
+
+  restack = !sh -c \"git rebase -v -i `git oldest-ancestor`\"
+
+  # Conflict resolution
+  resolveall = !git status -s | grep '^UU' | sed s@...@@ | xargs git add
+  editcornflakes = !nvim `git status -s | grep '^UU' | sed s@...@@` -c '/^<<<<<<<\\|^=======\\|^>>>>>>>'
+  findcornflakes = grep '^<<<<<<<$'
+
+  sui = submodule update --init
+  suir = submodule update --init --recursive --jobs=4
+  suirc = submodule update --init --recursive --checkout
+  ss = submodule update --init --recursive --jobs=4
+
+  ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
+
+  checkout-default = !git-checkout-default
+  checkout-main = !git-checkout-default
+  checkout-master = !git-checkout-default
+
+	cob2 = "!f(){ git checkout -b jmob/$1; }; f"
+
+  # Push but don't overwrite if local is behind
+  pushf = push --force-with-lease
+
+  # Make stuff faster automatically in regularly used repository
+  ms = maintenance start
+
+[color]
+  ui = auto
+[push]
+  default = simple
+[rerere]
+  enabled = true
+[filter "media"]
+	clean = git-media-clean %f
+	smudge = git-media-smudge %f
+[user]
+	name = Jason Mobarak
+	email = git@jason.mobarak.name
+[merge]
+	tool = diffconflicts
+[mergetool "diffconflicts"]
+	cmd = vim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
+	trustExitCode = true
+[mergetool]
+	keepBackup = false
+[gc]
+	autoDetach = false
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[diff "sopsdiffer"]
+	textconv = sops -d
+[credential]
+	helper = store
+[column]
+  ui = auto
+[branch]
+  sort = -committerdate
+[gpg]
+  format = ssh
+[user]
+  signingkey = ~/.ssh/id_ed25519.pub
+[commit]
+  gpgsign = true
 
 # Older things that aren't used anymore:
 #
@@ -68,44 +130,3 @@
 #    pull-rr = "!git pull --rebase --recurse-submodules=on-demand; git submodule update --remote"
 #    update-r = submodule update --recursive --remote
 #    push-r = push --recurse-submodules=on-demand
-
-    ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
-
-    cod = !git-checkout-default
-    checkout-default = !git-checkout-default
-    checkout-main = !git-checkout-default
-    checkout-master = !git-checkout-default
-
-
-[filter "media"]
-	clean = git-media-clean %f
-	smudge = git-media-smudge %f
-
-[user]
-	name = Jason Mobarak
-	email = jason@swift-nav.com
-
-[alias]
-	cob2 = "!f(){ git checkout -b jmob/$1; }; f"
-
-[merge]
-	tool = diffconflicts
-
-[mergetool "diffconflicts"]
-	cmd = vim -c DiffConflicts \"$MERGED\" \"$BASE\" \"$LOCAL\" \"$REMOTE\"
-	trustExitCode = true
-
-[mergetool]
-	keepBackup = false
-
-[gc]
-	autoDetach = false
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-[diff "sopsdiffer"]
-	textconv = sops -d
-[credential]
-	helper = store
