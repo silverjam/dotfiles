@@ -54,6 +54,7 @@
   ss = submodule update --init --recursive --jobs=4
 
   ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
+  ciam = "!f() { git commit -a -v -m \"$*\" ; }; f"
 
   checkout-default = !git-checkout-default
   checkout-main = !git-checkout-default
@@ -98,13 +99,11 @@
 [credential]
 	helper = store
 [column]
-  ui = auto
+  branch = auto
 [branch]
   sort = -committerdate
 [gpg]
   format = ssh
-[user]
-  signingkey = ~/.ssh/id_ed25519.pub
 [commit]
   gpgsign = true
 
