@@ -107,7 +107,7 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
-    PYTHONPATH = "$HOME/.nix-profile/lib/python3.11/site-packages/";
+#    PYTHONPATH = "$HOME/.nix-profile/lib/python3.11/site-packages/";
   };
 
   programs.bat.enable = true;
@@ -116,7 +116,7 @@ in
     enable = true;
     shellInit = ''
       export EDITOR=nvim
-      export PYTHONPATH=$HOME/.nix-profile/lib/python3.11/site-packages
+#      export PYTHONPATH=$HOME/.nix-profile/lib/python3.11/site-packages
 
       set -p PATH /nix/var/nix/profiles/default/bin
       set -p PATH $HOME/.nix-profile/bin

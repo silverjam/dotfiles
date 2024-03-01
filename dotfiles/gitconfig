@@ -3,6 +3,7 @@
   cob = "!f(){ git checkout -b jmob/$1; }; f"
 
   cod = !git-checkout-default
+  com = !git-checkout-default
 
   st = status
 

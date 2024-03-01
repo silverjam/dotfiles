@@ -19,7 +19,7 @@ function s-klog
     end
 end
 
-function s-zellij
+function z
     zellij --layout compact \
         options \
         --theme gruvbox-dark \
