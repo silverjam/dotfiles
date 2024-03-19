@@ -51,3 +51,11 @@ end
 function s-poetry-venv
     source <(poetry env list --full-path | grep Activated | awk '{print $1}')/bin/activate.fish
 end
+
+function s-docker-image-size
+    docker image inspect $argv | jq .[0].Size | python -c 'import sys; print(int(sys.stdin.read())/1024/1024)'
+end
+
+function s-klog-dev
+    AWS_PROFILE=pow kail --context=dev --ns=$argv[1] --deploy=$argv[1]
+end

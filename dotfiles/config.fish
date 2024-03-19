@@ -163,8 +163,8 @@ alias refish="source $SOURCE_DIR/config.fish"
 
 alias refresh-bg='export BACKGROUND=(tmux run-shell \'echo $BACKGROUND\')'
 
-alias vifuncs='nvim ~/dev/dotfiles/dotfiles/functions.fish; refish'
-alias vifuncs-local='nvim ~/dev/scripts/functions.fish; refish'
+alias vifuncs='nvim ~/dev/dotfiles/dotfiles/functions.fish; source ~/dev/dotfiles/dotfiles/functions.fish'
+alias vifuncs-local='nvim ~/dev/scripts/functions.fish; source ~/dev/scripts/functions.fish'
 
 alias vi-home-manager='nvim ~/dev/dotfiles/home.nix'
 
@@ -184,7 +184,7 @@ if has_cmd nvim
     alias vi=nvim
     alias vim=nvim
 else
-    echo "no nvim found?"
+    echo "no nvim found, cannot configure aliases"
 end
 
 # vim: sw=4:sts=4:ts=4:et:

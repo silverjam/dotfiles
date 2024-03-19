@@ -34,5 +34,10 @@
     "keyboard.dispatch": "keyCode",
     "python.defaultInterpreterPath": "/home/jmob/.pyenv/versions/3.10.13/envs/platform_be/bin/python",
     "python.condaPath": "/home/jmob/.conda/condabin/conda",
-    "vim.smartRelativeLine": true
+    "vim.smartRelativeLine": true,
+    "vscode-postgres.virtualFolders": [
+        "functions"
+    ],
+    "vscode-postgres.defaultConnection": "platform",
+    "vscode-postgres.defaultDatabase": "test",
 }
