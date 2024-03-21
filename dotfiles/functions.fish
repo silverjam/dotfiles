@@ -59,3 +59,11 @@ end
 function s-klog-dev
     AWS_PROFILE=pow kail --context=dev --ns=$argv[1] --deploy=$argv[1]
 end
+
+function s-toggle-starship
+    starship toggle directory \
+        && starship toggle python \
+        && starship toggle git_branch \
+        && starship toggle git_status \
+        && starship toggle kubernetes
+end
