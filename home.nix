@@ -29,6 +29,7 @@ let
     socat
     smem
     swappy
+    tmux
     tree
     xz
   ] ++ pipxPackages;
