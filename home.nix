@@ -2,15 +2,6 @@
 
 let 
 
-  pipxPackages = with pkgs; [
-    python311Packages.pipx
-    python311Packages.argcomplete
-    python311Packages.platformdirs
-    python311Packages.packaging
-    python311Packages.userpath
-    python311Packages.tox
-  ];
-
   tools = with pkgs; [
     awscli2
     delta
@@ -32,7 +23,7 @@ let
     tmux
     tree
     xz
-  ] ++ pipxPackages;
+  ];
 
   languages = with pkgs; [
     conda
@@ -40,12 +31,11 @@ let
     nodejs
     nodejs.pkgs.pnpm
     pyenv
-    python3
-    python3Packages.pyyaml
     rustup
   ];
 
   cloud = with pkgs; [
+    dex-oidc
     docker
     docker-compose
     k3d
@@ -54,6 +44,7 @@ let
     kustomize
     kubectl
     kubectx
+    postgrest
     postgresql
     terraform
     istioctl
@@ -108,7 +99,6 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
-#    PYTHONPATH = "$HOME/.nix-profile/lib/python3.11/site-packages/";
   };
 
   programs.bat.enable = true;
@@ -117,10 +107,13 @@ in
     enable = true;
     shellInit = ''
       export EDITOR=nvim
-#      export PYTHONPATH=$HOME/.nix-profile/lib/python3.11/site-packages
 
       set -p PATH /nix/var/nix/profiles/default/bin
       set -p PATH $HOME/.nix-profile/bin
+
+      if test -d /opt/python
+        set -p PATH /opt/python/bin $PATH
+      end
 
       source $HOME/dev/dotfiles/dotfiles/config.fish
     '';

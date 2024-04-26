@@ -4,6 +4,7 @@
 
   cod = !git-checkout-default
   cd = !git-checkout-default
+  cdp = !git-checkout-default && git pull
   com = !git-checkout-default
 
   st = status
