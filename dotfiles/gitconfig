@@ -28,6 +28,7 @@
   sa = !git stash-all
 
   ll = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative
+  llf = log --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr %an)%Creset' --abbrev-commit --date=relative --grep='chore(release):' --invert-grep
   lg = !git ll -n 10
   lg19 = !git ll -n 19
   lg10 = !git ll -n 10
