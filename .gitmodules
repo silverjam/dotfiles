@@ -1,9 +1,3 @@
-[submodule "ag"]
-	path = ag
-	url = https://github.com/ggreer/the_silver_searcher
-[submodule "jq"]
-	path = jq
-	url = https://github.com/stedolan/jq
 [submodule "scripts/plyj"]
 	path = scripts/plyj
 	url = https://github.com/silverjam/plyj.git
