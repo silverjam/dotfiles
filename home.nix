@@ -38,6 +38,7 @@ let
     dex-oidc
     docker
     docker-compose
+    helmfile
     k3d
     k9s
     kubernetes-helm

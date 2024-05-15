@@ -1,7 +1,7 @@
 #!/bin/sh
 
-speakers="alsa_output.usb-Creative_Technology_Ltd_Creative_Pebble_Pro_00023CA2B289-01.analog-stereo"
-headset="alsa_output.usb-046d_G435_Wireless_Gaming_Headset_V001008005.1-01.analog-stereo"
+speakers=$(pactl -f json list sinks | jq -r '.[].name' | grep 'Creative.*Pebble.*Pro')
+headset=$(pactl -f json list sinks | jq -r '.[].name' | grep 'G435.*Wireless.*Gaming.*Headset')
 
 if pactl get-default-sink | grep -q 'Creative.*Pebble.*Pro'; then
 	sink="🎧"
