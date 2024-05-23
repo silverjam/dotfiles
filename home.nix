@@ -26,7 +26,6 @@ let
   ];
 
   languages = with pkgs; [
-    conda
     deno
     nodejs
     nodejs.pkgs.pnpm

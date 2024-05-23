@@ -11,6 +11,8 @@
 
   ci = commit --verbose
   cia = commit -a --verbose
+  ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
+  ciam = "!f() { git commit -a -v -m \"$*\" ; }; f"
 
   # Update all remotes
   rup = remote update --prune
@@ -56,9 +58,6 @@
   suir = submodule update --init --recursive --jobs=4
   suirc = submodule update --init --recursive --checkout
   ss = submodule update --init --recursive --jobs=4
-
-  ciap = "!f() { git commit -a -v -m \"$*\" && git push; }; f"
-  ciam = "!f() { git commit -a -v -m \"$*\" ; }; f"
 
   checkout-default = !git-checkout-default
   checkout-main = !git-checkout-default
