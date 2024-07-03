@@ -18,13 +18,13 @@ return {
       "nvim-neotest/neotest-python",
       "nvim-neotest/neotest-plenary",
       "rouge8/neotest-rust",
-      "MarkEmmons/neotest-deno",
+      --"MarkEmmons/neotest-deno",
     },
     opts = {
       adapters = {
         "neotest-plenary",
         "neotest-python",
-        "neotest-deno",
+        --"neotest-deno",
         "neotest-rust",
       },
     },
@@ -76,6 +76,13 @@ return {
         eelixir = "html-eex",
         eruby = "erb",
         rust = "html",
+      },
+    },
+    opts = {
+      servers = {
+        denols = {
+          autostart = false,
+        },
       },
     },
   },

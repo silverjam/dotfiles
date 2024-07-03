@@ -13,6 +13,9 @@ and set PATH $HOME/.local/bin $PATH
 test -d $HOME/.cargo/bin
 and set PATH $HOME/.cargo/bin $PATH
 
+test -d $HOME/.deno/bin
+and set PATH $HOME/.deno/bin $PATH
+
 test -d $HOME/.krew/bin
 and set -gx PATH $PATH $HOME/.krew/bin
 

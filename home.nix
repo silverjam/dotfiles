@@ -44,11 +44,13 @@ let
     kustomize
     kubectl
     kubectx
+    nginx
     postgrest
     postgresql
     terraform
     istioctl
     pgcli
+    vouch-proxy
   ];
 
   apps = with pkgs; [
