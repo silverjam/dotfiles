@@ -53,9 +53,6 @@ let
     vouch-proxy
   ];
 
-  apps = with pkgs; [
-  ];
-
   shell = with pkgs; [
     fishPlugins.fzf-fish
     fishPlugins.bass
@@ -70,8 +67,7 @@ in
   home.stateVersion = "23.05"; # Warning: read docs before changing
 
   home.packages =
-       apps
-    ++ cloud
+       cloud
     ++ languages
     ++ shell
     ++ tools
