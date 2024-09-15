@@ -4,12 +4,15 @@ let
 
   tools = with pkgs; [
     awscli2
+    bfg-repo-cleaner
     delta
     fzf
     gh
     ghostunnel
     git
+    git-lfs
     go
+    hadolint
     htop
     just
     jq

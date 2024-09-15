@@ -67,3 +67,7 @@ function s-toggle-starship
         && starship toggle git_status \
         && starship toggle kubernetes
 end
+
+function hb
+    OPENSSL_LIB_DIR=/home/linuxbrew/.linuxbrew/lib LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib $argv
+end
