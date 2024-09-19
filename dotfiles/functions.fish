@@ -65,7 +65,16 @@ function s-toggle-starship
         && starship toggle python \
         && starship toggle git_branch \
         && starship toggle git_status \
-        && starship toggle kubernetes
+        && starship toggle kubernetes \
+        && starship toggle deno \
+        && starship toggle nodejs
+end
+
+function s-toggle-starship-essentials
+    starship toggle python \
+        && starship toggle kubernetes \
+        && starship toggle deno \
+        && starship toggle nodejs
 end
 
 function hb

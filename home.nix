@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let 
-
   tools = with pkgs; [
     awscli2
     bfg-repo-cleaner
@@ -34,6 +33,7 @@ let
     nodejs.pkgs.pnpm
     pyenv
     rustup
+    zig
   ];
 
   cloud = with pkgs; [
@@ -119,7 +119,15 @@ in
       source $HOME/dev/dotfiles/dotfiles/config.fish
     '';
     plugins = [
-      { 
+      {
+        name = "fzf-fish";
+        src = pkgs.fishPlugins.fzf-fish.src;
+      }
+      {
+        name = "bass";
+        src = pkgs.fishPlugins.bass.src;
+      }
+      {
         name = "nvm";
         src = pkgs.fetchFromGitHub {
           owner = "jorgebucaran";
@@ -128,16 +136,7 @@ in
           sha256 = "LV5NiHfg4JOrcjW7hAasUSukT43UBNXGPi1oZWPbnCA=";
         };
       }
-      { 
-        name = "pyenv";
-        src = pkgs.fetchFromGitHub {
-          owner = "oh-my-fish";
-          repo = "plugin-pyenv";
-          rev = "df70a415aba3680a1670dfcfeedf04177ef3273d";
-          sha256 = "qIPe1q3rrR7QdZ2Mr+KuSMxGgZ76QfmV2Q87ZEj4n0U=";
-        };
-      }
-      { 
+      {
         name = "zellij.fish";
         src = pkgs.fetchFromGitHub {
           owner = "kpbaks";
