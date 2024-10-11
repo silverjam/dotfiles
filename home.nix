@@ -119,10 +119,10 @@ in
       source $HOME/dev/dotfiles/dotfiles/config.fish
     '';
     plugins = [
-      {
-        name = "fzf-fish";
-        src = pkgs.fishPlugins.fzf-fish.src;
-      }
+#      {
+#        name = "fzf-fish";
+#        src = pkgs.fishPlugins.fzf-fish.src;
+#      }
       {
         name = "bass";
         src = pkgs.fishPlugins.bass.src;

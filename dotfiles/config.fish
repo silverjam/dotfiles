@@ -58,7 +58,8 @@ if test -z "$BACKGROUND"
     #  end
 end
 
-set -U FZF_DEFAULT_OPTS "--no-sort --color $BACKGROUND"
+#set -U FZF_DEFAULT_OPTS "--no-sort --color $BACKGROUND"
+set -U FZF_DEFAULT_OPTS "--color $BACKGROUND"
 
 function kp --description "Kill processes"
     set -l __kp__pid ''
