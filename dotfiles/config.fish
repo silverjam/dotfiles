@@ -29,13 +29,6 @@ set -e pure_color_mute
 set -U pure_color_mute (set_color normal)
 
 if functions --query bass
-
-    #test -f ~/.nix-profile/etc/profile.d/nix.sh
-    #and bass source ~/.nix-profile/etc/profile.d/nix.sh
-
-    test -s /usr/local/rvm/scripts/rvm
-    and bass source /usr/local/rvm/scripts/rvm
-
     test -f $HOME/.cargo/env
     and bass source $HOME/.cargo/env
 end
@@ -49,17 +42,11 @@ function has_cmd
 end
 
 if test -z "$BACKGROUND"
-    #  if has_cmd iterm-exists and has_cmd iterm-profile
-    #    if iterm-exists
-    #      set BACKGROUND (iterm-profile)
-    #    end
-    #  else
     set BACKGROUND dark
-    #  end
 end
 
-#set -U FZF_DEFAULT_OPTS "--no-sort --color $BACKGROUND"
-set -U FZF_DEFAULT_OPTS "--color $BACKGROUND"
+set -U FZF_DEFAULT_OPTS "--color=$BACKGROUND"
+set -U fzf_git_log_opts "--bind=ctrl-f:preview-page-down,ctrl-b:preview-page-up"
 
 function kp --description "Kill processes"
     set -l __kp__pid ''
@@ -189,6 +176,10 @@ if has_cmd nvim
     alias vim=nvim
 else
     echo "no nvim found, cannot configure aliases"
+end
+
+if has_cmd atuin
+    atuin init fish | source
 end
 
 # vim: sw=4:sts=4:ts=4:et:
