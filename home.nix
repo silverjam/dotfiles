@@ -1,7 +1,9 @@
 { config, pkgs, lib, ... }:
 
-let 
+let
+
   tools = with pkgs; [
+    age
     awscli2
 #    atuin
     bfg-repo-cleaner
@@ -14,8 +16,10 @@ let
     go
     hadolint
     htop
+    jose
     just
     jq
+    nomachine-client
     pandoc
     ripgrep
     screen
@@ -23,8 +27,11 @@ let
     socat
     smem
     swappy
+    topgrade
     tmux
     tree
+    watchexec
+    watchman
     xz
   ];
 
@@ -50,7 +57,8 @@ let
     kubectx
     nginx
     postgrest
-    postgresql
+#    postgresql
+    redis
     terraform
     istioctl
     pgcli
@@ -60,6 +68,8 @@ let
   shell = with pkgs; [
     fishPlugins.fzf-fish
     fishPlugins.bass
+#    rio
+    nushell
   ];
 
 in
