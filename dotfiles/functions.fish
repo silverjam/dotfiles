@@ -81,6 +81,10 @@ function hb
     OPENSSL_LIB_DIR=/home/linuxbrew/.linuxbrew/lib LD_LIBRARY_PATH=/home/linuxbrew/.linuxbrew/lib $argv
 end
 
+function nld
+    LD_LIBRARY_PATH= $argv
+end
+
 function s-ymd
     date "+%Y-%m-%d"
 end

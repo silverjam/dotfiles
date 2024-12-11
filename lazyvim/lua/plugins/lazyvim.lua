@@ -13,6 +13,8 @@ elseif machine == "ramjet" then
 end
 
 return {
+  --  { url = "git@gitlab.com:gitlab-org/editor-extensions/gitlab.vim.git", lazy = false },
+
   { "ellisonleao/gruvbox.nvim" },
   { "catppuccin/nvim" },
   { "rose-pine/neovim" },
@@ -68,6 +70,7 @@ return {
     opts = {
       linters_by_ft = {
         python = { "mypy" },
+        sh = { "shellcheck" },
       },
     },
   },
@@ -101,5 +104,17 @@ return {
         },
       },
     },
+  },
+
+  -- uuid-nvim
+  {
+    "TrevorS/uuid-nvim",
+    lazy = true,
+    config = function()
+      -- optional configuration
+      require("uuid-nvim").setup({
+        case = "upper",
+      })
+    end,
   },
 }

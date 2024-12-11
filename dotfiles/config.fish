@@ -178,8 +178,12 @@ else
     echo "no nvim found, cannot configure aliases"
 end
 
-if has_cmd atuin
-    atuin init fish | source
+#if has_cmd atuin
+#atuin init fish | source
+#end
+
+if has_cmd starship
+    starship init fish | source
 end
 
 # vim: sw=4:sts=4:ts=4:et:

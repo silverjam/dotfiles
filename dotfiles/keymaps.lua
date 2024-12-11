@@ -18,3 +18,12 @@ vim.keymap.set(
   ":Telescope git_files<CR>",
   { remap = false, silent = true, desc = "Find in git (*s)" }
 )
+
+local uuid = require("uuid-nvim")
+uuid.setup({
+  case = "lower",
+  quotes = "single",
+})
+
+vim.keymap.set("n", "<leader>ut", uuid.toggle_highlighting)
+vim.keymap.set("i", "<C-u>", uuid.insert_v4)

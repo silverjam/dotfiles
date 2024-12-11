@@ -11,6 +11,7 @@ let
     fzf
     gh
     ghostunnel
+    glab
     git
     git-lfs
     go
@@ -46,8 +47,9 @@ let
 
   cloud = with pkgs; [
     dex-oidc
-    docker
-    docker-compose
+#    docker
+#    docker-compose
+    fluxcd
     helmfile
     k3d
     k9s
