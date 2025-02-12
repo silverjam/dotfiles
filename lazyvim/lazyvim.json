@@ -1,4 +1,7 @@
 {
+  "disabled_extras": [
+
+  ],
   "extras": [
     "lazyvim.plugins.extras.ai.copilot",
     "lazyvim.plugins.extras.ai.copilot-chat",
@@ -17,8 +20,9 @@
     "lazyvim.plugins.extras.lsp.neoconf",
     "lazyvim.plugins.extras.test.core"
   ],
+  "install_version": 7,
   "news": {
-    "NEWS.md": "7429"
+    "NEWS.md": "10960"
   },
-  "version": 7
+  "version": 8
 }

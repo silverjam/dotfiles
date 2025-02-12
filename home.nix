@@ -2,6 +2,17 @@
 
 let
 
+  # Downgrade screen to version 4 because of this bug: https://savannah.gnu.org/bugs/?66209
+  pkgs_screen4 = import (pkgs.fetchFromGitHub {
+    owner = "NixOS";
+    repo = "nixpkgs";
+    # See https://github.com/NixOS/nixpkgs/blob/4f0dadbf38ee4cf4cc38cbc232b7708fddf965bc/pkgs/tools/misc/screen/default.nix
+    rev = "4f0dadbf38ee4cf4cc38cbc232b7708fddf965bc";
+    sha256 = "sha256-jQNGd1Kmey15jq5U36m8pG+lVsxSJlDj1bJ167BjHQ4=";
+  }) {
+    inherit (pkgs) system;
+  };
+
   tools = with pkgs; [
     age
     awscli2
@@ -23,7 +34,7 @@ let
     nomachine-client
     pandoc
     ripgrep
-    screen
+    pkgs_screen4.screen
     shfmt
     socat
     smem

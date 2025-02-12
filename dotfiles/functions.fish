@@ -88,3 +88,10 @@ end
 function s-ymd
     date "+%Y-%m-%d"
 end
+
+function lookup-radio-stream
+    set -f search (printf $argv | jq -sRr '@uri')
+    set -f search_url "https://nl1.api.radio-browser.info/json/stations/search?limit=10&name=$search&hidebroken=true&order=clickcount&reverse=true"
+    set -f stream_url (curl -sL $search_url | jq -r '.[0].url')
+    echo $stream_url
+end
