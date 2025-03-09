@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Alacritty
+Exec=alacritty
+Icon=/home/jmob/dev/dotfiles/alacritty.png
+Type=Application
+Categories=Development;

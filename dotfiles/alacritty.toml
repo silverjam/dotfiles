@@ -1,0 +1,30 @@
+[general]
+import = ["~/.config/alacritty/themes/themes/rose-pine.toml"]
+#import = ["~/.config/alacritty/themes/themes/remedy_dark.toml"]
+#import = ["~/.config/alacritty/themes/themes/gruvbox_material.toml"]
+#import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
+
+[window]
+dimensions = { columns = 80, lines = 24 }
+
+[font]
+size = 12.0
+
+[font.bold]
+family = "FiraCode Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "FiraCode Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+family = "FiraCode Nerd Font Mono"
+style = "Regular"
+
+[keyboard]
+bindings = [{ key = "N", mods = "Control|Shift", action = "CreateNewWindow" }]

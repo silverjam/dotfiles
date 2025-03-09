@@ -43,4 +43,8 @@
     "[typescript]": {
         "editor.defaultFormatter": "denoland.vscode-deno"
     },
+    "remote.SSH.connectTimeout": 90,
+    "remote.SSH.remotePlatform": {
+        "ramjet-ts": "linux"
+    },
 }

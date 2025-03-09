@@ -61,7 +61,7 @@ let
 #    docker
 #    docker-compose
     fluxcd
-    helmfile
+#    helmfile
     k3d
     k9s
     kubernetes-helm
@@ -72,10 +72,10 @@ let
     postgrest
 #    postgresql
     redis
-    terraform
-    istioctl
+#    terraform
+#    istioctl
     pgcli
-    vouch-proxy
+#    vouch-proxy
   ];
 
   shell = with pkgs; [
