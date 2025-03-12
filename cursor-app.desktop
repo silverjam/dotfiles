@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Cursor
+Exec=cursor
+Icon=/home/jmob/dev/dotfiles/cursor-app.png
+Type=Application
+Categories=Development;
