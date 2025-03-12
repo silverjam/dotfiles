@@ -20,10 +20,10 @@ function s-klog
 end
 
 function z
-    zellij --layout compact \
+    #    zellij --layout compact \
+    zellij \
         options \
-        --theme gruvbox-dark \
-        --session-name shell \
+        --session-name zj \
         --attach-to-session true \
         --pane-frames false
 end
