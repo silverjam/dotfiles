@@ -33,6 +33,7 @@ let
     jq
     nomachine-client
     pandoc
+    retry
     ripgrep
     pkgs_screen4.screen
     shfmt
@@ -42,6 +43,7 @@ let
     topgrade
     tmux
     tree
+    uv
     watchexec
     watchman
     xz

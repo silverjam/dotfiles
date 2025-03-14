@@ -95,3 +95,16 @@ function lookup-radio-stream
     set -f stream_url (curl -sL $search_url | jq -r '.[0].url')
     echo $stream_url
 end
+
+function stream-radio
+    set -f stream_url (lookup-radio-stream $argv)
+    screen -dmS radio -- fish -c "curl -sL $stream_url | mpv --cache=no -"
+end
+
+function stop-radio
+    screen -S radio -X quit
+end
+
+function mute-radio-toggle
+    screen -S radio -X stuff m
+end
