@@ -50,6 +50,7 @@ let
   ];
 
   languages = with pkgs; [
+    bun
     deno
     nodejs
     nodejs.pkgs.pnpm
