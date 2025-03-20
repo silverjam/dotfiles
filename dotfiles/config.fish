@@ -103,8 +103,6 @@ end
 export HELM_HOME=$HOME/helm
 export EDITOR=nvim
 
-has_cmd exa; and alias ls=exa
-
 if has_cmd just
     alias j=just
 end
@@ -184,6 +182,10 @@ end
 
 if has_cmd starship
     starship init fish | source
+end
+
+if has_cmd eza
+    alias ls 'eza -F --color=auto'
 end
 
 # vim: sw=4:sts=4:ts=4:et:

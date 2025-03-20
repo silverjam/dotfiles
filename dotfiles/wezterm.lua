@@ -9,4 +9,6 @@ else
 	config.color_scheme = "Rosé Pine Moon (base16)"
 end
 
+config.font = wezterm.font("FiraCode Nerd Font Mono")
+
 return config
