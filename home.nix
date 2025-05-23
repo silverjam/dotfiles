@@ -19,6 +19,8 @@ let
 #    atuin
     bfg-repo-cleaner
     delta
+    du-dust
+    dua
     fzf
     gh
     ghostunnel
@@ -43,6 +45,7 @@ let
     topgrade
     tmux
     tree
+    uutils-coreutils-noprefix
     uv
     watchexec
     watchman
