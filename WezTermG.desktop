@@ -2,7 +2,7 @@
 Name=WezTerm (Work)
 Comment=Work, work, work
 Keywords=shell;prompt;command;commandline;cmd;
-Icon=org.wezfurlong.wezterm
+Icon=wezterm
 StartupWMClass=org.wezfurlong.wezterm
 TryExec=wezterm
 Exec=wezterm --config 'color_scheme="Gruvbox dark, hard (base16)";' start --cwd .
