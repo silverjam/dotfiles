@@ -89,3 +89,45 @@ end
 function mute-radio-toggle
     screen -S radio -X stuff m
 end
+
+function kgetall --description "Fetch all Kubernetes resources in a namespace, including CRDs optionally specifying a namespace and a resource type"
+
+    argparse 'n/namespace=' a/all-namespaces w/wide -- $argv
+
+    set -f resources
+
+    for arg in $argv
+        if string match -r '^--' -- $arg
+            set -f resources $resources -- (string replace -r -a '^--' '' -- $arg)
+        else if string match -r '^-' -- $arg
+            set -f resources $resources -- (string replace -r -a '^-' '' -- $arg)
+        else
+            set -f resources $resources $arg
+        end
+    end
+
+    if test -z "$resources"
+        set -f resource_list (kubectl api-resources --verbs=list --namespaced -o name \
+          | grep -v "events.events.k8s.io" | grep -v "events" | sort | uniq \
+          | awk '{printf "%s%s", sep, $0; sep=","} END {print ""}')
+    else
+        set -f resource_list (echo $resources | tr ' ' ',')
+    end
+
+    if set -q _flag_wide
+        set -f wide_flag "--output=wide"
+    end
+
+    if set -q _flag_all_namespaces
+        kubectl get $resource_list --all-namespaces $wide_flag
+    else if test -n "$_flag_namespace"
+        kubectl get $resource_list --namespace=$_flag_namespace $wide_flag
+    else
+        kubectl get $resource_list $wide_flag
+    end
+end
+
+complete -c kgetall -r -f -a "(kubectl api-resources --verbs=list --namespaced -o name | grep -v 'events.events.k8s.io' | grep -v 'events' | sort | uniq)" -d "Specify the resource type to fetch, defaults to all resources"
+complete -c kgetall -s n -l namespace -d "Specify the namespace to use, defaults to current namespace" -a "(kubectl get namespaces -o name | sed 's/^namespace\///')"
+complete -c kgetall -s a -l all-namespaces -d "Fetch resources from all namespaces"
+complete -c kgetall -s w -l wide -d "Use wide output format"

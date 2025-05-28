@@ -12,4 +12,8 @@
         "key": "shift+alt+]",
         "command": "workbench.action.nextEditor"
     },
+    {
+        "key": "ctrl+i",
+        "command": "composerMode.agent"
+    },
 ]

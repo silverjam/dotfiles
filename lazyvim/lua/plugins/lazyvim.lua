@@ -97,13 +97,17 @@ return {
         rust = "html",
       },
     },
-    opts = {
-      servers = {
-        denols = {
-          autostart = false,
+    opts = function()
+      ---@class PluginLspOpts
+      local ret = {
+        servers = {
+          denols = {
+            autostart = false,
+          },
         },
-      },
-    },
+      }
+      return ret
+    end,
   },
 
   -- uuid-nvim

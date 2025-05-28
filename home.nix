@@ -33,6 +33,7 @@ let
     jose
     just
     jq
+    lazydocker
     nomachine-client
     pandoc
     retry
