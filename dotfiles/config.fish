@@ -4,9 +4,6 @@ and set PATH $HOME/dev/scripts $PATH
 test -d $HOME/dev/dotfiles/scripts
 and set PATH $HOME/dev/dotfiles/scripts $PATH
 
-test -d /ansible/$USER/git/sysmods/scripts
-and set PATH /ansible/$USER/git/sysmods/scripts $PATH
-
 test -d $HOME/.local/bin
 and set PATH $HOME/.local/bin $PATH
 
@@ -24,9 +21,6 @@ and set PATH /snap/bin $PATH
 
 test -d /home/linuxbrew/.linuxbrew/bin
 and set PATH /home/linuxbrew/.linuxbrew/bin $PATH
-
-set -e pure_color_mute
-set -U pure_color_mute (set_color normal)
 
 if functions --query bass
     test -f $HOME/.cargo/env
