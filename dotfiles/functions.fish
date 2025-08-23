@@ -72,7 +72,7 @@ end
 
 function lookup-radio-stream
     set -f search (printf $argv | jq -sRr '@uri')
-    set -f search_url "https://nl1.api.radio-browser.info/json/stations/search?limit=10&name=$search&hidebroken=true&order=clickcount&reverse=true"
+    set -f search_url "https://all.api.radio-browser.info/json/stations/search?limit=10&name=$search&hidebroken=true&order=clickcount&reverse=true"
     set -f stream_url (curl -sL $search_url | jq -r '.[0].url')
     echo $stream_url
 end
@@ -131,3 +131,7 @@ complete -c kgetall -r -f -a "(kubectl api-resources --verbs=list --namespaced -
 complete -c kgetall -s n -l namespace -d "Specify the namespace to use, defaults to current namespace" -a "(kubectl get namespaces -o name | sed 's/^namespace\///')"
 complete -c kgetall -s a -l all-namespaces -d "Fetch resources from all namespaces"
 complete -c kgetall -s w -l wide -d "Use wide output format"
+
+function claudes
+    claude --append-system-prompt "PLEASE ONLY USE DIRECT AND OBJECTIVE LANGUAGE!" $argv
+end

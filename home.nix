@@ -18,19 +18,20 @@ let
     awscli2
 #    atuin
     bfg-repo-cleaner
+    btop
     delta
     du-dust
     dua
     fzf
     gh
     ghostunnel
-    glab
+#    glab
     git
     git-lfs
     go
     hadolint
     htop
-    jose
+#    jose
     just
     jq
     lazydocker
@@ -38,7 +39,8 @@ let
     pandoc
     retry
     ripgrep
-    pkgs_screen4.screen
+#    pkgs_screen4.screen
+    screen
     shfmt
     socat
     smem
@@ -68,7 +70,6 @@ let
 #    docker
 #    docker-compose
     fluxcd
-#    helmfile
     k3d
     k9s
     kubernetes-helm
@@ -143,11 +144,10 @@ in
       set -p PATH /nix/var/nix/profiles/default/bin
       set -p PATH $HOME/.nix-profile/bin
 
-      if test -d /opt/python
-        set -p PATH /opt/python/bin $PATH
-      end
-
       source $HOME/dev/dotfiles/dotfiles/config.fish
+
+      # Not sure why but this needs to happen here for starship to work
+      starship init fish | source
     '';
     plugins = [
       {
