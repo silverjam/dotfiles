@@ -105,10 +105,10 @@
   branch = auto
 [branch]
   sort = -committerdate
-[gpg]
-  format = ssh
-[commit]
-  gpgsign = true
+#[gpg]
+#  format = ssh
+#[commit]
+#  gpgsign = true
 
 # Older things that aren't used anymore:
 #

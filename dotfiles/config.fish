@@ -4,9 +4,6 @@ and set PATH $HOME/dev/scripts $PATH
 test -d $HOME/dev/dotfiles/scripts
 and set PATH $HOME/dev/dotfiles/scripts $PATH
 
-test -d $HOME/.local/bin
-and set PATH $HOME/.local/bin $PATH
-
 test -d $HOME/.cargo/bin
 and set PATH $HOME/.cargo/bin $PATH
 
@@ -19,8 +16,14 @@ and set -gx PATH $PATH $HOME/.krew/bin
 test -d /snap/bin
 and set PATH /snap/bin $PATH
 
-test -d /home/linuxbrew/.linuxbrew/bin
-and set PATH /home/linuxbrew/.linuxbrew/bin $PATH
+#test -d /home/linuxbrew/.linuxbrew/bin
+#and set PATH /home/linuxbrew/.linuxbrew/bin $PATH
+
+test -d /opt/python3.13/bin
+and set PATH /opt/python3.13/bin $PATH
+
+test -d $HOME/.local/bin
+and set PATH $HOME/.local/bin $PATH
 
 if functions --query bass
     test -f $HOME/.cargo/env

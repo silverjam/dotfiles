@@ -2,21 +2,11 @@
 
 let
 
-  # Downgrade screen to version 4 because of this bug: https://savannah.gnu.org/bugs/?66209
-  pkgs_screen4 = import (pkgs.fetchFromGitHub {
-    owner = "NixOS";
-    repo = "nixpkgs";
-    # See https://github.com/NixOS/nixpkgs/blob/4f0dadbf38ee4cf4cc38cbc232b7708fddf965bc/pkgs/tools/misc/screen/default.nix
-    rev = "4f0dadbf38ee4cf4cc38cbc232b7708fddf965bc";
-    sha256 = "sha256-jQNGd1Kmey15jq5U36m8pG+lVsxSJlDj1bJ167BjHQ4=";
-  }) {
-    inherit (pkgs) system;
-  };
-
   tools = with pkgs; [
     age
     awscli2
 #    atuin
+    bash
     bfg-repo-cleaner
     btop
     delta
@@ -35,11 +25,10 @@ let
     just
     jq
     lazydocker
-    nomachine-client
+#    nomachine-client
     pandoc
     retry
     ripgrep
-#    pkgs_screen4.screen
     screen
     shfmt
     socat
@@ -49,6 +38,8 @@ let
     tmux
     tree
     uutils-coreutils-noprefix
+    uutils-diffutils
+    uutils-findutils
     uv
     watchexec
     watchman
@@ -125,6 +116,7 @@ in
 
   home.activation = {
     linkDotfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p $HOME/.config/Code/User
       $DRY_RUN_CMD ln -sf $VERBOSE_ARG \
           ${builtins.toPath ./dotfiles/vscode-settings.json} $HOME/.config/Code/User/settings.json
     '';
