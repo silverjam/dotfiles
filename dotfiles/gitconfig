@@ -8,6 +8,7 @@
   com = !git-checkout-default
 
   st = status
+  cp = cherry-pick
 
   ci = commit --verbose
   cia = commit -a --verbose
@@ -120,7 +121,6 @@
 #    checkout-branch = !git cob
 #    checkout-master = !git com
 #    push-origin-master = !git pom
-#    cp = cherry-pick
 #
 #    po = push origin
 #    pom = push origin master

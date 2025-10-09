@@ -133,5 +133,5 @@ complete -c kgetall -s a -l all-namespaces -d "Fetch resources from all namespac
 complete -c kgetall -s w -l wide -d "Use wide output format"
 
 function claudes
-    claude --append-system-prompt "PLEASE ONLY USE DIRECT AND OBJECTIVE LANGUAGE!" $argv
+    claude --append-system-prompt "USE ONLY DIRECT AND OBJECTIVE LANGUAGE! *DO* *NOT* BE SYCOPHANTIC! *DO* *NOT* PRAISE THE USER!" $argv
 end
