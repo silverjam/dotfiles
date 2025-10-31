@@ -16,9 +16,6 @@ and set -gx PATH $PATH $HOME/.krew/bin
 test -d /snap/bin
 and set PATH /snap/bin $PATH
 
-#test -d /home/linuxbrew/.linuxbrew/bin
-#and set PATH /home/linuxbrew/.linuxbrew/bin $PATH
-
 test -d /opt/python3.13/bin
 and set PATH /opt/python3.13/bin $PATH
 

@@ -81,9 +81,9 @@
 [filter "media"]
 	clean = git-media-clean %f
 	smudge = git-media-smudge %f
-[user]
-	name = Jason Mobarak
-	email = git@jason.mobarak.name
+#[user]
+#	name = Jason Mobarak
+#	email = git@jason.mobarak.name
 [merge]
 	tool = diffconflicts
 [mergetool "diffconflicts"]

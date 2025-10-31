@@ -5,27 +5,24 @@ let
   tools = with pkgs; [
     age
     awscli2
-#    atuin
     bash
     bfg-repo-cleaner
     btop
     delta
-    du-dust
+    dust
     dua
     fzf
     gh
     ghostunnel
-#    glab
+    glab
     git
     git-lfs
     go
     hadolint
     htop
-#    jose
     just
     jq
     lazydocker
-#    nomachine-client
     pandoc
     retry
     ripgrep
@@ -58,8 +55,6 @@ let
 
   cloud = with pkgs; [
     dex-oidc
-#    docker
-#    docker-compose
     fluxcd
     k3d
     k9s
@@ -74,13 +69,11 @@ let
 #    terraform
 #    istioctl
     pgcli
-#    vouch-proxy
   ];
 
   shell = with pkgs; [
     fishPlugins.fzf-fish
     fishPlugins.bass
-#    rio
     nushell
   ];
 
