@@ -22,11 +22,13 @@ let
     htop
     just
     jq
+    hadolint
     lazydocker
     pandoc
     retry
     ripgrep
     screen
+    shellcheck
     shfmt
     socat
     smem
