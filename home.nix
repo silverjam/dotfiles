@@ -23,12 +23,13 @@ let
     imagemagick
     just
     jq
-    hadolint
     lazydocker
     pandoc
     retry
     ripgrep
+    ruff
     screen
+    sd
     shellcheck
     shfmt
     socat
@@ -72,7 +73,6 @@ let
 #    postgresql
     redis
 #    terraform
-#    istioctl
     pgcli
   ];
 
@@ -96,6 +96,7 @@ in
     ++ shell
     ++ tools
     ++ (with pkgs; [
+      # Here for misc stuff not in a list
     ])
   ;
 
@@ -153,8 +154,8 @@ in
         src = pkgs.fetchFromGitHub {
           owner = "jorgebucaran";
           repo = "nvm.fish";
-          rev = "c69e5d1017b21bcfca8f42c93c7e89fff6141a8a";
-          sha256 = "LV5NiHfg4JOrcjW7hAasUSukT43UBNXGPi1oZWPbnCA=";
+          rev = "846f1f20b2d1d0a99e344f250493c41a450f9448";
+          sha256 = "u3qhoYBDZ0zBHbD+arDxLMM8XoLQlNI+S84wnM3nDzg=";
         };
       }
       {
@@ -162,8 +163,8 @@ in
         src = pkgs.fetchFromGitHub {
           owner = "kpbaks";
           repo = "zellij.fish";
-          rev = "4ccafc9f3433ef75defa98c5e17d52342943d6a6";
-          sha256 = "miiwxKW5XJpO3G9XerJIZkmfSyuyzvx2IG6rMdk7qxA=";
+          rev = "0b2393b48b55a7f3b200b5a12ac0cf26444b7172";
+          sha256 = "Nxo6usCI5tqLJ/CZ1YXtCFJ+piy1DGlzFIi9/HSgDIk=";
         };
       }
     ];
