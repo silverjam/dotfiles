@@ -44,6 +44,7 @@ let
     watchexec
     watchman
     xz
+    yq
     zellij
   ];
 
