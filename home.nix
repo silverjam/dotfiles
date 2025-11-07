@@ -20,6 +20,7 @@ let
     go
     hadolint
     htop
+    imagemagick
     just
     jq
     hadolint
@@ -43,6 +44,7 @@ let
     watchexec
     watchman
     xz
+    zellij
   ];
 
   languages = with pkgs; [

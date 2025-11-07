@@ -1,50 +1,19 @@
 {
-    "workbench.colorTheme": "Gruvbox Dark (Soft)",
-    "cSpell.userWords": [
-        "Istio",
-        "Kustomize"
-    ],
-    "cSpell.ignoreWords": [
-        "CREDS",
-        "autofetch",
-        "isinstance",
-        "keycloak",
-        "rabbitmq",
-        "sqlalchemy",
-        "urlencode",
-        "werkzeug",
-        "yurtsplatform"
-    ],
     "vim.handleKeys": {
         "<C-s>": false,
         "<C-p>": false,
         "<C-c>": false
     },
     "terminal.integrated.commandsToSkipShell": [
-        "-workbench.action.quickOpen"
+        "-workbench.action.quickOpen",
+        "-workbench.action.terminal.focusFind",
     ],
     "git.autofetch": true,
     "git.confirmSync": false,
     "files.insertFinalNewline": true,
-    "python.analysis.typeCheckingMode": "strict",
-    "githubPullRequests.ignoredPullRequestBranches": [
-        "main"
-    ],
-    "githubPullRequests.pullBranch": "never",
-    "keyboard.dispatch": "keyCode",
-    "python.defaultInterpreterPath": "/home/jmob/.pyenv/versions/3.10.13/envs/platform_be/bin/python",
-    "python.condaPath": "/home/jmob/.conda/condabin/conda",
+    //"keyboard.dispatch": "keyCode",
     "vim.smartRelativeLine": true,
-    "vscode-postgres.virtualFolders": [
-        "functions"
-    ],
-    "vscode-postgres.defaultConnection": "platform",
-    "vscode-postgres.defaultDatabase": "test",
-    "[typescript]": {
-        "editor.defaultFormatter": "denoland.vscode-deno"
-    },
-    "remote.SSH.connectTimeout": 90,
-    "remote.SSH.remotePlatform": {
-        "ramjet-ts": "linux"
-    },
+    "workbench.colorTheme": "Pop Dark",
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "editor.stickyScroll.scrollWithEditor": false,
 }
