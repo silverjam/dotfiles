@@ -1,7 +1,8 @@
 [general]
-import = ["~/.config/alacritty/themes/themes/rose-pine.toml"]
+#import = ["~/dev/dotfiles/themes/rose-pine.toml"]
 #import = ["~/.config/alacritty/themes/themes/remedy_dark.toml"]
 #import = ["~/.config/alacritty/themes/themes/gruvbox_material.toml"]
+import = ["~/dev/dotfiles/alacritty-themes/themes/gruvbox_material.toml"]
 #import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
 
 [window]

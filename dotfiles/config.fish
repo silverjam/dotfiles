@@ -182,4 +182,6 @@ if has_cmd eza
     alias ls 'eza -F --color=auto'
 end
 
+export DOCKER_API_VERSION=1.52
+
 # vim: sw=4:sts=4:ts=4:et:

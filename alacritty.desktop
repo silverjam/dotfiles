@@ -1,6 +1,18 @@
 [Desktop Entry]
-Name=Alacritty
+Type=Application
+TryExec=alacritty
 Exec=alacritty
 Icon=/home/jmob/dev/dotfiles/alacritty.png
-Type=Application
-Categories=Development;
+Terminal=false
+Categories=System;TerminalEmulator;
+
+Name=Alacritty
+GenericName=Terminal
+Comment=A fast, cross-platform, OpenGL terminal emulator
+StartupNotify=true
+StartupWMClass=Alacritty
+Actions=New;
+
+[Desktop Action New]
+Name=New Terminal
+Exec=alacritty
