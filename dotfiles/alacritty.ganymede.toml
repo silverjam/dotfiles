@@ -1,0 +1,28 @@
+[general]
+import = ["~/dev/dotfiles/alacritty-themes/themes/rose-pine.toml"]
+
+[window]
+dimensions = { columns = 100, lines = 30 }
+padding = { x = 5, y = 5 }
+
+[font]
+size = 12.0
+
+[font.bold]
+family = "FiraCode Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "FiraCode Nerd Font Mono"
+style = "Bold Italic"
+
+[font.italic]
+family = "FiraCode Nerd Font Mono"
+style = "Italic"
+
+[font.normal]
+family = "FiraCode Nerd Font Mono"
+style = "Regular"
+
+[keyboard]
+bindings = [{ key = "N", mods = "Control|Shift", action = "CreateNewWindow" }]
