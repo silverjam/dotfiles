@@ -16,4 +16,5 @@
     "workbench.colorTheme": "Pop Dark",
     "github.copilot.nextEditSuggestions.enabled": true,
     "editor.stickyScroll.scrollWithEditor": false,
+    "terminal.integrated.allowChords": false
 }

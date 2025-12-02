@@ -6,7 +6,8 @@ import = ["~/dev/dotfiles/alacritty-themes/themes/gruvbox_material.toml"]
 #import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
 
 [window]
-dimensions = { columns = 80, lines = 24 }
+dimensions = { columns = 100, lines = 30 }
+padding = { x = 5, y = 5 }
 
 [font]
 size = 12.0
