@@ -11,6 +11,7 @@ let
     delta
     dust
     dua
+    fnm
     fzf
     gh
     ghostunnel
@@ -62,6 +63,7 @@ let
   cloud = with pkgs; [
     dex-oidc
     fluxcd
+    helm-docs
     k3d
     k9s
     kubernetes-helm
@@ -149,15 +151,15 @@ in
         name = "bass";
         src = pkgs.fishPlugins.bass.src;
       }
-      {
-        name = "nvm";
-        src = pkgs.fetchFromGitHub {
-          owner = "jorgebucaran";
-          repo = "nvm.fish";
-          rev = "846f1f20b2d1d0a99e344f250493c41a450f9448";
-          sha256 = "u3qhoYBDZ0zBHbD+arDxLMM8XoLQlNI+S84wnM3nDzg=";
-        };
-      }
+#      {
+#        name = "nvm";
+#        src = pkgs.fetchFromGitHub {
+#          owner = "jorgebucaran";
+#          repo = "nvm.fish";
+#          rev = "846f1f20b2d1d0a99e344f250493c41a450f9448";
+#          sha256 = "u3qhoYBDZ0zBHbD+arDxLMM8XoLQlNI+S84wnM3nDzg=";
+#        };
+#      }
       {
         name = "zellij.fish";
         src = pkgs.fetchFromGitHub {
