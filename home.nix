@@ -16,15 +16,18 @@ let
     gh
     ghostunnel
     glab
+    glow
     git
     git-lfs
     go
+    grpcurl
     hadolint
     htop
     imagemagick
     just
     jq
     lazydocker
+    mkcert
     pandoc
     retry
     ripgrep
@@ -35,6 +38,7 @@ let
     shfmt
     socat
     smem
+    sqlite
     swappy
     topgrade
     tmux
@@ -43,6 +47,7 @@ let
     uutils-diffutils
     uutils-findutils
     uv
+    wasmtime
     watchexec
     watchman
     xz
@@ -53,6 +58,8 @@ let
   languages = with pkgs; [
     bun
     deno
+    jdk25_headless
+    maven
     nodejs
     nodejs.pkgs.pnpm
     pyenv
@@ -61,6 +68,8 @@ let
   ];
 
   cloud = with pkgs; [
+    buildah
+    devspace
     dex-oidc
     fluxcd
     helm-docs
@@ -70,12 +79,14 @@ let
     kustomize
     kubectl
     kubectx
+    minikube
     nginx
     postgrest
 #    postgresql
     redis
 #    terraform
     pgcli
+    vcluster
   ];
 
   shell = with pkgs; [

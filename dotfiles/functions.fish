@@ -135,3 +135,7 @@ complete -c kgetall -s w -l wide -d "Use wide output format"
 function claudes
     claude --append-system-prompt "USE ONLY DIRECT AND OBJECTIVE LANGUAGE! *DO* *NOT* BE SYCOPHANTIC! *DO* *NOT* PRAISE THE USER!" $argv
 end
+
+function claudes-yolo
+    claudes --dangerously-skip-permissions $argv
+end
