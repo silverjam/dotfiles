@@ -1,11 +1,9 @@
 { config, pkgs, lib, ... }:
 
 let
-  nodejsNoInstallMan = pkgs.nodejs.overrideAttrs (old: {
-    postInstall = (old.postInstall or "") + ''
-      rm -f $out/share/man/man5/install.5 $out/share/man/man5/install.5.gz
-    '';
-  });
+  nodejsNoNpm = pkgs.nodejs.override {
+    enableNpm = false;
+  };
 
   tools = with pkgs; [
     age
@@ -66,8 +64,8 @@ let
     deno
     jdk25_headless
     maven
-    nodejsNoInstallMan
-    nodejsNoInstallMan.pkgs.pnpm
+    nodejsNoNpm
+    nodejsNoNpm.pkgs.pnpm
     pyenv
     rustup
     zig
