@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }:
 
 let
-  nodejsNoNpm = pkgs.nodejs.override {
-    enableNpm = false;
-  };
+#  nodejsNoNpm = pkgs.nodejs.override {
+#    enableNpm = false;
+#  };
 
   tools = with pkgs; [
     age
@@ -64,8 +64,8 @@ let
     deno
     jdk25_headless
     maven
-    nodejsNoNpm
-    nodejsNoNpm.pkgs.pnpm
+#    nodejsNoNpm
+#    nodejsNoNpm.pkgs.pnpm
     pyenv
     rustup
     zig
@@ -81,7 +81,7 @@ let
     k9s
     kubernetes-helm
     kustomize
-    kubectl
+#    kubectl  # minikube is installing kubectl too???
     kubectx
     minikube
     nginx
