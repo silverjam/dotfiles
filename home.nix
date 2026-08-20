@@ -14,6 +14,7 @@ let
     delta
     dust
     dua
+    fd
     fnm
     fzf
     gh

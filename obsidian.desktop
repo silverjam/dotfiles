@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Obsidian
+Comment=Knowledge base and markdown notes
+Exec=obsidian --no-sandbox %U
+TryExec=obsidian
+Icon=obsidian
+Terminal=false
+StartupNotify=true
+StartupWMClass=md.obsidian.Obsidian
+MimeType=x-scheme-handler/obsidian;
+Categories=Office;
