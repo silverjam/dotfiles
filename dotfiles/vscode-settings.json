@@ -13,8 +13,9 @@
     "files.insertFinalNewline": true,
     //"keyboard.dispatch": "keyCode",
     "vim.smartRelativeLine": true,
-    "workbench.colorTheme": "Pop Dark",
+    "workbench.colorTheme": "GitHub Dark Default",
     "github.copilot.nextEditSuggestions.enabled": true,
     "editor.stickyScroll.scrollWithEditor": false,
-    "terminal.integrated.allowChords": false
+    "terminal.integrated.allowChords": false,
+    "diffEditor.renderSideBySide": false
 }

@@ -31,6 +31,7 @@ let
     just
     jq
     lazydocker
+    markdownlint-cli
     mkcert
     pandoc
     retry
