@@ -1,6 +1,10 @@
 { config, pkgs, lib, ... }:
 
 let
+  # This repo's checkout location. Config files are symlinked back out of the
+  # nix store to here, so edits are live and `git status` sees them.
+  dots = "${config.home.homeDirectory}/dev/dotfiles";
+
 #  nodejsNoNpm = pkgs.nodejs.override {
 #    enableNpm = false;
 #  };
@@ -123,8 +127,9 @@ in
   ;
 
   home.file = {
-    ".config/fish/functions/functions.fish".text = "";
- 
+    ".config/Code/User/settings.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${dots}/dotfiles/vscode-settings.json";
+
     ".config/fish/completions/aws.fish".text = ''
 
       function __fish_complete_aws
@@ -132,14 +137,6 @@ in
       end
 
       complete -c aws -f -a "(__fish_complete_aws)"
-    '';
-  };
-
-  home.activation = {
-    linkDotfiles = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      $DRY_RUN_CMD mkdir -p $HOME/.config/Code/User
-      $DRY_RUN_CMD ln -sf $VERBOSE_ARG \
-          ${builtins.toPath ./dotfiles/vscode-settings.json} $HOME/.config/Code/User/settings.json
     '';
   };
 
@@ -157,7 +154,7 @@ in
       set -p PATH /nix/var/nix/profiles/default/bin
       set -p PATH $HOME/.nix-profile/bin
 
-      source $HOME/dev/dotfiles/dotfiles/config.fish
+      source ${dots}/dotfiles/config.fish
 
       # Not sure why but this needs to happen here for starship to work
       starship init fish | source
