@@ -17,5 +17,8 @@
     "github.copilot.nextEditSuggestions.enabled": true,
     "editor.stickyScroll.scrollWithEditor": false,
     "terminal.integrated.allowChords": false,
-    "diffEditor.renderSideBySide": false
+    "diffEditor.renderSideBySide": false,
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+    "python.analysis.typeCheckingMode": "strict"
 }

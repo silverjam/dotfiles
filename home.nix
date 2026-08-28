@@ -8,6 +8,7 @@ let
   tools = with pkgs; [
     age
     awscli2
+#    ssm-session-manager-plugin
     bash
     bfg-repo-cleaner
     btop
@@ -83,13 +84,15 @@ let
     k9s
     kubernetes-helm
     kustomize
-#    kubectl  # minikube is installing kubectl too???
+    kubectl  # minikube is installing kubectl too???
     kubectx
-    minikube
+#    minikube
     nginx
     postgrest
 #    postgresql
     redis
+## Non-free, installed using ad-hoc recipes
+#    terragrunt
 #    terraform
     pgcli
     vcluster
