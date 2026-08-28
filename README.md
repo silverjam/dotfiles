@@ -42,6 +42,7 @@ just              # list every recipe
 just install      # the standard set
 just doctor       # check what is installed, missing or drifted
 just switch       # rebuild the home-manager generation
+just machine      # developer tooling installers (docker, terraform, ...)
 ```
 
 ### The standard set — `just install`
@@ -65,6 +66,35 @@ just switch       # rebuild the home-manager generation
 
 `just uninstall` removes every symlink these recipes created, and leaves
 machine-local files (`~/.gitconfig`) and anything home-manager owns alone.
+
+
+Machine setup — `just machine`
+------------------------------
+
+Installers for developer tooling, as opposed to the shell and dotfile
+personalization above. These live in `machine-setup.just`, loaded as a module:
+
+```sh
+just machine                     # list them
+just machine install-docker      # run one
+just machine verify-docker
+just machine update-docker
+```
+
+(`just --list machine` also works. `just machine --list` does not.)
+
+Covered: codex, docker, fastmail, herdr, openspec, ssm, temporal, terraform,
+terragrunt, tfenv, vscode. Every tool has an `install-` / `verify-` / `update-`
+triple, releases are checksum- or signature-verified, and nothing is installed
+by piping a script into a shell.
+
+Deliberately no `install-all`: these touch apt repositories, add the user to
+groups and need sudo throughout, so they stay individually invokable. They are
+not part of `just install` and `just doctor` does not check them — use the
+per-tool `verify-` recipes.
+
+These were previously the standalone `silverjam/artos-machine-setup` repo,
+vendored here at `d1201d5`. This copy is the source of truth now.
 
 
 How things get installed
@@ -120,6 +150,9 @@ Notes
 - **Per-host config** is handled inside the files themselves —
   `lazyvim/lua/plugins/lazyvim.lua` picks a colorscheme from the hostname, and
   `dotfiles/alacritty.ganymede.toml` is a host variant.
+- **terraform and terragrunt** are commented out in `home.nix` because they are
+  non-free; `just machine install-terraform` / `install-terragrunt` handle them
+  instead.
 - **Not wired up:** `dotfiles/alacritty.toml`, `wezterm.lua`, `vimrc*`,
   `spacemacs`, `bash_aliases`, `vscode-keybindings.json`, and the WezTerm /
   Alacritty / Cursor `.desktop` files. The last three contain absolute

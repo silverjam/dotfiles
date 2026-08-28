@@ -4,10 +4,14 @@
 # Everything:     just install             (the standard set)
 # Pick and mix:   just --list              (optional extras are individually invokable)
 # Check:          just doctor
+# Tooling:        just machine             (docker, terraform, codex, ...)
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 dots := justfile_directory()
+
+# Developer tooling installers — `just machine` to list, `just machine install-docker` to run
+mod machine 'machine-setup.just'
 
 default:
     @just --list
