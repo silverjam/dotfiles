@@ -472,3 +472,80 @@ verify-tfenv:
 
 # Update tfenv to the latest version (re-runs the install recipe)
 update-tfenv: install-tfenv verify-tfenv
+
+# ---------------------------------------------------------------------------
+# apt package bundles
+#
+# From the "Machine Setup" notes in silverjam/yurts-notes.md. Packages that
+# home.nix already provides are deliberately left out, so the nix-managed copy
+# stays the one on PATH: watchman and htop were dropped from these lists.
+# ---------------------------------------------------------------------------
+
+# Toolchain and headers for compiling from source. pyenv needs these to build
+# Pythons; without them the builds fail late with missing-header errors.
+build_tools := "autoconf automake build-essential cmake gdb pkg-config authbind " + \
+               "libbz2-dev libedit-dev liblzma-dev libncurses-dev libpq-dev " + \
+               "libreadline-dev libssl-dev libz-dev python3-dev tk-dev"
+
+dev_tools := "pass zsh"
+
+sys_tools := "wavemon iw kazam xclip inkscape"
+
+# Install the build toolchain and headers needed to compile from source
+install-build-tools:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo apt-get update
+    sudo apt-get install -y {{build_tools}}
+
+# Verify the build toolchain is installed
+verify-build-tools: (_verify-apt "build-tools" build_tools)
+
+# Update the build toolchain to the latest packaged versions
+update-build-tools:
+    sudo apt-get update && sudo apt-get install -y {{build_tools}}
+
+# Install assorted development tools
+install-dev-tools:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo apt-get update
+    sudo apt-get install -y {{dev_tools}}
+
+# Verify the development tools are installed
+verify-dev-tools: (_verify-apt "dev-tools" dev_tools)
+
+# Update the development tools to the latest packaged versions
+update-dev-tools:
+    sudo apt-get update && sudo apt-get install -y {{dev_tools}}
+
+# Install assorted system and desktop utilities
+install-sys-tools:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo apt-get update
+    sudo apt-get install -y {{sys_tools}}
+
+# Verify the system utilities are installed
+verify-sys-tools: (_verify-apt "sys-tools" sys_tools)
+
+# Update the system utilities to the latest packaged versions
+update-sys-tools:
+    sudo apt-get update && sudo apt-get install -y {{sys_tools}}
+
+# Report which packages in a bundle are installed, listing any that are missing
+_verify-apt group packages:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    missing=()
+    total=0
+    for pkg in {{packages}}; do
+        total=$((total + 1))
+        dpkg -s "$pkg" >/dev/null 2>&1 || missing+=("$pkg")
+    done
+    if [[ ${#missing[@]} -eq 0 ]]; then
+        echo "{{group}}: all $total packages installed"
+    else
+        echo "{{group}}: $((total - ${#missing[@]}))/$total installed, missing: ${missing[*]}"
+        exit 1
+    fi
