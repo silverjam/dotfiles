@@ -38,63 +38,81 @@ Day to day
 ----------
 
 ```sh
-just              # list every recipe
-just install      # the standard set
+just              # list the top-level recipes
+just install      # nix config, home-manager, then the config files
 just doctor       # check what is installed, missing or drifted
 just switch       # rebuild the home-manager generation
-just machine      # developer tooling installers (docker, terraform, ...)
 ```
 
-### The standard set — `just install`
+Two modules sit underneath. `just <module>` lists a module's recipes,
+`just <module> <recipe>` runs one:
+
+```sh
+just dotfiles                    # link this repo's config files
+just dotfiles install-nvim
+
+just machine                     # install developer tooling
+just machine install-docker
+```
+
+(`just --list dotfiles` also works. `just dotfiles --list` does not.)
+
+### Top level — provisioning
 
 | Recipe | What it does |
 | --- | --- |
+| `install` | `install-nix-config`, `install-home-manager`, then `just dotfiles install` |
 | `install-nix-config` | links `nix/nixpkgs-config.nix` → `~/.config/nixpkgs/config.nix` |
-| `install-home-manager` | links `home.nix`, then `home-manager switch -b bak` |
+| `install-home-manager` | links `home.nix`, then `switch` |
+| `switch` | `home-manager switch -b bak`, sourcing the nix profile first |
+| `doctor` | checks nix, channels, home-manager, git, and every managed link |
+| `uninstall` | delegates to `just dotfiles uninstall` |
+
+These stay at the top level rather than moving into a module because `install`
+depends on them, and just cannot express dependencies across modules.
+
+### `just dotfiles` — this repo's config files
+
+| Recipe | What it does |
+| --- | --- |
+| `install` | `install-git`, `install-nvim`, `install-obsidian` |
 | `install-git` | adds the `include.path` to `~/.gitconfig` (see below) |
 | `install-nvim` | clones the LazyVim starter if absent, links the tracked files |
 | `install-obsidian` | installs the launcher and icons |
-
-### Optional extras — invoke individually
-
-| Recipe | What it does |
-| --- | --- |
 | `install-zellij` | config, default layout and the zjstatus plugin |
 | `install-tmux` | `~/.tmux.conf` |
 | `install-fonts` | the bundled FiraCode Nerd Fonts, then `fc-cache` |
 | `install-completions` | fish completions for `just` |
+| `uninstall` | removes every symlink the module created |
 
-`just uninstall` removes every symlink these recipes created, and leaves
-machine-local files (`~/.gitconfig`) and anything home-manager owns alone.
+The last four are not part of `just dotfiles install` — invoke them
+individually.
 
+### `just machine` — developer tooling
 
-Machine setup — `just machine`
-------------------------------
+Installers for third-party tooling, as opposed to the personalization above.
 
-Installers for developer tooling, as opposed to the shell and dotfile
-personalization above. These live in `machine-setup.just`, loaded as a module:
+| Group | Recipes |
+| --- | --- |
+| apt bundles | `install-build-tools`, `install-dev-tools`, `install-sys-tools` |
+| tools | codex, docker, fastmail, herdr, openspec, ssm, temporal, terraform, terragrunt, tfenv, vscode |
 
-```sh
-just machine                     # list them
-just machine install-docker      # run one
-just machine verify-docker
-just machine update-docker
-```
+Everything has an `install-` / `verify-` / `update-` triple. Releases are
+checksum- or signature-verified, and nothing is installed by piping a script
+into a shell.
 
-(`just --list machine` also works. `just machine --list` does not.)
+`build-tools` is the toolchain and headers `pyenv` needs to build Pythons.
+Packages `home.nix` already provides are left out of these bundles, so the
+nix-managed copy stays the one on PATH — `watchman` and `htop` are omitted for
+that reason.
 
-Covered: codex, docker, fastmail, herdr, openspec, ssm, temporal, terraform,
-terragrunt, tfenv, vscode. Every tool has an `install-` / `verify-` / `update-`
-triple, releases are checksum- or signature-verified, and nothing is installed
-by piping a script into a shell.
-
-Deliberately no `install-all`: these touch apt repositories, add the user to
-groups and need sudo throughout, so they stay individually invokable. They are
-not part of `just install` and `just doctor` does not check them — use the
-per-tool `verify-` recipes.
+Deliberately no `install-all`, and `just doctor` does not check them: these
+touch apt repositories, add the user to groups and need sudo throughout, so
+they stay individually invokable. Use the per-tool `verify-` recipes.
 
 These were previously the standalone `silverjam/artos-machine-setup` repo,
-vendored here at `d1201d5`. This copy is the source of truth now.
+vendored at `d1201d5`; the apt bundles came from the "Machine Setup" notes in
+`silverjam/yurts-notes.md`. This copy is the source of truth now.
 
 
 How things get installed
@@ -107,9 +125,15 @@ declaratively. It uses `config.lib.file.mkOutOfStoreSymlink`, so the installed
 files are symlinks back into this repo rather than copies in the nix store —
 edits are live and `git status` sees them.
 
-**The Justfile** owns everything home-manager can't or shouldn't: bootstrapping,
-things needing a network clone (the LazyVim starter), files that must stay
-mutable (`~/.gitconfig`), and system caches (fonts, desktop database).
+**The Justfile and its modules** own everything home-manager can't or shouldn't:
+bootstrapping, things needing a network clone (the LazyVim starter), files that
+must stay mutable (`~/.gitconfig`), system caches (fonts, desktop database) and
+third-party tool installers.
+
+`scripts/link.sh` does the actual symlinking for every recipe that makes a link.
+It is a script rather than a just recipe because just modules cannot call each
+other's private recipes — a nested `just _link` from inside a module resolves
+against the top-level Justfile instead.
 
 **`scripts/bootstrap.sh`** owns the cold start, up to the point where the other
 two can run.
@@ -117,7 +141,7 @@ two can run.
 ### `~/.gitconfig` is deliberately not a symlink
 
 It holds per-machine identity — work email on one box, personal on another — so
-it stays a real file. `just install-git` only ensures it *includes* the shared
+it stays a real file. `just dotfiles install-git` only ensures it *includes* the shared
 `dotfiles/gitconfig`:
 
 ```ini
@@ -128,7 +152,7 @@ it stays a real file. `just install-git` only ensures it *includes* the shared
 Identity is filled in only if unset. To set it non-interactively:
 
 ```sh
-just install-git "Your Name" you@example.com
+just dotfiles install-git "Your Name" you@example.com
 ```
 
 ### `nix/nixpkgs-config.nix` must always parse

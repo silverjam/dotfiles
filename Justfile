@@ -1,41 +1,50 @@
 # dotfiles — install and manage config files
 #
 # Fresh machine:  ./scripts/bootstrap.sh   (installs nix + home-manager, then runs `just install`)
-# Everything:     just install             (the standard set)
-# Pick and mix:   just --list              (optional extras are individually invokable)
+# Everything:     just install             (nix, home-manager and the config files)
 # Check:          just doctor
-# Tooling:        just machine             (docker, terraform, codex, ...)
+#
+# Two modules underneath:
+#   just dotfiles   link this repo's config files (git, nvim, zellij, fonts, ...)
+#   just machine    install developer tooling (docker, terraform, apt bundles, ...)
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 dots := justfile_directory()
+link := justfile_directory() / "scripts/link.sh"
 
-# Developer tooling installers — `just machine` to list, `just machine install-docker` to run
-mod machine 'machine-setup.just'
+# Link this repo's config files — `just dotfiles` to list
+mod dotfiles 'dotfiles.just'
+
+# Install developer tooling — `just machine` to list
+mod machine 'machine.just'
 
 default:
     @just --list
 
 # ---------------------------------------------------------------------------
-# The standard set — what a machine gets by default
+# Provisioning. These live here rather than in a module because `install`
+# depends on them, and just cannot express dependencies across modules.
 # ---------------------------------------------------------------------------
 
-# Install the standard set of config files
-install: install-nix-config install-home-manager install-git install-nvim install-obsidian
+# Install everything: nix config, home-manager, then the config files
+install: install-nix-config install-home-manager
+    @just dotfiles install
     @echo ""
-    @echo "Done. 'just doctor' to verify, 'just --list' for optional extras."
+    @echo "Done. 'just doctor' to verify."
+    @echo "Optional extras: just dotfiles    Developer tooling: just machine"
 
 # Link the global nixpkgs config (must be valid, or every nix eval fails)
 install-nix-config:
     @echo "nixpkgs config:"
-    @just _link "{{dots}}/nix/nixpkgs-config.nix" "$HOME/.config/nixpkgs/config.nix"
+    @{{link}} "{{dots}}/nix/nixpkgs-config.nix" "$HOME/.config/nixpkgs/config.nix"
     @nix-instantiate --parse "$HOME/.config/nixpkgs/config.nix" >/dev/null \
         && echo "  ✓ parses cleanly"
 
 # Link home.nix and rebuild the home-manager generation
 install-home-manager: install-nix-config
     @echo "home-manager:"
-    @just _link "{{dots}}/home.nix" "$HOME/.config/home-manager/home.nix"
+    @{{link}} "{{dots}}/home.nix" "$HOME/.config/home-manager/home.nix"
     @just switch
 
 # Rebuild the home-manager generation
@@ -49,107 +58,9 @@ switch:
     # -b bak: back up pre-existing unmanaged files rather than failing activation.
     home-manager switch -b bak
 
-# Point ~/.gitconfig at the shared gitconfig; identity stays machine-local
-install-git name="" email="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    # Usage: just install-git "Jason Mobarak" me@example.com
-    echo "git:"
-
-    # ~/.gitconfig is deliberately a real file, never a symlink: it holds
-    # per-machine identity (work vs personal email). We only ensure it
-    # *includes* the shared config.
-    inc="{{dots}}/dotfiles/gitconfig"
-    # git stores include.path verbatim and only expands ~ when reading, so a
-    # literal string compare would add a duplicate alongside a "~/..." entry.
-    found=0
-    while IFS= read -r existing; do
-        [[ -z "$existing" ]] && continue
-        resolved="${existing/#\~\//$HOME/}"
-        if [[ "$resolved" == "$inc" ]] \
-           || { [[ -e "$resolved" && -e "$inc" ]] \
-                && [[ "$(readlink -f "$resolved")" == "$(readlink -f "$inc")" ]]; }; then
-            found=1
-            echo "  = include.path $existing"
-            break
-        fi
-    done < <(git config --global --get-all include.path 2>/dev/null || true)
-    if [[ $found -eq 0 ]]; then
-        git config --global --add include.path "$inc"
-        echo "  + include.path $inc"
-    fi
-
-    # Explicit args win; otherwise only fill in what is not already set.
-    [[ -n "{{name}}"  ]] && git config --global user.name  "{{name}}"
-    [[ -n "{{email}}" ]] && git config --global user.email "{{email}}"
-
-    for field in user.name user.email; do
-        if git config --global --get "$field" >/dev/null 2>&1; then
-            echo "  = $field $(git config --global --get "$field")"
-        elif [[ -t 0 ]]; then
-            read -rp "  $field: " value
-            [[ -n "$value" ]] && git config --global "$field" "$value"
-        else
-            echo "  ! $field unset — run: just install-git \"Your Name\" you@example.com" >&2
-        fi
-    done
-
-    if ! git config --global --get init.defaultBranch >/dev/null 2>&1; then
-        git config --global init.defaultBranch main
-        echo "  + init.defaultBranch main"
-    fi
-
-# Install the LazyVim starter (if absent) and link the tracked config files
-install-nvim:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    echo "nvim:"
-    nvim_dir="$HOME/.config/nvim"
-    if [[ ! -d "$nvim_dir" ]]; then
-        echo "  cloning LazyVim starter"
-        git clone --quiet --depth 1 https://github.com/LazyVim/starter "$nvim_dir"
-        # Drop the starter's history: this checkout is ours now, and the bits
-        # we care about are symlinked back into this repo below.
-        rm -rf "$nvim_dir/.git"
-    fi
-    just _link "{{dots}}/lazyvim/lazyvim.json"            "$nvim_dir/lazyvim.json"
-    just _link "{{dots}}/lazyvim/lua/plugins/lazyvim.lua" "$nvim_dir/lua/plugins/lazyvim.lua"
-
-# Install the Obsidian launcher and icons
-install-obsidian:
-    @echo "obsidian:"
-    @just _install-desktop obsidian
-
-# ---------------------------------------------------------------------------
-# Optional extras — not run by `just install`, invoke individually
-# ---------------------------------------------------------------------------
-
-# Link the zellij config, default layout and zjstatus plugin
-install-zellij:
-    @echo "zellij:"
-    @just _link "{{dots}}/dotfiles/zellij.kdl"            "$HOME/.config/zellij/config.kdl"
-    @just _link "{{dots}}/zellij-layouts/default.kdl"     "$HOME/.config/zellij/layouts/default.kdl"
-    @just _link "{{dots}}/zjstatus.wasm"                  "$HOME/.config/zellij/zjstatus.wasm"
-
-# Link the tmux config
-install-tmux:
-    @echo "tmux:"
-    @just _link "{{dots}}/dotfiles/tmux.conf" "$HOME/.tmux.conf"
-
-# Link the bundled Nerd Fonts and rebuild the font cache
-install-fonts:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    echo "fonts:"
-    for font in "{{dots}}"/fonts/*.ttf; do
-        just _link "$font" "$HOME/.local/share/fonts/$(basename "$font")"
-    done
-    fc-cache -f >/dev/null 2>&1 && echo "  ✓ font cache rebuilt" || echo "  ! fc-cache unavailable"
-
-# Link shell completions
-install-completions:
-    @echo "completions:"
-    @just _link "{{dots}}/just.fish" "$HOME/.config/fish/completions/just.fish"
+# Remove the symlinks the dotfiles module manages
+uninstall:
+    @just dotfiles uninstall
 
 # ---------------------------------------------------------------------------
 # Diagnostics
@@ -230,7 +141,7 @@ doctor:
         fi
     done < <(git config --global --get-all include.path 2>/dev/null || true)
     case $matches in
-        0) bad "include.path missing — run: just install-git" ;;
+        0) bad "include.path missing — run: just dotfiles install-git" ;;
         1) ok "include.path set" ;;
         *) note "include.path listed $matches times — remove the duplicates" ;;
     esac
@@ -244,7 +155,7 @@ doctor:
         check_link "{{dots}}/lazyvim/lazyvim.json"            "$HOME/.config/nvim/lazyvim.json"
         check_link "{{dots}}/lazyvim/lua/plugins/lazyvim.lua" "$HOME/.config/nvim/lua/plugins/lazyvim.lua"
     else
-        bad "~/.config/nvim missing — run: just install-nvim"
+        bad "~/.config/nvim missing — run: just dotfiles install-nvim"
     fi
 
     echo "vscode (via home-manager):"
@@ -255,9 +166,9 @@ doctor:
 
     echo "optional extras:"
     for pair in \
-        "{{dots}}/dotfiles/zellij.kdl:$HOME/.config/zellij/config.kdl:just install-zellij" \
-        "{{dots}}/dotfiles/tmux.conf:$HOME/.tmux.conf:just install-tmux" \
-        "{{dots}}/just.fish:$HOME/.config/fish/completions/just.fish:just install-completions"; do
+        "{{dots}}/dotfiles/zellij.kdl:$HOME/.config/zellij/config.kdl:just dotfiles install-zellij" \
+        "{{dots}}/dotfiles/tmux.conf:$HOME/.tmux.conf:just dotfiles install-tmux" \
+        "{{dots}}/just.fish:$HOME/.config/fish/completions/just.fish:just dotfiles install-completions"; do
         IFS=: read -r src dst recipe <<<"$pair"
         if [[ -L "$dst" && "$(readlink -f "$dst")" == "$(readlink -f "$src")" ]]; then
             printf '  %s✓%s %-46s\n' "$G" "$N" "$dst"
@@ -273,96 +184,3 @@ doctor:
         printf '%sProblems found.%s See above.\n' "$R" "$N"
     fi
     exit $fail
-
-# Remove the symlinks this Justfile manages (home-manager's own are not touched)
-uninstall:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    for dst in \
-        "$HOME/.config/nvim/lazyvim.json" \
-        "$HOME/.config/nvim/lua/plugins/lazyvim.lua" \
-        "$HOME/.local/share/applications/obsidian.desktop" \
-        "$HOME/.config/zellij/config.kdl" \
-        "$HOME/.config/zellij/layouts/default.kdl" \
-        "$HOME/.config/zellij/zjstatus.wasm" \
-        "$HOME/.tmux.conf" \
-        "$HOME/.config/fish/completions/just.fish"; do
-        if [[ -L "$dst" && "$(readlink -f "$dst")" == "{{dots}}"/* ]]; then
-            rm -f "$dst"
-            echo "  - $dst"
-        fi
-    done
-    for icon in "$HOME"/.local/share/icons/hicolor/*/apps/obsidian.png; do
-        [[ -L "$icon" ]] && rm -f "$icon" && echo "  - $icon"
-    done
-    for font in "$HOME"/.local/share/fonts/*.ttf; do
-        if [[ -L "$font" && "$(readlink -f "$font")" == "{{dots}}"/* ]]; then
-            rm -f "$font"
-            echo "  - $font"
-        fi
-    done
-    echo ""
-    echo "Left alone: ~/.gitconfig (machine-local), ~/.config/nixpkgs/config.nix,"
-    echo "~/.config/home-manager/home.nix, and anything home-manager owns."
-    echo "To undo home-manager itself: home-manager generations / home-manager remove-generations"
-
-# ---------------------------------------------------------------------------
-# Private helpers
-# ---------------------------------------------------------------------------
-
-# Idempotently symlink src -> dst, backing up anything real already there
-_link src dst:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    src="{{src}}"
-    dst="{{dst}}"
-
-    [[ -e "$src" ]] || { echo "  ✗ missing source: $src" >&2; exit 1; }
-
-    if [[ -L "$dst" && "$(readlink -f "$dst")" == "$(readlink -f "$src")" ]]; then
-        echo "  = $dst"
-        exit 0
-    fi
-
-    mkdir -p "$(dirname "$dst")"
-
-    if [[ -e "$dst" || -L "$dst" ]]; then
-        backup="$dst.bak.$(date +%Y%m%d%H%M%S)"
-        mv "$dst" "$backup"
-        echo "  ~ backed up $dst -> $(basename "$backup")"
-    fi
-
-    ln -sfn "$src" "$dst"
-    echo "  + $dst"
-
-# Install NAME.desktop (and icons/NAME/*.png if present) into the XDG user dirs
-_install-desktop name:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    name="{{name}}"
-    src="{{dots}}/$name.desktop"
-    apps="$HOME/.local/share/applications"
-
-    [[ -f "$src" ]] || { echo "  ✗ no such desktop file: $src" >&2; exit 1; }
-
-    mkdir -p "$apps"
-    if grep -q '@DOTFILES@' "$src"; then
-        # Contains repo-relative paths, so it has to be generated rather than
-        # linked. Re-run this recipe after editing the source file.
-        sed "s|@DOTFILES@|{{dots}}|g" "$src" > "$apps/$name.desktop"
-        echo "  + $apps/$name.desktop (generated)"
-    else
-        just _link "$src" "$apps/$name.desktop"
-    fi
-
-    if [[ -d "{{dots}}/icons/$name" ]]; then
-        for png in "{{dots}}/icons/$name"/*.png; do
-            [[ -e "$png" ]] || continue
-            size=$(basename "$png" .png)
-            just _link "$png" \
-                "$HOME/.local/share/icons/hicolor/${size}x${size}/apps/$name.png"
-        done
-    fi
-
-    update-desktop-database "$apps" 2>/dev/null || true
-    gtk-update-icon-cache "$HOME/.local/share/icons/hicolor" 2>/dev/null || true
