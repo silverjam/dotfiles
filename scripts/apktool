@@ -1,4 +1,0 @@
-#!/bin/bash
-
-D=$( (cd `dirname $0` >/dev/null; pwd -P) )
-java -jar $D/apktool.d/apktool.jar ${*}
