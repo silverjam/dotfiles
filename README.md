@@ -135,6 +135,7 @@ depends on them, and just cannot express dependencies across modules.
 | `install-nvim` | clones the LazyVim starter if absent, links the tracked files |
 | `install-obsidian` | installs the launcher and icons |
 | `install-zellij` | config, default layout and the zjstatus plugin |
+| `update-zjstatus` | downloads the latest zjstatus release into the repo |
 | `install-tmux` | `~/.tmux.conf` |
 | `install-fonts` | the bundled FiraCode Nerd Fonts, then `fc-cache` |
 | `install-completions` | fish completions for `just` |
@@ -221,6 +222,13 @@ end of file`. `just doctor` checks this explicitly.
 Notes
 -----
 
+- **zjstatus is vendored**, not fetched at install time — `zjstatus.wasm` is
+  tracked here and `zjstatus.version` records the release it came from.
+  `just dotfiles update-zjstatus` pulls the latest, verifying the sha256 the
+  GitHub API publishes for the asset. It is a no-op when already current; pass
+  any argument to force a re-download. Because `~/.config/zellij/zjstatus.wasm`
+  symlinks to the repo copy, there is nothing to re-link — but restart zellij
+  to load the new plugin.
 - **zellij rewrites its own config.** `~/.config/zellij/config.kdl` is a symlink
   into this repo, so if zellij regenerates it the change lands in `git status`.
   Review before committing.

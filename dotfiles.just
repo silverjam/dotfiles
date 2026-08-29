@@ -105,6 +105,69 @@ install-zellij:
     @{{link}} "{{dots}}/zellij-layouts/default.kdl" "$HOME/.config/zellij/layouts/default.kdl"
     @{{link}} "{{dots}}/zjstatus.wasm"              "$HOME/.config/zellij/zjstatus.wasm"
 
+# Updates the vendored zjstatus.wasm in place. ~/.config/zellij/zjstatus.wasm
+# is a symlink to it, so there is nothing to re-link afterwards — but a running
+# zellij needs restarting to pick the new plugin up.
+
+# Download the latest zjstatus plugin into this repo
+update-zjstatus force="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "zjstatus:"
+
+    repo="dj95/zjstatus"
+    asset="zjstatus.wasm"
+    dest="{{dots}}/zjstatus.wasm"
+    version_file="{{dots}}/zjstatus.version"
+
+    command -v jq >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y jq; }
+
+    release="$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest")" \
+        || { echo "  ✗ could not reach GitHub" >&2; exit 1; }
+
+    tag="$(jq -r '.tag_name' <<<"$release")"
+    [[ -n "$tag" && "$tag" != "null" ]] || { echo "  ✗ could not resolve latest tag" >&2; exit 1; }
+
+    # The API publishes a digest per asset, so there is no separate checksum
+    # file to fetch — same approach as the machine module's release installers.
+    expected="$(jq -r --arg n "$asset" \
+        '.assets[] | select(.name == $n) | .digest' <<<"$release" | sed 's/^sha256://')"
+    [[ -n "$expected" ]] || { echo "  ✗ no digest published for $asset" >&2; exit 1; }
+
+    current="$(cat "$version_file" 2>/dev/null || echo unknown)"
+    if [[ -z "{{force}}" && -f "$dest" ]]; then
+        # Trust the file itself over the version marker: the marker can be
+        # missing or stale, the hash cannot.
+        if [[ "$(sha256sum "$dest" | awk '{print $1}')" == "$expected" ]]; then
+            echo "  = already at $tag"
+            printf '%s\n' "$tag" > "$version_file"
+            exit 0
+        fi
+    fi
+
+    echo "  current: $current, latest: $tag"
+
+    workdir="$(mktemp -d)"
+    trap 'rm -rf "$workdir"' EXIT
+
+    curl -fsSL -o "$workdir/$asset" \
+        "https://github.com/$repo/releases/download/$tag/$asset" \
+        || { echo "  ✗ download failed" >&2; exit 1; }
+
+    actual="$(sha256sum "$workdir/$asset" | awk '{print $1}')"
+    if [[ "$actual" != "$expected" ]]; then
+        echo "  ✗ checksum mismatch for $asset" >&2
+        echo "      expected: $expected" >&2
+        echo "      actual:   $actual" >&2
+        exit 1
+    fi
+    echo "  ✓ verified sha256: $actual"
+
+    mv "$workdir/$asset" "$dest"
+    printf '%s\n' "$tag" > "$version_file"
+    echo "  + updated to $tag ($(du -h "$dest" | cut -f1))"
+    echo "  restart zellij to pick up the new plugin"
+
 # Link the tmux config
 install-tmux:
     @echo "tmux:"
