@@ -46,13 +46,22 @@ if ! command -v git >/dev/null 2>&1; then
 fi
 
 # ---------------------------------------------------------------- stage 2 ---
+# Get just early, so the recipes are usable before nix exists -- otherwise
+# `just machine install-nix` is unreachable on a bare machine. Also puts
+# ~/.local/bin on PATH for bash, zsh and fish.
+say "just"
+
+"$DOTFILES/scripts/bootstrap-just.sh"
+export PATH="$HOME/.local/bin:$PATH"
+
+# ---------------------------------------------------------------- stage 3 ---
 # Nix itself plus the channels, shared with `just machine install-nix` so the
 # two cannot drift. Handles its own curl/xz dependencies and is idempotent.
 say "Nix and channels"
 
 "$DOTFILES/scripts/install-nix.sh"
 
-# ---------------------------------------------------------------- stage 3 ---
+# ---------------------------------------------------------------- stage 4 ---
 # install-nix.sh sourced the profile in its own shell, not ours. Do it again
 # here so the remaining stages can call nix-instantiate and home-manager.
 #
@@ -71,7 +80,7 @@ fi
 command -v nix-channel >/dev/null 2>&1 || die "nix-channel not on PATH after sourcing profile"
 info "nix $(nix --version | awk '{print $3}') on PATH"
 
-# ---------------------------------------------------------------- stage 4 ---
+# ---------------------------------------------------------------- stage 5 ---
 # Must happen before any home-manager evaluation: nixpkgs reads this file every
 # time, and an invalid one fails the whole build.
 say "nixpkgs config"
@@ -90,7 +99,7 @@ if ! nix-instantiate --parse "$target" >/dev/null 2>&1; then
 fi
 info "parses cleanly"
 
-# ---------------------------------------------------------------- stage 5 ---
+# ---------------------------------------------------------------- stage 6 ---
 say "home-manager"
 
 mkdir -p "$HOME/.config/home-manager"
@@ -114,10 +123,19 @@ info "switching"
 # whole activation.
 home-manager switch -b bak
 
-# ---------------------------------------------------------------- stage 6 ---
+# ---------------------------------------------------------------- stage 7 ---
 say "Config files"
 
+# ~/.local/bin sits *ahead* of the nix profile in PATH, so the bootstrap copy
+# of just would keep shadowing the nix-managed one and quietly go stale. Now
+# that home-manager provides just, drop the bootstrap copy.
+if [ -x "$HOME/.nix-profile/bin/just" ] && [ -f "$HOME/.local/bin/just" ]; then
+    rm -f "$HOME/.local/bin/just"
+    info "removed the bootstrap just; home-manager provides it now"
+fi
+
 if command -v just >/dev/null 2>&1; then
+    info "using $(command -v just)"
     exec just --justfile "$DOTFILES/Justfile" --working-directory "$DOTFILES" install
 else
     warn "just not on PATH after home-manager switch"

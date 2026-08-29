@@ -21,11 +21,44 @@ run before nix, `just` and fish exist. It is idempotent — re-run it any time.
 It:
 
 1. installs `git` via apt if missing
-2. runs `scripts/install-nix.sh` — see below
-3. sources the nix profile so the rest of the script can see nix
-4. links `nix/nixpkgs-config.nix` into place and checks it parses
-5. links `home.nix`, installs home-manager, runs `home-manager switch -b bak`
-6. hands off to `just install`
+2. runs `scripts/bootstrap-just.sh` — see below
+3. runs `scripts/install-nix.sh` — see below
+4. sources the nix profile so the rest of the script can see nix
+5. links `nix/nixpkgs-config.nix` into place and checks it parses
+6. links `home.nix`, installs home-manager, runs `home-manager switch -b bak`
+7. hands off to `just install`
+
+### Getting `just` before nix exists
+
+`just` normally comes from `home.nix`, which is a problem when the thing you
+want to run is `just machine install-nix`. `scripts/bootstrap-just.sh` breaks
+that cycle by installing the standalone binary from GitHub into
+`~/.local/bin`:
+
+```sh
+scripts/bootstrap-just.sh            # skips if just is already on PATH
+scripts/bootstrap-just.sh --force    # install anyway
+```
+
+Linux x86_64 only, by design — it is a bootstrap shim, not a general
+installer. It needs only `curl`, `tar` and `sha256sum` (no `jq`, which would
+not be installed yet), resolves the latest release by following the
+`/releases/latest` redirect, and verifies the tarball against the published
+`SHA256SUMS` before unpacking.
+
+It calls `scripts/bootstrap-path.sh` first, which puts `~/.local/bin` on PATH
+for bash, zsh and fish. That script writes a marker-delimited block so re-runs
+update in place, and leaves any shell alone that already handles `~/.local/bin`
+— Ubuntu's stock `~/.profile` and `~/.bashrc` do. For fish it writes
+`~/.config/fish/conf.d/00-local-bin.fish`, which is safe alongside
+home-manager: home-manager only cleans up links it created itself.
+
+Worth knowing which copy wins afterwards. `~/.local/bin` sits **ahead** of the
+nix profile in PATH, so the bootstrap binary would keep shadowing the
+nix-managed one and quietly go stale. `bootstrap.sh` therefore deletes
+`~/.local/bin/just` once home-manager has provided its own. Running the script
+by hand leaves the copy in place — remove it yourself, or re-run
+`bootstrap.sh`, once nix is in charge.
 
 ### Installing nix by itself
 
