@@ -23,6 +23,67 @@
 default:
     @just --list machine
 
+# ---------------------------------------------------------------------------
+# Nix
+#
+# Note the chicken-and-egg: `just` itself comes from home.nix, so on a truly
+# bare machine you cannot run this recipe — use ./scripts/bootstrap.sh, which
+# calls the same script. This recipe is for repairing or re-running the nix
+# setup on a machine that already has just.
+# ---------------------------------------------------------------------------
+
+# Install nix (multi-user) on an existing Linux system, plus the channels
+install-nix:
+    @{{justfile_directory() / "scripts/install-nix.sh"}}
+
+# Verify the nix installation and channels are healthy
+verify-nix:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    fi
+
+    command -v nix >/dev/null 2>&1 || { echo "nix: command not found on PATH"; exit 1; }
+    nix --version
+    echo "nix is installed: $(command -v nix)"
+
+    systemctl is-active --quiet nix-daemon.service \
+        || { echo "nix-daemon: not active (a multi-user install needs it)"; exit 1; }
+    echo "nix-daemon: active"
+
+    # NIX_PATH being empty is fine — nix has a compiled-in default nix-path.
+    # What matters is that <nixpkgs> actually resolves, through root's channel.
+    nix-instantiate --eval -E '<nixpkgs>' >/dev/null 2>&1 \
+        || { echo "<nixpkgs>: does not resolve"; exit 1; }
+    echo "<nixpkgs>: $(nix-instantiate --eval -E 'builtins.toString <nixpkgs>' | tr -d '\"')"
+
+    sudo -n nix-channel --list 2>/dev/null | grep -q '^nixpkgs ' \
+        && echo "root channel: nixpkgs present" \
+        || echo "root channel: unverified (needs sudo)"
+    nix-channel --list | grep -q '^home-manager ' \
+        || { echo "user channel: home-manager missing"; exit 1; }
+    echo "user channel: home-manager present"
+
+# Update nix itself and the channels
+update-nix:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+    fi
+
+    # `nix upgrade-nix` is experimental and needs nix-command enabled, which
+    # /etc/nix/nix.conf does not do here. This is the path the nix manual
+    # documents for multi-user installs.
+    sudo nix-channel --update
+    sudo nix-env --install --attr nixpkgs.nix nixpkgs.cacert
+    sudo systemctl daemon-reload
+    sudo systemctl restart nix-daemon
+
+    nix-channel --update
+    echo "nix is now: $(nix --version)"
+
 # Install openspec globally via npm
 install-openspec:
     npm install -g @fission-ai/openspec

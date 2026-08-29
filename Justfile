@@ -22,6 +22,8 @@ mod machine 'machine.just'
 default:
     @just --list
 
+help: default
+
 # ---------------------------------------------------------------------------
 # Provisioning. These live here rather than in a module because `install`
 # depends on them, and just cannot express dependencies across modules.

@@ -20,18 +20,40 @@ git clone <this repo> ~/dev/dotfiles
 run before nix, `just` and fish exist. It is idempotent — re-run it any time.
 It:
 
-1. installs `curl`, `xz-utils` and `git` via apt if missing
-2. installs upstream **nix in multi-user (daemon) mode** (needs sudo)
+1. installs `git` via apt if missing
+2. runs `scripts/install-nix.sh` — see below
 3. sources the nix profile so the rest of the script can see nix
-4. adds the channels — `nixpkgs-unstable` for root, `home-manager` master for
-   the user (master pairs with unstable nixpkgs; a release channel would skew)
-5. links `nix/nixpkgs-config.nix` into place and checks it parses
-6. links `home.nix`, installs home-manager, runs `home-manager switch -b bak`
-7. hands off to `just install`
+4. links `nix/nixpkgs-config.nix` into place and checks it parses
+5. links `home.nix`, installs home-manager, runs `home-manager switch -b bak`
+6. hands off to `just install`
 
-Note that `<nixpkgs>` resolves through **root's** channel, not the user's, so
-step 4 has a sudo half. Flakes are deliberately not enabled; this setup is
-channel-based throughout.
+### Installing nix by itself
+
+`scripts/install-nix.sh` installs **upstream nix in multi-user (daemon) mode**
+on top of an existing Linux system, then adds the channels: `nixpkgs-unstable`
+for root and `home-manager` master for the user (master pairs with unstable
+nixpkgs; a release channel would skew). It handles its own `curl`/`xz`
+dependencies and is idempotent.
+
+It is also exposed as a recipe, so it can be re-run or repaired without going
+through the whole bootstrap:
+
+```sh
+just machine install-nix
+just machine verify-nix
+just machine update-nix
+```
+
+There is a chicken-and-egg to be aware of: `just` itself comes from `home.nix`,
+so on a genuinely bare machine the recipe is not available yet — use
+`scripts/bootstrap.sh`, which calls the same script. Both share one
+implementation so they cannot drift.
+
+Two things worth knowing about this setup. `<nixpkgs>` resolves through
+**root's** channel, not the user's, so channel setup has a sudo half. And
+flakes are deliberately not enabled; this is channel-based throughout, which is
+also why `update-nix` uses the `nix-env` upgrade path the nix manual documents
+for multi-user installs rather than the experimental `nix upgrade-nix`.
 
 
 Day to day
@@ -94,6 +116,7 @@ Installers for third-party tooling, as opposed to the personalization above.
 
 | Group | Recipes |
 | --- | --- |
+| nix | `install-nix` (also used by the bootstrap) |
 | apt bundles | `install-build-tools`, `install-dev-tools`, `install-sys-tools` |
 | tools | codex, docker, fastmail, herdr, openspec, ssm, temporal, terraform, terragrunt, tfenv, vscode |
 
