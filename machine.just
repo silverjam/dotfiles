@@ -560,7 +560,7 @@ install-build-tools:
     sudo apt-get install -y {{build_tools}}
 
 # Verify the build toolchain is installed
-verify-build-tools: (_verify-apt "build-tools" build_tools)
+verify-build-tools: (_verify_apt "build-tools" build_tools)
 
 # Update the build toolchain to the latest packaged versions
 update-build-tools:
@@ -574,7 +574,7 @@ install-dev-tools:
     sudo apt-get install -y {{dev_tools}}
 
 # Verify the development tools are installed
-verify-dev-tools: (_verify-apt "dev-tools" dev_tools)
+verify-dev-tools: (_verify_apt "dev-tools" dev_tools)
 
 # Update the development tools to the latest packaged versions
 update-dev-tools:
@@ -588,14 +588,15 @@ install-sys-tools:
     sudo apt-get install -y {{sys_tools}}
 
 # Verify the system utilities are installed
-verify-sys-tools: (_verify-apt "sys-tools" sys_tools)
+verify-sys-tools: (_verify_apt "sys-tools" sys_tools)
 
 # Update the system utilities to the latest packaged versions
 update-sys-tools:
     sudo apt-get update && sudo apt-get install -y {{sys_tools}}
 
 # Report which packages in a bundle are installed, listing any that are missing
-_verify-apt group packages:
+[private]
+_verify_apt group packages:
     #!/usr/bin/env bash
     set -euo pipefail
     missing=()

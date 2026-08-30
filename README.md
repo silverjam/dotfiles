@@ -187,6 +187,10 @@ bootstrapping, things needing a network clone (the LazyVim starter), files that
 must stay mutable (`~/.gitconfig`), system caches (fonts, desktop database) and
 third-party tool installers.
 
+Recipe naming: public recipes are kebab-case (`install-nvim`); internal helpers
+are `_snake_case` and carry just's `[private]` attribute, which keeps them out
+of `--list` while leaving them callable.
+
 `scripts/link.sh` does the actual symlinking for every recipe that makes a link.
 It is a script rather than a just recipe because just modules cannot call each
 other's private recipes — a nested `just _link` from inside a module resolves

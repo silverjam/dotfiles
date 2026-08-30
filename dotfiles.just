@@ -92,7 +92,7 @@ install-nvim:
 # Install the Obsidian launcher and icons
 install-obsidian:
     @echo "obsidian:"
-    @just dotfiles _install-desktop obsidian
+    @just dotfiles _install_desktop obsidian
 
 # ---------------------------------------------------------------------------
 # Optional extras — not run by `just dotfiles install`, invoke individually
@@ -221,7 +221,8 @@ uninstall:
     echo "To undo home-manager itself: home-manager generations / home-manager remove-generations"
 
 # Install NAME.desktop (and icons/NAME/*.png if present) into the XDG user dirs
-_install-desktop name:
+[private]
+_install_desktop name:
     #!/usr/bin/env bash
     set -euo pipefail
     name="{{name}}"

@@ -7,6 +7,10 @@
 # Two modules underneath:
 #   just dotfiles   link this repo's config files (git, nvim, zellij, fonts, ...)
 #   just machine    install developer tooling (docker, terraform, apt bundles, ...)
+#
+# Convention: public recipes are kebab-case (install-nvim). Internal helpers are
+# _snake_case and carry just's [private] attribute, which keeps them out of
+# --list while leaving them callable.
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
