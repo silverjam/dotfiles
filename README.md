@@ -136,12 +136,13 @@ depends on them, and just cannot express dependencies across modules.
 | `install-obsidian` | installs the launcher and icons |
 | `install-zellij` | config, default layout and the zjstatus plugin |
 | `update-zjstatus` | downloads the latest zjstatus release into the repo |
+| `install-zj-snapshot` | links `zj-snapshot` and enables a 5-minute timer that snapshots zellij session `zj` (tabs, panes, cwds, Claude session ids); restore with `~/.local/share/zj-snapshots/restore-zj.sh` |
 | `install-tmux` | `~/.tmux.conf` |
 | `install-fonts` | the bundled FiraCode Nerd Fonts, then `fc-cache` |
 | `install-completions` | fish completions for `just` |
 | `uninstall` | removes every symlink the module created |
 
-The last four are not part of `just dotfiles install` — invoke them
+Everything after `install-obsidian` is not part of `just dotfiles install` — invoke them
 individually.
 
 ### `just machine` — developer tooling

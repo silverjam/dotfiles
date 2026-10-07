@@ -105,6 +105,20 @@ install-zellij:
     @{{link}} "{{dots}}/zellij-layouts/default.kdl" "$HOME/.config/zellij/layouts/default.kdl"
     @{{link}} "{{dots}}/zjstatus.wasm"              "$HOME/.config/zellij/zjstatus.wasm"
 
+# Restore after a crash with ~/.local/share/zj-snapshots/restore-zj.sh.
+
+# Link zj-snapshot and enable its timer (snapshots session zj every 5 minutes)
+install-zj-snapshot:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "zj-snapshot:"
+    {{link}} "{{dots}}/scripts/zj-snapshot"           "$HOME/.local/bin/zj-snapshot"
+    {{link}} "{{dots}}/systemd/zj-snapshot.service"   "$HOME/.config/systemd/user/zj-snapshot.service"
+    {{link}} "{{dots}}/systemd/zj-snapshot.timer"     "$HOME/.config/systemd/user/zj-snapshot.timer"
+    systemctl --user daemon-reload
+    systemctl --user enable --now zj-snapshot.timer >/dev/null 2>&1
+    echo "  ✓ zj-snapshot.timer enabled"
+
 # Updates the vendored zjstatus.wasm in place. ~/.config/zellij/zjstatus.wasm
 # is a symlink to it, so there is nothing to re-link afterwards — but a running
 # zellij needs restarting to pick the new plugin up.
@@ -192,7 +206,13 @@ install-completions:
 uninstall:
     #!/usr/bin/env bash
     set -euo pipefail
+    if [[ -L "$HOME/.config/systemd/user/zj-snapshot.timer" ]]; then
+        systemctl --user disable --now zj-snapshot.timer >/dev/null 2>&1 || true
+    fi
     for dst in \
+        "$HOME/.local/bin/zj-snapshot" \
+        "$HOME/.config/systemd/user/zj-snapshot.service" \
+        "$HOME/.config/systemd/user/zj-snapshot.timer" \
         "$HOME/.config/nvim/lazyvim.json" \
         "$HOME/.config/nvim/lua/plugins/lazyvim.lua" \
         "$HOME/.local/share/applications/obsidian.desktop" \

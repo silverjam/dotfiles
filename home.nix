@@ -90,6 +90,7 @@ let
     kustomize
     kubectl  # minikube is installing kubectl too???
     kubectx
+    oha
 #    minikube
     nginx
     postgrest
