@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""Snapshot a running zellij session into a restorable layout.
+
+Dumps the session layout and rewrites every `claude` pane to resume the exact
+Claude session currently running in it (pane -> pid via ZELLIJ_PANE_ID ->
+~/.claude/sessions/<pid>.json). Writes:
+
+  ~/.local/share/zj-snapshots/<session>.kdl          latest layout
+  ~/.local/share/zj-snapshots/restore-<session>.sh   restores it
+  ~/.local/share/zj-snapshots/history/<session>-<ts>.kdl  (last 50 kept)
+
+Usage: zj-snapshot [session-name]   (defaults to $ZELLIJ_SESSION_NAME, else "zj")
+"""
+import json
+import os
+import re
+import shlex
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+SESSION = (sys.argv[1] if len(sys.argv) > 1
+           else os.environ.get("ZELLIJ_SESSION_NAME") or "zj")
+OUT = Path.home() / ".local/share/zj-snapshots"
+HIST = OUT / "history"
+KEEP = 50
+CLAUDE_SESSIONS = Path.home() / ".claude/sessions"
+# Args that pin a specific/forked session; replaced by --resume <current id>.
+DROP_FLAGS = {"--continue", "-c", "--fork-session"}
+DROP_WITH_VALUE = {"--resume", "-r", "--session-id"}
+
+
+def zj(*args):
+    return subprocess.run(["zellij", "-s", SESSION, "action", *args],
+                          check=True, capture_output=True, text=True).stdout
+
+
+def pane_pids():
+    """Map zellij pane id -> list of claude pids running in it."""
+    out = {}
+    for pid in os.listdir("/proc"):
+        if not pid.isdigit():
+            continue
+        try:
+            if Path(f"/proc/{pid}/comm").read_text().strip() != "claude":
+                continue
+            env = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        vals = dict(e.split(b"=", 1) for e in env if b"=" in e)
+        if vals.get(b"ZELLIJ_SESSION_NAME", b"").decode() != SESSION:
+            continue
+        pane = vals.get(b"ZELLIJ_PANE_ID")
+        if pane:
+            out.setdefault(int(pane), []).append(int(pid))
+    return out
+
+
+def session_id(pid):
+    try:
+        return json.loads((CLAUDE_SESSIONS / f"{pid}.json").read_text())["sessionId"]
+    except (OSError, KeyError, ValueError):
+        return None
+
+
+def strip_session_args(args):
+    out, skip = [], False
+    for i, a in enumerate(args):
+        if skip:
+            skip = False
+            continue
+        if a in DROP_FLAGS:
+            continue
+        if a in DROP_WITH_VALUE:
+            # --resume may be bare (opens picker); only skip a following non-flag value
+            nxt = args[i + 1] if i + 1 < len(args) else None
+            skip = nxt is not None and not nxt.startswith("-")
+            continue
+        if a.split("=", 1)[0] in DROP_WITH_VALUE:
+            continue
+        out.append(a)
+    return out
+
+
+def kdl_args(args):
+    return " ".join(json.dumps(a) for a in args)
+
+
+def main():
+    layout = zj("dump-layout")
+    panes = [p for p in json.loads(zj("list-panes", "-a", "-j"))
+             if not p["is_plugin"]]
+    pids = pane_pids()
+    root_cwd = re.search(r'^\s*cwd "([^"]*)"', layout, re.M)
+    root_cwd = root_cwd.group(1) if root_cwd else str(Path.home())
+
+    used = set()
+    lines = layout.splitlines()
+    result, report = [], []
+    tab_pos = -1
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if re.match(r'^\s*tab\b', line):
+            tab_pos += 1
+        m = re.match(r'^(\s*)pane command="claude"(.*)\{\s*$', line)
+        if not m:
+            result.append(line)
+            i += 1
+            continue
+
+        indent, attrs = m.group(1), m.group(2)
+        # Collect this pane's body (args / start_suspended) up to its closing brace.
+        body, j = [], i + 1
+        while not re.match(rf'^{indent}\}}\s*$', lines[j]):
+            body.append(lines[j])
+            j += 1
+        args = []
+        for b in body:
+            am = re.match(r'^\s*args (.*)$', b)
+            if am:
+                args = shlex.split(am.group(1))
+        cwd_m = re.search(r'cwd="([^"]*)"', attrs)
+        cwd = cwd_m.group(1) if cwd_m else ""
+        abs_cwd = os.path.normpath(os.path.join(root_cwd, cwd))
+        cmd = " ".join(["claude", *args])
+
+        def pick(pred):
+            for p in panes:
+                if p["id"] not in used and p["tab_position"] == tab_pos and pred(p):
+                    return p
+        p = (pick(lambda p: p.get("pane_cwd") == abs_cwd and p.get("pane_command") == cmd)
+             or pick(lambda p: p.get("pane_cwd") == abs_cwd
+                     and (p.get("pane_command") or "").startswith("claude")))
+        sid = None
+        if p:
+            used.add(p["id"])
+            for pid in pids.get(p["id"], []):
+                sid = session_id(pid) or sid
+
+        new_args = strip_session_args(args)
+        if sid:
+            new_args += ["--resume", sid]
+        report.append(f"  tab {tab_pos} {abs_cwd}: {sid or 'NO SESSION FOUND (fresh claude)'}"
+                      + (f"  [{p['title']}]" if p else ""))
+
+        result.append(f"{indent}pane command=\"claude\"{attrs}{{")
+        if new_args:
+            result.append(f"{indent}    args {kdl_args(new_args)}")
+        # Drop start_suspended so sessions come back running on restore.
+        result.extend(b for b in body
+                      if not re.match(r'^\s*(args|start_suspended)\b', b))
+        result.append(lines[j])
+        i = j + 1
+
+    OUT.mkdir(parents=True, exist_ok=True)
+    HIST.mkdir(exist_ok=True)
+    text = "\n".join(result) + "\n"
+    latest = OUT / f"{SESSION}.kdl"
+    tmp = latest.with_suffix(".tmp")
+    tmp.write_text(text)
+    tmp.replace(latest)
+    (HIST / f"{SESSION}-{time.strftime('%Y%m%d-%H%M%S')}.kdl").write_text(text)
+    for old in sorted(HIST.glob(f"{SESSION}-*.kdl"))[:-KEEP]:
+        old.unlink()
+
+    restore = OUT / f"restore-{SESSION}.sh"
+    restore.write_text(f"""#!/usr/bin/env bash
+# Restore zellij session "{SESSION}" from snapshot (taken {time.strftime('%F %T')}).
+# Usage: restore-{SESSION}.sh [layout.kdl]   (defaults to latest snapshot;
+#        older ones are in {HIST})
+set -euo pipefail
+layout="${{1:-{latest}}}"
+name="{SESSION}"
+if zellij list-sessions -n 2>/dev/null | grep -q "^$name "; then
+  echo "A zellij session named '$name' already exists (possibly a dead/resurrectable one)."
+  echo "Delete it first:  zellij delete-session --force $name"
+  echo "or restore under another name:  zellij -s $name-restored -n \\"$layout\\""
+  exit 1
+fi
+exec zellij -s "$name" -n "$layout"
+""")
+    restore.chmod(0o755)
+
+    print(f"Saved {latest}")
+    print("\n".join(report))
+    print(f"Restore with: {restore}")
+
+
+if __name__ == "__main__":
+    main()
