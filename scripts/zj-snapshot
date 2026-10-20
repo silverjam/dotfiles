@@ -35,7 +35,8 @@ CLAUDE_SESSIONS = Path.home() / ".claude/sessions"
 # Args that pin a specific/forked session; replaced by --resume <current id>.
 DROP_FLAGS = {"--continue", "-c", "--fork-session"}
 DROP_WITH_VALUE = {"--resume", "-r", "--session-id"}
-CODEX_HOME = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
+AGENTS = {"claude", "codex"}
+CODEX_HOME =Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
 # Subcommands that pick a session; replaced by `resume <current id>`.
 CODEX_SESSION_SUBCOMMANDS = {"resume", "fork"}
 CODEX_DROP_FLAGS = {"--last", "--all"}
@@ -49,16 +50,18 @@ def zj(*args):
                           check=True, capture_output=True, text=True).stdout
 
 
-def pane_pids():
-    """Map zellij pane id -> list of claude pids running in it."""
+def pane_agents():
+    """Map zellij pane id -> [(agent, pid, cwd)] for agents running in it."""
     out = {}
     for pid in os.listdir("/proc"):
         if not pid.isdigit():
             continue
         try:
-            if Path(f"/proc/{pid}/comm").read_text().strip() != "claude":
+            agent = Path(f"/proc/{pid}/comm").read_text().strip()
+            if agent not in AGENTS:
                 continue
             env = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
+            cwd = os.readlink(f"/proc/{pid}/cwd")
         except OSError:
             continue
         vals = dict(e.split(b"=", 1) for e in env if b"=" in e)
@@ -66,7 +69,7 @@ def pane_pids():
             continue
         pane = vals.get(b"ZELLIJ_PANE_ID")
         if pane:
-            out.setdefault(int(pane), []).append(int(pid))
+            out.setdefault(int(pane), []).append((agent, int(pid), cwd))
     return out
 
 
@@ -154,7 +157,7 @@ def main():
     layout = zj("dump-layout")
     panes = [p for p in json.loads(zj("list-panes", "-a", "-j"))
              if not p["is_plugin"]]
-    pids = pane_pids()
+    agents = pane_agents()
     threads = codex_threads()
     root_cwd = re.search(r'^\s*cwd "([^"]*)"', layout, re.M)
     root_cwd = root_cwd.group(1) if root_cwd else str(Path.home())
@@ -194,15 +197,19 @@ def main():
             for p in panes:
                 if p["id"] not in used and p["tab_position"] == tab_pos and pred(p):
                     return p
+
+        def runs_agent(p):
+            return any(a == agent and c == abs_cwd for a, _, c in agents.get(p["id"], []))
+        # zellij sometimes reports null pane_command/pane_cwd, so /proc is the fallback.
         p = (pick(lambda p: p.get("pane_cwd") == abs_cwd and p.get("pane_command") == cmd)
-             or pick(lambda p: p.get("pane_cwd") == abs_cwd
-                     and (p.get("pane_command") or "").startswith(agent)))
+             or pick(runs_agent))
         sid = None
         if p:
             used.add(p["id"])
             if agent == "claude":
-                for pid in pids.get(p["id"], []):
-                    sid = session_id(pid) or sid
+                for a, pid, _ in agents.get(p["id"], []):
+                    if a == "claude":
+                        sid = session_id(pid) or sid
             else:
                 sid = codex_thread(p["title"], abs_cwd, threads, used_threads)
                 used_threads.add(sid)
