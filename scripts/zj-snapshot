@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Snapshot a running zellij session into a restorable layout.
 
-Dumps the session layout and rewrites every `claude` pane to resume the exact
-Claude session currently running in it (pane -> pid via ZELLIJ_PANE_ID ->
-~/.claude/sessions/<pid>.json). Writes:
+Dumps the session layout and rewrites every `claude` and `codex` pane to resume
+the exact session currently running in it:
+
+  claude  pane -> pid via ZELLIJ_PANE_ID -> ~/.claude/sessions/<pid>.json
+  codex   pane title ("<thread name> | <dir>") + cwd -> threads in
+          ~/.codex/state_*.sqlite
+
+Writes:
 
   ~/.local/share/zj-snapshots/<session>.kdl          latest layout
   ~/.local/share/zj-snapshots/restore-<session>.sh   restores it
@@ -15,6 +20,7 @@ import json
 import os
 import re
 import shlex
+import sqlite3
 import subprocess
 import sys
 import time
@@ -29,6 +35,13 @@ CLAUDE_SESSIONS = Path.home() / ".claude/sessions"
 # Args that pin a specific/forked session; replaced by --resume <current id>.
 DROP_FLAGS = {"--continue", "-c", "--fork-session"}
 DROP_WITH_VALUE = {"--resume", "-r", "--session-id"}
+CODEX_HOME = Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex")
+# Subcommands that pick a session; replaced by `resume <current id>`.
+CODEX_SESSION_SUBCOMMANDS = {"resume", "fork"}
+CODEX_DROP_FLAGS = {"--last", "--all"}
+# The TUI prefixes its title with a status glyph (spinner, etc.) while busy.
+CODEX_TITLE_STATUS = re.compile(r'^[^\w\s]\s+')
+TRUNCATION = "..."
 
 
 def zj(*args):
@@ -83,6 +96,56 @@ def strip_session_args(args):
     return out
 
 
+def claude_resume_args(args, sid):
+    return strip_session_args(args) + ["--resume", sid]
+
+
+def codex_state_db():
+    def version(p):
+        m = re.search(r'_(\d+)\.sqlite$', p.name)
+        return int(m.group(1)) if m else -1
+    dbs = sorted(CODEX_HOME.glob("state_*.sqlite"), key=version)
+    return dbs[-1] if dbs else None
+
+
+def codex_threads():
+    """Map cwd -> [(thread id, name)] for named, unarchived threads, newest first."""
+    db = codex_state_db()
+    if not db:
+        return {}
+    try:
+        with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as conn:
+            rows = conn.execute(
+                "select id, cwd, name from threads"
+                " where archived = 0 and name is not null"
+                " order by updated_at desc").fetchall()
+    except sqlite3.Error:
+        return {}
+    out = {}
+    for tid, cwd, name in rows:
+        out.setdefault(cwd, []).append((tid, name))
+    return out
+
+
+def codex_thread(title, cwd, threads, used):
+    name = CODEX_TITLE_STATUS.sub("", title).rsplit(" | ", 1)[0]
+    truncated = name.endswith(TRUNCATION)
+    prefix = name.removesuffix(TRUNCATION)
+    for tid, thread_name in threads.get(cwd, []):
+        matches = thread_name == name or (truncated and thread_name.startswith(prefix))
+        if matches and tid not in used:
+            return tid
+
+
+def codex_resume_args(args, tid):
+    rest = [a for a in args if a not in CODEX_DROP_FLAGS]
+    sub = next((i for i, a in enumerate(rest) if a in CODEX_SESSION_SUBCOMMANDS), None)
+    if sub is not None:
+        has_session_arg = sub + 1 < len(rest) and not rest[sub + 1].startswith("-")
+        del rest[sub:sub + 1 + has_session_arg]
+    return ["resume", *rest, tid]
+
+
 def kdl_args(args):
     return " ".join(json.dumps(a) for a in args)
 
@@ -92,10 +155,11 @@ def main():
     panes = [p for p in json.loads(zj("list-panes", "-a", "-j"))
              if not p["is_plugin"]]
     pids = pane_pids()
+    threads = codex_threads()
     root_cwd = re.search(r'^\s*cwd "([^"]*)"', layout, re.M)
     root_cwd = root_cwd.group(1) if root_cwd else str(Path.home())
 
-    used = set()
+    used, used_threads = set(), set()
     lines = layout.splitlines()
     result, report = [], []
     tab_pos = -1
@@ -104,13 +168,13 @@ def main():
         line = lines[i]
         if re.match(r'^\s*tab\b', line):
             tab_pos += 1
-        m = re.match(r'^(\s*)pane command="claude"(.*)\{\s*$', line)
+        m = re.match(r'^(\s*)pane command="(claude|codex)"(.*)\{\s*$', line)
         if not m:
             result.append(line)
             i += 1
             continue
 
-        indent, attrs = m.group(1), m.group(2)
+        indent, agent, attrs = m.groups()
         # Collect this pane's body (args / start_suspended) up to its closing brace.
         body, j = [], i + 1
         while not re.match(rf'^{indent}\}}\s*$', lines[j]):
@@ -124,7 +188,7 @@ def main():
         cwd_m = re.search(r'cwd="([^"]*)"', attrs)
         cwd = cwd_m.group(1) if cwd_m else ""
         abs_cwd = os.path.normpath(os.path.join(root_cwd, cwd))
-        cmd = " ".join(["claude", *args])
+        cmd = " ".join([agent, *args])
 
         def pick(pred):
             for p in panes:
@@ -132,20 +196,28 @@ def main():
                     return p
         p = (pick(lambda p: p.get("pane_cwd") == abs_cwd and p.get("pane_command") == cmd)
              or pick(lambda p: p.get("pane_cwd") == abs_cwd
-                     and (p.get("pane_command") or "").startswith("claude")))
+                     and (p.get("pane_command") or "").startswith(agent)))
         sid = None
         if p:
             used.add(p["id"])
-            for pid in pids.get(p["id"], []):
-                sid = session_id(pid) or sid
+            if agent == "claude":
+                for pid in pids.get(p["id"], []):
+                    sid = session_id(pid) or sid
+            else:
+                sid = codex_thread(p["title"], abs_cwd, threads, used_threads)
+                used_threads.add(sid)
 
-        new_args = strip_session_args(args)
-        if sid:
-            new_args += ["--resume", sid]
-        report.append(f"  tab {tab_pos} {abs_cwd}: {sid or 'NO SESSION FOUND (fresh claude)'}"
+        if agent == "claude":
+            new_args = claude_resume_args(args, sid) if sid else strip_session_args(args)
+            missing = "NO SESSION FOUND (fresh claude)"
+        else:
+            # Unmatched codex panes keep their args: `codex resume` reopens the picker.
+            new_args = codex_resume_args(args, sid) if sid else args
+            missing = f"NO THREAD FOUND ({cmd})"
+        report.append(f"  tab {tab_pos} {agent} {abs_cwd}: {sid or missing}"
                       + (f"  [{p['title']}]" if p else ""))
 
-        result.append(f"{indent}pane command=\"claude\"{attrs}{{")
+        result.append(f"{indent}pane command=\"{agent}\"{attrs}{{")
         if new_args:
             result.append(f"{indent}    args {kdl_args(new_args)}")
         # Drop start_suspended so sessions come back running on restore.
