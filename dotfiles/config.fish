@@ -123,6 +123,10 @@ if has_cmd fdfind
     alias fd fdfind
 end
 
+if has_cmd zj-snapshot
+    alias zjs="zj-snapshot zj"
+end
+
 alias bork="echo bork"
 
 alias k kubectl

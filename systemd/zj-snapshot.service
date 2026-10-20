@@ -1,5 +1,5 @@
 [Unit]
-Description=Snapshot zellij session zj (tabs/panes/cwd/claude sessions)
+Description=Snapshot zellij session zj (tabs/panes/cwd/claude sessions/codex threads)
 
 [Service]
 Type=oneshot
