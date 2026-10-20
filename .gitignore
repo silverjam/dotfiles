@@ -2,3 +2,4 @@
 .*.swp
 jq.pkg
 live105*
+__pycache__/
