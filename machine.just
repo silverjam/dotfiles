@@ -534,6 +534,30 @@ verify-tfenv:
 # Update tfenv to the latest version (re-runs the install recipe)
 update-tfenv: install-tfenv verify-tfenv
 
+# Let google-chrome and vivaldi reach keyboards over WebHID for usevia.app
+install-via-udev:
+    @{{justfile_directory() / "scripts/install-via-udev.sh"}}
+
+# Verify the VIA udev rule is installed and the current user can open hidraw devices
+verify-via-udev:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rules=/etc/udev/rules.d/70-via-hidraw.rules
+    [[ -f $rules ]] || { echo "$rules: missing (run: just machine install-via-udev)"; exit 1; }
+    shopt -s nullglob
+    nodes=(/dev/hidraw*)
+    [[ ${#nodes[@]} -gt 0 ]] || { echo "via-udev: rule installed, no hidraw devices present"; exit 0; }
+    denied=()
+    for node in "${nodes[@]}"; do
+        [[ -r $node && -w $node ]] || denied+=("$node")
+    done
+    if [[ ${#denied[@]} -eq 0 ]]; then
+        echo "via-udev: rule installed, ${#nodes[@]} hidraw devices accessible"
+    else
+        echo "via-udev: no read/write access to ${denied[*]}"
+        exit 1
+    fi
+
 # ---------------------------------------------------------------------------
 # apt package bundles
 #
