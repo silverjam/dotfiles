@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Music key bridge",
+  "version": "1.0",
+  "description": "Lets vc-ytmusic-*.sh control YouTube Music without focusing it.",
+  "content_scripts": [
+    {
+      "matches": ["https://music.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
