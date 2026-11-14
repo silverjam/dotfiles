@@ -558,6 +558,23 @@ verify-via-udev:
         exit 1
     fi
 
+# Install the Brother DS-620 scanner driver (repacks Brother's 2013 .deb for libsane1)
+install-brother-ds620:
+    @{{justfile_directory() / "scripts/install-brother-ds620.sh"}}
+
+# Verify SANE sees the Brother DS-620
+verify-brother-ds620:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    grep -qx dsseries /etc/sane.d/dll.conf \
+        || { echo "dsseries: backend not enabled (run: just machine install-brother-ds620)"; exit 1; }
+    device="$(scanimage -L 2>/dev/null | grep -i 'ds-620' || true)"
+    [[ -n $device ]] || { echo "DS-620: not detected by SANE"; exit 1; }
+    echo "$device"
+
+# Update the Brother DS-620 driver (re-runs the install; Brother's package is frozen at 2013)
+update-brother-ds620: install-brother-ds620 verify-brother-ds620
+
 # ---------------------------------------------------------------------------
 # apt package bundles
 #
