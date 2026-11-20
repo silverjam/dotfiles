@@ -98,6 +98,11 @@ install-obsidian:
 # Optional extras — not run by `just dotfiles install`, invoke individually
 # ---------------------------------------------------------------------------
 
+# Install the Orca launcher and icons (AppImage must be on PATH as orca)
+install-orca:
+    @echo "orca:"
+    @just dotfiles _install_desktop orca-ide
+
 # Link the zellij config, default layout and zjstatus plugin
 install-zellij:
     @echo "zellij:"
@@ -216,6 +221,7 @@ uninstall:
         "$HOME/.config/nvim/lazyvim.json" \
         "$HOME/.config/nvim/lua/plugins/lazyvim.lua" \
         "$HOME/.local/share/applications/obsidian.desktop" \
+        "$HOME/.local/share/applications/orca-ide.desktop" \
         "$HOME/.config/zellij/config.kdl" \
         "$HOME/.config/zellij/layouts/default.kdl" \
         "$HOME/.config/zellij/zjstatus.wasm" \
@@ -226,8 +232,11 @@ uninstall:
             echo "  - $dst"
         fi
     done
-    for icon in "$HOME"/.local/share/icons/hicolor/*/apps/obsidian.png; do
-        [[ -L "$icon" ]] && rm -f "$icon" && echo "  - $icon"
+    for icon in "$HOME"/.local/share/icons/hicolor/*/apps/{obsidian,orca-ide}.png; do
+        if [[ -L "$icon" && "$(readlink -f "$icon")" == "{{dots}}"/* ]]; then
+            rm -f "$icon"
+            echo "  - $icon"
+        fi
     done
     for font in "$HOME"/.local/share/fonts/*.ttf; do
         if [[ -L "$font" && "$(readlink -f "$font")" == "{{dots}}"/* ]]; then

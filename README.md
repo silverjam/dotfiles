@@ -134,6 +134,7 @@ depends on them, and just cannot express dependencies across modules.
 | `install-git` | adds the `include.path` to `~/.gitconfig` (see below) |
 | `install-nvim` | clones the LazyVim starter if absent, links the tracked files |
 | `install-obsidian` | installs the launcher and icons |
+| `install-orca` | links the Orca AppImage launcher and bundled icons |
 | `install-zellij` | config, default layout and the zjstatus plugin |
 | `update-zjstatus` | downloads the latest zjstatus release into the repo |
 | `install-zj-snapshot` | links `zj-snapshot` and enables a 5-minute timer that snapshots zellij session `zj` (tabs, panes, cwds, Claude session and Codex thread ids); restore with `~/.local/share/zj-snapshots/restore-zj.sh` |
@@ -144,6 +145,12 @@ depends on them, and just cannot express dependencies across modules.
 
 Everything after `install-obsidian` is not part of `just dotfiles install` — invoke them
 individually.
+
+Orca's AppImage must be executable and available on `PATH` as `orca` (on this
+machine, `~/.local/bin/orca`). Run `just dotfiles install-orca` to symlink the
+desktop entry and icons into `~/.local/share`. The icons in `icons/orca-ide/`
+come from Orca AppImage 1.4.265. Replacing the AppImage at the same path keeps
+the launcher working after updates.
 
 ### `just machine` — developer tooling
 

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Orca
+Comment=IDE for parallel agentic development
+Exec=orca %U
+TryExec=orca
+Icon=orca-ide
+Terminal=false
+StartupWMClass=orca
+MimeType=text/markdown;text/csv;text/tab-separated-values;x-scheme-handler/orca;
+Categories=Development;IDE;

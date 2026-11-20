@@ -172,6 +172,7 @@ doctor:
 
     echo "optional extras:"
     for pair in \
+        "{{dots}}/orca-ide.desktop:$HOME/.local/share/applications/orca-ide.desktop:just dotfiles install-orca" \
         "{{dots}}/dotfiles/zellij.kdl:$HOME/.config/zellij/config.kdl:just dotfiles install-zellij" \
         "{{dots}}/scripts/zj-snapshot:$HOME/.local/bin/zj-snapshot:just dotfiles install-zj-snapshot" \
         "{{dots}}/dotfiles/tmux.conf:$HOME/.tmux.conf:just dotfiles install-tmux" \
