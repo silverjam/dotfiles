@@ -68,20 +68,29 @@ fi
 command -v nix-channel >/dev/null 2>&1 || die "nix-channel not on PATH after sourcing profile"
 info "nix $(nix --version | awk '{print $3}') on PATH"
 
+# sudo resets PATH via secure_path, so a bare `sudo nix-channel` cannot find
+# the daemon's binaries even though the profile sourced above put them on
+# *our* PATH. Invoke by absolute path and hand root the sourced PATH, so the
+# nix tools nix-channel shells out to resolve too; -H pins HOME to /root so
+# this stays root's channel, not the invoking user's.
+root_nix_channel() {
+    sudo -H env "PATH=$PATH" /nix/var/nix/profiles/default/bin/nix-channel "$@"
+}
+
 # --------------------------------------------------------------------------
 say "Channels"
 
 # <nixpkgs> resolves through *root's* channel, not the user's. home-manager
 # master tracks nixpkgs unstable, so pin that pairing explicitly rather than
 # trusting whatever default the installer picked.
-if sudo nix-channel --list | grep -q '^nixpkgs '; then
+if root_nix_channel --list | grep -q '^nixpkgs '; then
     info "root: nixpkgs already present"
 else
     info "root: adding nixpkgs-unstable"
-    sudo nix-channel --add "$NIXPKGS_CHANNEL" nixpkgs
+    root_nix_channel --add "$NIXPKGS_CHANNEL" nixpkgs
 fi
 info "root: updating"
-sudo nix-channel --update
+root_nix_channel --update
 
 if nix-channel --list | grep -q '^home-manager '; then
     info "user: home-manager already present"

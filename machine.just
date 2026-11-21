@@ -58,7 +58,7 @@ verify-nix:
         || { echo "<nixpkgs>: does not resolve"; exit 1; }
     echo "<nixpkgs>: $(nix-instantiate --eval -E 'builtins.toString <nixpkgs>' | tr -d '\"')"
 
-    sudo -n nix-channel --list 2>/dev/null | grep -q '^nixpkgs ' \
+    sudo -n -H env "PATH=$PATH" /nix/var/nix/profiles/default/bin/nix-channel --list 2>/dev/null | grep -q '^nixpkgs ' \
         && echo "root channel: nixpkgs present" \
         || echo "root channel: unverified (needs sudo)"
     nix-channel --list | grep -q '^home-manager ' \
@@ -76,8 +76,10 @@ update-nix:
     # `nix upgrade-nix` is experimental and needs nix-command enabled, which
     # /etc/nix/nix.conf does not do here. This is the path the nix manual
     # documents for multi-user installs.
-    sudo nix-channel --update
-    sudo nix-env --install --attr nixpkgs.nix nixpkgs.cacert
+    # Path is absolute and PATH is handed over because sudo's secure_path
+    # strips it -- see root_nix_channel in scripts/install-nix.sh.
+    sudo -H env "PATH=$PATH" /nix/var/nix/profiles/default/bin/nix-channel --update
+    sudo -H env "PATH=$PATH" /nix/var/nix/profiles/default/bin/nix-env --install --attr nixpkgs.nix nixpkgs.cacert
     sudo systemctl daemon-reload
     sudo systemctl restart nix-daemon
 

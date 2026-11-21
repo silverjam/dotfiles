@@ -118,7 +118,7 @@ doctor:
     fi
 
     echo "channels:"
-    sudo -n nix-channel --list 2>/dev/null | grep -q '^nixpkgs ' \
+    sudo -n -H env "PATH=$PATH" /nix/var/nix/profiles/default/bin/nix-channel --list 2>/dev/null | grep -q '^nixpkgs ' \
         && ok "root: nixpkgs" || note "root: nixpkgs unverified (needs sudo)"
     nix-channel --list 2>/dev/null | grep -q '^home-manager ' \
         && ok "user: home-manager" || bad "user: home-manager channel missing"
