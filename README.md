@@ -147,10 +147,12 @@ Everything after `install-obsidian` is not part of `just dotfiles install` — i
 individually.
 
 Orca's AppImage must be executable and available on `PATH` as `orca` (on this
-machine, `~/.local/bin/orca`). Run `just dotfiles install-orca` to symlink the
+machine, `~/.local/bin/orca`; `just machine install-orca` fetches the latest
+release there, hash-verified). Run `just dotfiles install-orca` to symlink the
 desktop entry and icons into `~/.local/share`. The icons in `icons/orca-ide/`
 come from Orca AppImage 1.4.265. Replacing the AppImage at the same path keeps
-the launcher working after updates.
+the launcher working after updates. Note `orca` then shadows GNOME's
+unrelated screen reader at `/usr/bin/orca`.
 
 ### `just machine` — developer tooling
 
@@ -160,7 +162,7 @@ Installers for third-party tooling, as opposed to the personalization above.
 | --- | --- |
 | nix | `install-nix` (also used by the bootstrap) |
 | apt bundles | `install-build-tools`, `install-dev-tools`, `install-sys-tools` |
-| tools | codex, docker, fastmail, herdr, openspec, ssm, temporal, terraform, terragrunt, tfenv, vscode |
+| tools | codex, docker, fastmail, herdr, openspec, orca, ssm, temporal, terraform, terragrunt, tfenv, vscode |
 
 Everything has an `install-` / `verify-` / `update-` triple. Releases are
 checksum- or signature-verified, and nothing is installed by piping a script

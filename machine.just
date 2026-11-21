@@ -4,6 +4,7 @@
 # Loaded as a module, so these are invoked with a `machine` prefix:
 #
 #     just machine                 # list them
+#     just machine help            # same as listing
 #     just machine install-docker  # run one
 #
 # (`just --list machine` also works; `just machine --list` does not.)
@@ -22,6 +23,8 @@
 # List the machine setup recipes
 default:
     @just --list machine
+
+help: default
 
 # ---------------------------------------------------------------------------
 # Nix
@@ -535,6 +538,79 @@ verify-tfenv:
 
 # Update tfenv to the latest version (re-runs the install recipe)
 update-tfenv: install-tfenv verify-tfenv
+
+# AppImage, not deb: the orca-ide launcher and README expect the binary itself
+# on PATH as `orca`; `just dotfiles install-orca` links the desktop launcher
+# and icons for it.
+#
+# Install Orca, the agent IDE, from the latest hash-verified GitHub release (no piped install script)
+install-orca:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    command -v jq >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y jq; }
+
+    case "$(uname -m)" in
+        x86_64) asset="orca-linux.AppImage" ;;
+        aarch64) asset="orca-linux-arm64.AppImage" ;;
+        *) echo "install-orca: unsupported architecture: $(uname -m)"; exit 1 ;;
+    esac
+
+    tag="$(curl -fsSL "https://api.github.com/repos/stablyai/orca/releases/latest" | jq -r '.tag_name')"
+    [ -n "$tag" ] && [ "$tag" != "null" ] || { echo "install-orca: could not resolve latest release tag"; exit 1; }
+    echo "install-orca: latest release is ${tag}"
+
+    expected_sha="$(curl -fsSL "https://api.github.com/repos/stablyai/orca/releases/tags/${tag}" \
+        | jq -r --arg name "$asset" '.assets[] | select(.name == $name) | .digest' \
+        | sed 's/^sha256://')"
+    [ -n "$expected_sha" ] || { echo "install-orca: could not resolve expected digest for ${asset}"; exit 1; }
+
+    workdir="$(mktemp -d)"
+    trap 'rm -rf "$workdir"' EXIT
+
+    curl -fsSL -o "$workdir/$asset" \
+        "https://github.com/stablyai/orca/releases/download/${tag}/${asset}"
+
+    actual_sha="$(sha256sum "$workdir/$asset" | awk '{print $1}')"
+    if [ "$actual_sha" != "$expected_sha" ]; then
+        echo "install-orca: checksum mismatch for ${asset}"
+        echo "  expected: $expected_sha"
+        echo "  actual:   $actual_sha"
+        exit 1
+    fi
+    echo "install-orca: verified sha256 for ${asset}: $actual_sha"
+
+    install -Dm755 "$workdir/$asset" "$HOME/.local/bin/orca"
+    echo "orca installed to $HOME/.local/bin/orca"
+    if [[ -e /usr/bin/orca ]]; then
+        echo "orca: note: ~/.local/bin/orca now shadows GNOME's screen reader at /usr/bin/orca on PATH"
+    fi
+    echo "orca: run 'just dotfiles install-orca' to link the desktop launcher and icons"
+
+# Verify Orca was installed correctly
+verify-orca:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    command -v orca >/dev/null 2>&1 || { echo "orca: command not found on PATH (run: just machine install-orca)"; exit 1; }
+
+    installed_version="$(orca --version 2>/dev/null | head -n1)"
+    [ -n "$installed_version" ] || { echo "verify-orca: orca --version did not report a version"; exit 1; }
+
+    # GNOME ships its own accessibility screen reader called Orca at
+    # /usr/bin/orca; it prints "Orca version ...". The IDE prints a bare
+    # version. Reject the screen reader rather than false-positive on it.
+    if [[ $installed_version == "Orca version"* ]]; then
+        echo "verify-orca: $(command -v orca) is the GNOME screen reader, not the Orca IDE"
+        echo "verify-orca: (run: just machine install-orca, which shadows it from ~/.local/bin)"
+        exit 1
+    fi
+    [[ $installed_version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+        || { echo "verify-orca: orca --version reported unexpected output: '$installed_version'"; exit 1; }
+
+    echo "orca is installed: $(command -v orca) (version $installed_version)"
+
+# Update Orca to the latest version (re-runs the install recipe)
+update-orca: install-orca verify-orca
 
 # Let google-chrome and vivaldi reach keyboards over WebHID for usevia.app
 install-via-udev:
